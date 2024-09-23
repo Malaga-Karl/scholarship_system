@@ -3,6 +3,8 @@ import Navbar from './components/Navbar'
 import Home from './components/Home'
 import Announcements from './components/Announcements'
 import ParteredFoundation from './components/ParteredFoundation'
+import Prefooter  from './components/Prefooter'
+import Footer from './components/Footer'
 
 function App() {
 
@@ -12,6 +14,8 @@ function App() {
       <Home />
       <Announcements />
       <ParteredFoundation />
+      <Prefooter/>
+      <Footer/>
     </>
   )
 }
