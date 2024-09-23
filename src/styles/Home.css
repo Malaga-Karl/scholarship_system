@@ -3,7 +3,8 @@
   width: 100vw;
   background-image: url("../assets/plm_background.png");
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
+  background-color: aquamarine;
 }
 
 .home--content {
