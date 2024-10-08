@@ -3,18 +3,16 @@ import Navbar from './components/Navbar'
 import Home from './components/Home'
 import Announcements from './components/Announcements'
 import ParteredFoundation from './components/ParteredFoundation'
-import Prefooter  from './components/Prefooter'
 import Footer from './components/Footer'
 
 function App() {
 
   return (
     <>
-      <Navbar />
-      <Home />
-      <Announcements />
+      <Navbar/>
+      <Home id="home"/>
+      <Announcements id="announce"/>
       <ParteredFoundation />
-      <Prefooter/>
       <Footer/>
     </>
   )

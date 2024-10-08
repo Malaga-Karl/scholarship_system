@@ -77,23 +77,33 @@ nav {
   /* background-color: aquamarine; */
 }
 
-.bigscholar--container {
-  background-color: #34000044;
-  border-radius: 16px;
-  width: 25%;
-  height: 20%;
-  padding: 20px;
-  /* margin: 20px; */
+.news {
+  border: black solid 1px;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: white;
 }
 
-.bigscholar--container > img {
-  width: 80%;
-}
-
-.bigscholar--container > h2,
-p {
+.news button {
+  background-color: #bf9b30;
   color: white;
-  white-space: pre-line;
+}
+
+.announce--big {
+  width: 25%;
+  margin: 50px;
+}
+
+.announce--big > img {
+  width: 100%;
+}
+
+.announce--small {
+  display: flex;
+}
+
+#desc {
+  display: none;
 }
 
 .vl {
@@ -104,40 +114,6 @@ p {
   margin-left: 51px;
   margin-right: 51px;
   top: 0;
-}
-
-.announce--small {
-  width: 35%;
-  /* height: 0%; */
-}
-
-.smallscholar--container {
-  display: flex;
-  height: fit-content;
-  background-color: #34000044;
-  padding: 16px;
-  margin: 16px 16px 16px 0px;
-  border-radius: 16px;
-}
-
-.smallscholar--container > img {
-  margin-right: 22px;
-  height: fit-content;
-}
-
-.smallscholar--details > h3 {
-  font-size: 100%;
-  color: white;
-}
-
-.smallscholar--details > p {
-  text-align: justify;
-  display: block; /* or inline-block */
-  text-overflow: ellipsis;
-  word-wrap: break-word;
-  overflow: hidden;
-  max-height: 50px;
-  font-size: 100%;
 }
 
 .shadow {
