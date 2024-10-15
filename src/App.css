@@ -1,0 +1,31 @@
+#root {
+  /* max-width: 1280px; */
+  /* margin: 0 auto;
+  padding: 2rem; */
+  text-align: center;
+}
+
+.banner {
+  background-color: rgb(191, 155, 48);
+  width: 100vw;
+  margin: 0px;
+  color: white;
+  padding: 20px;
+}
+
+.banner--lowered {
+  position: relative;
+  top: 30px;
+}
+.nav--active {
+  position: relative;
+}
+.nav--active::after {
+  content: "";
+  width: 100%;
+  background-color: rgb(191, 155, 48);
+  height: 5px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
