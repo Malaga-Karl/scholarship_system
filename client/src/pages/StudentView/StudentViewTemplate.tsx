@@ -14,8 +14,31 @@ import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
+import Tooltip from '@mui/material/Tooltip';
+
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+
+import SchoolIcon from '@mui/icons-material/School';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+
+import CampaignIcon from '@mui/icons-material/Campaign';
+import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
+
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
 
 const drawerWidth = 300;
+
+
+const navTabs = [
+    {page:"Dashboard", path:"dashboard", active:<DashboardIcon/>, inactive:<DashboardOutlinedIcon/>},
+    {page:"Scholarship", path:"scholarship", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
+    {page:"Announcements", path:"announcements", active:<CampaignIcon/>, inactive:<CampaignOutlinedIcon/>},
+    {page:"Contact", path:"contact", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
+];
+
+const hasApplied = false;
 
 function CustomDrawerNav(){
     return (
@@ -32,7 +55,12 @@ function CustomDrawerNav(){
     )
 }
 
-export default function PermanentDrawerLeft() {
+type StudentViewTemplateProps = {
+  active: 'dashboard' | 'scholarship' | 'announcements' | 'contact';
+  children: React.ReactNode;
+};
+
+export default function StudentViewTemplate({active, children}:StudentViewTemplateProps) {
   return (
     <Box sx={{ display: 'flex'}}>
       {/* <CssBaseline /> */}
@@ -68,7 +96,7 @@ export default function PermanentDrawerLeft() {
             margin:"0 auto",
             marginBottom: "30px"
         }} src={AlvinKalbo}/>
-        {/* <Divider /> */}
+
         <Typography variant='body1' mb={2}>Welcome,</Typography>
         <Typography variant='h5' sx={{fontWeight:'bold'}}>Juan Dela Cruz</Typography>
         <Typography variant='body1'>2021-00000</Typography>
@@ -77,20 +105,25 @@ export default function PermanentDrawerLeft() {
         <Divider sx={{backgroundColor:"rgba(255,255,255,0.6)", width:"85%", margin:"0 auto"}}/>
    
         <List>
-          {['Dashboard', 'Scholarship', 'Announcements', 'Contact RGO'].map((text) => (
-            <ListItem key={text}>
-              <ListItemButton >{text}</ListItemButton>
+          {navTabs.map((nav) => (
+            <ListItem key={nav.page} className={active === nav.path ? "drawer--active" : ""}>
+              <Tooltip
+                title={nav.path === 'dashboard' && !hasApplied ? "You need to apply first" : ""} placement='top-start' arrow>
+                <div style={{width:"100%"}}>
+
+                  <ListItemButton href={"/studentview/"+nav.path} disabled={nav.path === 'dashboard' && !hasApplied ? true : false}>
+                   {nav.page}
+                  </ListItemButton>
+
+                </div>
+              </Tooltip>
             </ListItem>))}
         </List>
+
+        <Divider sx={{backgroundColor: 'white'}}/>
+        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}}>Log Out</Button>
       </Drawer>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
-      >
-        <Toolbar />
-       <Typography variant='h1'>There are currently no available scholarship offers 😞</Typography>
-       <Typography variant='body1' mt={5}>Please come back later or contact the RGO Admin for more information</Typography>
-      </Box>
+      {children}
     </Box>
   );
 }
