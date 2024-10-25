@@ -19,11 +19,14 @@ function App() {
         <Routes>            
           <Route path='/' element={<HomePage/>}/>
           <Route path='home' index element={<HomePage/>}/>
-          <Route path='announcements' element={<AnnouncementsPage/>}/>
+          <Route path='announcements' element={<AnnouncementsPage/>}>
+            <Route path=':id' element={<AnnouncementsPage/>}/>
+            
+          </Route>
           <Route path='partners' element={<PartnersPage/>}/>
           <Route path='signin' element={<SignInPage/>}/>
           <Route path='/studentview'>
-            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route index element={<Navigate to="scholarship" replace />} />
             <Route path='scholarship' element={<StudentViewScholarship/>}/>
             <Route path='dashboard' element={<StudentViewDashboard/>}/>
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>

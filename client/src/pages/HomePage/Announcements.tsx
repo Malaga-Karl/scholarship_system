@@ -14,8 +14,10 @@ import newsPlmScholar from '../../assets/announcements/plmscholar.png'
 import newsDostScholar from '../../assets/announcements/dost.png'
 import newsLamudiScholar from '../../assets/announcements/lamudi.png'
 import newsMegaworldScholar from '../../assets/announcements/megaworld.png'
+import { useParams } from 'react-router-dom';
 
 export type NewsProps = {
+    id?: number,
     date: string,
     image: string,
     title: string,
@@ -24,16 +26,19 @@ export type NewsProps = {
 
 const announcements: NewsProps[] = [
     {
+        id: 1,
         title: "DOST S&T Undergraduate Scholarship Program 2024",
         date: "September 21, 2024",
         image: newsDostScholar,
     },
     {
+        id: 2,
         title: "Lamudi Philippines Undergraduate Scholarship Program",
         date: "August 05, 2024",
         image: newsLamudiScholar,
     },
     {
+        id: 3,
         title: "Megaworld College Scholarship Program 2024",
         date: "October 1, 2024",
         image: newsMegaworldScholar,
@@ -45,7 +50,7 @@ export const boldStyle = {
     lineHeight:"normal",
 }
 
-export function BigNews({date, image, title, content}: NewsProps){
+export function BigNews({date, image, title, content, id}: NewsProps){
     return(
         <Card sx={{
             maxWidth:450,
@@ -66,7 +71,7 @@ export function BigNews({date, image, title, content}: NewsProps){
                 justifyContent:"space-between",
             }}>
                 <Typography variant='body2'>{date}</Typography>
-                <Button variant='contained'  sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={()=>window.location.href = '/announcements'}>Read More</Button>
+                <Button variant='contained'  sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={()=>window.location.href = '/announcements/' + id}>Read More</Button>
             </CardActions>
         </Card>
     )
@@ -123,6 +128,7 @@ export default function Announcements(){
                 justifyContent:"center",
             }}>
                 <BigNews
+                    id={1}
                     date='September 30, 2021' 
                     image={newsPlmScholar} 
                     title='PLM Scholar Application Now Open' 

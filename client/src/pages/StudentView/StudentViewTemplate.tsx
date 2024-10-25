@@ -27,6 +27,7 @@ import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
+import Container from '@mui/material/Container';
 
 const drawerWidth = 300;
 
@@ -63,7 +64,7 @@ type StudentViewTemplateProps = {
 export default function StudentViewTemplate({active, children}:StudentViewTemplateProps) {
   return (
     <Box sx={{ display: 'flex'}}>
-      {/* <CssBaseline /> */}
+    {/* <Box> */}
       <AppBar
         position="fixed"
         sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
@@ -77,7 +78,7 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
       <Drawer
         sx={{
           width: drawerWidth,
-          flexShrink: 0,
+          // flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
@@ -123,7 +124,9 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
         <Divider sx={{backgroundColor: 'white'}}/>
         <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}}>Log Out</Button>
       </Drawer>
-      {children}
+      <Container sx={{backgroundColor:"grey", width:"100%"}}>
+        {children}
+      </Container>
     </Box>
   );
 }

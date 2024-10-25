@@ -34,14 +34,17 @@ const scholarships : Scholarship[] = [
 export default function StudentViewScholarship(){
     return(
         <StudentViewTemplate active="scholarship">
-
-            <Box sx={{backgroundColor:"grey", flexGrow:1}}>
-                <Typography variant='h1'>Available Scholarships</Typography>
-            </Box>
+            <>
+                <Toolbar/>
+                <Typography variant='h1'>Scholarship Offers</Typography>
+                <Box sx={{display:"flex", flexDirection:"column", alignItems:"center"}}>
+                    {scholarships.map((scholarship, index) => (
+                        <SvScholarship key={index} {...scholarship}/>
+                    ))}
+                </Box>
+            </>
         </StudentViewTemplate>
     );
 }
-                        // <>
-                        //     <Typography variant='h1'>There are currently no available scholarship offers 😞</Typography>
-                        //     <Typography variant='body1' mt={5}>Please come back later or contact the RGO Admin for more information</Typography>
-                        // </>
+    // <Typography variant='body1' mt={5}>Please come back later or contact the RGO Admin for more information</Typography>
+    // <Typography variant='h1'>There are currently no available scholarship offers 😞</Typography>
