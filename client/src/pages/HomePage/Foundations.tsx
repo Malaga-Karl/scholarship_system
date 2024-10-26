@@ -12,27 +12,31 @@ import logoGreen from '../../assets/partners/green.png';
 //Style Imports
 import { boldStyle } from './Announcements';
 
-type Foundation = {
+export type FoundationProps = {
+    id: number,
     image: string,
     name: string,
 }
 
-const foundations: Foundation[] = [
+const foundations: FoundationProps[] = [
     {
+        id: 1,
         image: logoCharityFirst,
         name: "Charity First Foundation Inc."
     },
     {
+        id: 2,
         image: logoLcck,
         name: "Luis Co Chi Kiat Foundation Inc."
     },
     {
+        id: 3,
         image: logoGreen,
         name: "Buddhist Compassion Relief Tzu Chi Foundation Philippines"
     }
 ]
 
-function FoundationCard({image, name}: Foundation){
+function FoundationCard({image, name}: FoundationProps){
     return(
         <div style={{display:"flex", flexDirection:"column", alignItems:"center", width:"300px"}}>
             <img src={image} style={{scale:1.5}}/>

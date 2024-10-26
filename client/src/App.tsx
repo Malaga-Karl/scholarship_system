@@ -21,9 +21,10 @@ function App() {
           <Route path='home' index element={<HomePage/>}/>
           <Route path='announcements' element={<AnnouncementsPage/>}>
             <Route path=':id' element={<AnnouncementsPage/>}/>
-            
           </Route>
-          <Route path='partners' element={<PartnersPage/>}/>
+          <Route path='partners' element={<PartnersPage/>}>
+            <Route path=':id' element={<PartnersPage/>}/>
+          </Route>  
           <Route path='signin' element={<SignInPage/>}/>
           <Route path='/studentview'>
             <Route index element={<Navigate to="scholarship" replace />} />
