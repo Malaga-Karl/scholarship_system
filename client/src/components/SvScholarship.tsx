@@ -20,7 +20,7 @@ export default function SvScholarship({image, title, slots, deadline}:Scholarshi
             <CardContent>
                 <Typography variant="h5">{title}</Typography>
             </CardContent>
-            <CardActions>
+            <CardActions sx={{display:"flex", justifyContent:"space-between"}}>
                 <Box>
                     <Typography variant="body1">Slots: {slots}</Typography>
                     <Typography variant="body1">Deadline: {deadline}</Typography>

@@ -39,7 +39,7 @@ const navTabs = [
     {page:"Contact", path:"contact", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
 ];
 
-const hasApplied = false;
+const hasApplied = true;
 
 function CustomDrawerNav(){
     return (
@@ -78,7 +78,7 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
       <Drawer
         sx={{
           width: drawerWidth,
-          // flexShrink: 0,
+          flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
@@ -124,9 +124,9 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
         <Divider sx={{backgroundColor: 'white'}}/>
         <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}}>Log Out</Button>
       </Drawer>
-      <Container sx={{backgroundColor:"grey", width:"100%"}}>
+      <Box sx={{width:`calc(100vw - ${drawerWidth}px)`, flexGrow:"2"}}>
         {children}
-      </Container>
+      </Box>
     </Box>
   );
 }
