@@ -7,13 +7,18 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 
 export type Scholarship ={
+    id: number,
     image: string,
     title: string,
     slots: number,
     deadline: string,
+    desc :string
+    eligibility :string[],
+    reqs : string[],
+    benefits: string[],
 }
 
-export default function SvScholarship({image, title, slots, deadline}:Scholarship) {
+export default function SvScholarship({id, image, title, slots, deadline}:Scholarship) {
     return (
         <Card variant='outlined' sx={{width:"20vw"}}>
             <CardMedia sx={{height:"100px", width:"100%"}} image={image} />
@@ -25,7 +30,7 @@ export default function SvScholarship({image, title, slots, deadline}:Scholarshi
                     <Typography variant="body1">Slots: {slots}</Typography>
                     <Typography variant="body1">Deadline: {deadline}</Typography>
                 </Box>
-                <Button variant="contained">Apply</Button>
+                <Button variant="contained" onClick={() => window.location.href = "apply/" + id}>Apply</Button>
             </CardActions>
         </Card>
     );
