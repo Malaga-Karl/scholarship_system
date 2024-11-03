@@ -12,7 +12,7 @@ export default function StudentViewAnnouncments(){
                 sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
             >
             <Toolbar />
-            <Typography variant='h1'>The fookin announcments</Typography>
+            <Typography variant='h1'>Announcments</Typography>
             </Box>
         </StudentViewTemplate>
     );

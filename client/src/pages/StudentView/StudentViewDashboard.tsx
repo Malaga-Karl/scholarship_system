@@ -28,7 +28,7 @@ export default function StudentViewDashboard(){
                 sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
             >
             <Toolbar />
-            <Typography variant='h1'>The fookin Dashboard</Typography>
+            <Typography variant='h1'>Dashboard</Typography>
             </Box>
         </StudentViewTemplate>
     );

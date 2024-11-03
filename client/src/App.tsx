@@ -28,7 +28,7 @@ function App() {
           </Route>  
           <Route path='signin' element={<SignInPage/>}/>
           <Route path='/studentview'>
-            <Route index element={<Navigate to="scholarship/" replace />} />
+            <Route index element={<Navigate to="scholarship" replace />} />
             <Route path='scholarship' element={<StudentViewScholarship/>}>
               <Route path='apply/:id' element={<StudentViewScholarship/>}/>
             </Route>

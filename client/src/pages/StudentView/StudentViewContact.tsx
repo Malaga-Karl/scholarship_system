@@ -12,7 +12,7 @@ export default function StudentViewContact(){
                 sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
             >
             <Toolbar />
-            <Typography variant='h1'>The fookin contact</Typography>
+            <Typography variant='h1'>Contact RGO</Typography>
             </Box>
         </StudentViewTemplate>
     );
