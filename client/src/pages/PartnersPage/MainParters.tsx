@@ -23,47 +23,56 @@ const foundations: FoundationProps[] = [
     {
         id: 1,
         image: logoCharityFirst,
-        name: "Charity First Foundation Inc."
+        name: "Charity First Foundation Inc.",
+        description: "Charity First Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     },
     {
         id: 2,
         image: logoLcck,
-        name: "Luis Co Chi Kiat Foundation Inc."
+        name: "Luis Co Chi Kiat Foundation Inc.",
+        description: "Luis Co Chi Kiat Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     },
     {
         id: 3,
         image: logoGreen,
-        name: "Buddhist Compassion Relief Tzu Chi Foundation Philippines"
+        name: "Buddhist Compassion Relief Tzu Chi Foundation Philippines",
+        description: "Buddhist Compassion Relief Tzu Chi Foundation Philippines is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     },
     {
         id: 4,
         image: logoCharityFirst,
-        name: "Charity First Foundation Inc."
+        name: "Charity First Foundation Inc.",
+        description: "Charity First Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     },
     {
         id: 5,
         image: logoLcck,
-        name: "Luis Co Chi Kiat Foundation Inc."
+        name: "Luis Co Chi Kiat Foundation Inc.",
+        description: "Charity First Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     },
     {
         id: 6,
         image: logoGreen,
-        name: "Buddhist Compassion Relief Tzu Chi Foundation Philippines"
+        name: "Buddhist Compassion Relief Tzu Chi Foundation Philippines",
+        description: "Charity First Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     },
     {
         id: 7,
         image: logoCharityFirst,
-        name: "Charity First Foundation Inc."
+        name: "Charity First Foundation Inc.",
+        description: "Charity First Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     },
     {
         id: 8,
         image: logoLcck,
-        name: "Luis Co Chi Kiat Foundation Inc."
+        name: "Luis Co Chi Kiat Foundation Inc.",
+        description: "Charity First Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     },
     {
         id: 9,
         image: logoGreen,
-        name: "Buddhist Compassion Relief Tzu Chi Foundation Philippines"
+        name: "Buddhist Compassion Relief Tzu Chi Foundation Philippines",
+        description: "Charity First Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
     }
     
     

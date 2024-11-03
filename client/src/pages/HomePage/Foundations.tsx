@@ -16,6 +16,7 @@ export type FoundationProps = {
     id: number,
     image: string,
     name: string,
+    description?: string
 }
 
 const foundations: FoundationProps[] = [
