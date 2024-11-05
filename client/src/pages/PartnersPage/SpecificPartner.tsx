@@ -7,7 +7,7 @@ import { ArrowBack, ArrowForward} from "@mui/icons-material";
 export default function SpecificFoundation({name, image, id, description}:FoundationProps){
     return(
         <Box sx={{color:"white", height:"fill-content"}}>
-            {/* <Box sx={{height: '60px', backgroundColor: '#bf9b30'}}/> */}
+            <Box sx={{height: '60px', backgroundColor: '#bf9b30'}}/>
             <Typography variant="h3" color="black" style={{marginTop: '30px', marginBottom: '50px'}}>{name}</Typography>
             <img src={image} style={{width: '35%', height: 'auto'}} alt="announcement"/>
             {/* <Typography variant="body1" color="black" style={{textAlign: 'justify', marginLeft: '200px', marginRight: '200px', marginTop: '50px'}}>{description}</Typography> */}
