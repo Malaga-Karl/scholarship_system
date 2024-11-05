@@ -13,15 +13,16 @@ export default function SpecificScholarshipTemplate({title, desc, eligibility, r
 
                 <Typography variant="h3" mb={10}>{title}</Typography>
                 <Box sx={{display:"flex", justifyContent:"space-around"}}>
-                    <Box>
+                    <Box  sx={{textAlign:"start"}}>
                         <Typography variant="h4">About {title}</Typography>
                         <Typography variant="body1">{desc}</Typography>
+                        <br/><br/>
                         <Typography variant="h4">Eligibility Criteria</Typography>
                         <ol>
                             {eligibility.map((item) => <li><Typography variant="body1">{item}</Typography></li>)}
                         </ol>
                     </Box>
-                    <Box>
+                    <Box  sx={{textAlign:"start"}}>
                         <Typography variant="h4">Requirements</Typography>
                         <ul>
                             {reqs.map((item) => <li><Typography variant="body1">{item}</Typography></li>)}
@@ -36,7 +37,7 @@ export default function SpecificScholarshipTemplate({title, desc, eligibility, r
                     </Box>
                 </Box>
             </CardContent>
-            <CardActions>
+            <CardActions sx={{display:"flex", justifyContent:"end"}}>
                 <Button variant="contained">Apply Now</Button>
             </CardActions>
         </Card>

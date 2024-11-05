@@ -22,8 +22,8 @@ const scholarships : Scholarship[] = [
         slots: 20,
         deadline: "Sept 30, 2021",
         desc:"test desc",
-        eligibility: ["good looking", "black", "from the hood", "has a glock", "speaks fluent yapanese"],
-        reqs:["app form", "complete grades"],
+        eligibility: ["2nd Year in Tech Courses", "No Failing Grades"],
+        reqs:["Application Form", "Complete Grades"],
         benefits:["allowance", "dorms"]
     },
     {
@@ -122,12 +122,12 @@ export default function StudentViewScholarship(){
     const handleSwitchChange = () => {
         setScholarSwitch(prevState => !prevState); // Toggle the switch state
     };
-    const testing = ScholarSwitch ? scholarships : []; 
+    const switcher = ScholarSwitch ? scholarships : []; 
 
     const {id} = useParams();
     const specificScholarship = id ? scholarships.find((announcement) => announcement.id === parseInt(id)) : null
     return(
-        <StudentViewTemplate active="scholarship">
+        <StudentViewTemplate active="dashboard">
             <>
                 <Toolbar/>
                 {id ? (
@@ -151,8 +151,8 @@ export default function StudentViewScholarship(){
                         
                         </Box>
                         <Box sx={{display:"flex", flexDirection:"row", justifyContent:"center",flexWrap:"wrap", gap:"50px"}}>
-                            {testing.length > 0 ? (
-                                testing.map((scholarship, index) => (
+                            {switcher.length > 0 ? (
+                                switcher.map((scholarship, index) => (
                                     <SvScholarship key={index} {...scholarship}/>
                                 ))
                             ) : (

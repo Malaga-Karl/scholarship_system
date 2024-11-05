@@ -6,7 +6,6 @@ import PartnersPage from './routes/PartnersPage';
 import SignInPage from './routes/SignInPage';
 // import StudentView from './routes/StudentView';
 import StudentViewScholarship from './pages/StudentView/StudentViewScholarship';
-import StudentViewDashboard from './pages/StudentView/StudentViewDashboard';
 import StudentViewAnnouncments from './pages/StudentView/StudentViewAnnouncements';
 import StudentViewContact from './pages/StudentView/StudentViewContact';
 import NotFoundPage from './routes/PageNotFound';
@@ -28,13 +27,14 @@ function App() {
           </Route>  
           <Route path='signin' element={<SignInPage/>}/>
           <Route path='/studentview'>
-            <Route index element={<Navigate to="scholarship" replace />} />
-            <Route path='scholarship' element={<StudentViewScholarship/>}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path='dashboard' element={<StudentViewScholarship/>}>
               <Route path='apply/:id' element={<StudentViewScholarship/>}/>
             </Route>
-            <Route path='dashboard' element={<StudentViewDashboard/>}/>
+            {/* <Route path='dashboard' element={<StudentViewDashboard/>}/> */}
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>
             <Route path='contact' element={<StudentViewContact/>}/>
+            
           </Route>
 
           <Route path='*' element={<NotFoundPage />} />

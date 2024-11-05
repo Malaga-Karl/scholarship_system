@@ -26,11 +26,11 @@ export default function SvScholarship({id, image, title, slots, deadline}:Schola
                 <Typography variant="h5">{title}</Typography>
             </CardContent>
             <CardActions sx={{display:"flex", justifyContent:"space-between"}}>
-                <Box>
+                <Box sx={{textAlign:"start"}}>
                     <Typography variant="body1">Slots: {slots}</Typography>
                     <Typography variant="body1">Deadline: {deadline}</Typography>
                 </Box>
-                <Button variant="contained" onClick={() => window.location.href = "scholarship/apply/" + id}>Apply</Button>
+                <Button variant="contained" onClick={() => window.location.href = "dashboard/apply/" + id}>Apply</Button>
             </CardActions>
         </Card>
     );

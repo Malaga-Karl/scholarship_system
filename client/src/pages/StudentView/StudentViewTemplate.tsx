@@ -14,11 +14,6 @@ import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import Tooltip from '@mui/material/Tooltip';
-
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-
 import SchoolIcon from '@mui/icons-material/School';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 
@@ -27,14 +22,12 @@ import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
-import Container from '@mui/material/Container';
 
 const drawerWidth = 300;
 
 
 const navTabs = [
-    {page:"Dashboard", path:"dashboard", active:<DashboardIcon/>, inactive:<DashboardOutlinedIcon/>},
-    {page:"Scholarship", path:"scholarship", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
+    {page:"Dashboard", path:"dashboard", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
     {page:"Announcements", path:"announcements", active:<CampaignIcon/>, inactive:<CampaignOutlinedIcon/>},
     {page:"Contact", path:"contact", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
 ];
@@ -108,16 +101,9 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
         <List>
           {navTabs.map((nav) => (
             <ListItem key={nav.page} className={active === nav.path ? "drawer--active" : ""}>
-              <Tooltip
-                title={nav.path === 'dashboard' && !hasApplied ? "You need to apply first" : ""} placement='top-start' arrow>
-                <div style={{width:"100%"}}>
-
-                  <ListItemButton href={"/studentview/"+nav.path} disabled={nav.path === 'dashboard' && !hasApplied ? true : false}>
+              <ListItemButton href={"/studentview/"+nav.path}>
                    {nav.page}
                   </ListItemButton>
-
-                </div>
-              </Tooltip>
             </ListItem>))}
         </List>
 
