@@ -24,7 +24,15 @@ const foundations: FoundationProps[] = [
         id: 1,
         image: logoCharityFirst,
         name: "Charity First Foundation Inc.",
-        description: "Charity First Foundation Inc. is a non-profit organization that aims to provide assistance to the less fortunate members of the society. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life. The foundation is committed to making a positive impact on the lives of the less fortunate members of the society by providing them with the necessary resources to improve their quality of life. The foundation is dedicated to helping the poor and the needy by providing them with the necessary resources to improve their quality of life."
+        description: `
+            In 2001, a group of Chinese-Filipino businessmen and women decided to pool their resources together to extend help to those affected by natural calamities. 
+            After organizing various relief missions in remote towns struck by typhoons and flash floods, the group continued its service by reaching out to fire victims in Metro Manila areas.
+            <br><br>
+            Recognizing the overwhelming problems plaguing the country, the group committed to being part of the solution. However, realizing that organizing relief missions and providing relief goods were only temporary and short-term solutions to deeper problems, they sought to find more long-term and far-reaching solutions to the problems caused by poverty. 
+            Driven by their common desire, the group formed Charity First Foundation Inc, an organization committed to “helping people help themselves”.
+            <br><br>
+            On July 1, 2001, Charity First Foundation was formally registered by the Securities and Exchange Commission, as a non-profit organization committed to improving the quality of life of the marginalized sectors of the country through its four main programs.
+        `
     },
     {
         id: 2,
