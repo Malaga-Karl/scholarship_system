@@ -1,6 +1,7 @@
 // MUI Imports
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import Divider from "@mui/material/Divider";
 
 // Image Imports
 import plmLogo from '../assets/footerLogos/plm_iconlogo.png'
@@ -39,7 +40,8 @@ export default function Footer(){
                     {logoList.map((image, index) => <img src={image} key={index} style={{width:110, height:110}}/>)}
                 </Box>
             </Box>
-            <hr />
+            {/* <hr /> */}
+            <Divider sx={{marginTop: 1, BorderColor: 'gray', BorderWidth: 1}}/>
             <Typography variant='body1' sx={{
                 padding:"30px 0",
                 color:"gray"    
