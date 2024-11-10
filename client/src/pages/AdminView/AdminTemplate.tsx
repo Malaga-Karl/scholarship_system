@@ -29,11 +29,11 @@ const drawerWidth = 300;
 
 
 const navTabs = [
-    {page:"Dashboard", path:"dashboard", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
-    {page:"Announcements", path:"announcements", active:<CampaignIcon/>, inactive:<CampaignOutlinedIcon/>},
-    {page:"Contact", path:"contact", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
+    {page:"Partnered Foundations", path:"foundations", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
+    {page:"Scholarships", path:"scholarships", active:<CampaignIcon/>, inactive:<CampaignOutlinedIcon/>},
+    {page:"Announcments", path:"announcements", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
+    {page:"Applicants", path:"applicants", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
 ];
-
 
 
 function CustomDrawerNav(){
@@ -51,21 +51,21 @@ function CustomDrawerNav(){
     )
 }
 
-type StudentViewTemplateProps = {
-  active: 'dashboard' | 'scholarship' | 'announcements' | 'contact';
+type AdminViewTemplateProps = {
+  active: 'foundations' | 'scholarships' | 'announcements' | 'applicants';
   children: React.ReactNode;
 };
 
-export default function StudentViewTemplate({active, children}:StudentViewTemplateProps) {
+export default function AdminTemplate({active, children}:AdminViewTemplateProps) {
   return (
     <Box sx={{ display: 'flex'}}>
     {/* <Box> */}
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, backgroundColor:"white" }}
       >
         <Toolbar>
-        <Box sx={{display:"flex", alignItems:"center"}}>
+          <Box sx={{display:"flex", alignItems:"center"}}>
             <img src={logoPLM} alt="plmlogo" width={60} />
             <Typography variant='h4' ml={3} sx={{color:"black", fontWeight:"bold"}}>PLM Scholarship System</Typography>
           </Box>
@@ -104,7 +104,7 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
         <List>
           {navTabs.map((nav) => (
             <ListItem key={nav.page} className={active === nav.path ? "drawer--active" : ""}>
-              <ListItemButton href={"/studentview/"+nav.path}>
+              <ListItemButton href={"/adminview/"+nav.path}>
                    {nav.page}
                   </ListItemButton>
             </ListItem>))}

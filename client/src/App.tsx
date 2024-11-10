@@ -9,6 +9,10 @@ import StudentViewScholarship from './pages/StudentView/StudentViewScholarship';
 import StudentViewAnnouncments from './pages/StudentView/StudentViewAnnouncements';
 import StudentViewContact from './pages/StudentView/StudentViewContact';
 import NotFoundPage from './routes/PageNotFound';
+import AdminViewFoundation from './pages/AdminView/AdminViewFoundation';
+import AdminViewScholarship from './pages/AdminView/AdminViewScholarship';
+import AdminViewAnnouncement from './pages/AdminView/AdminViewAnnouncement';
+import AdminViewApplicant from './pages/AdminView/AdminViewApplicant';
 
 
 function App() {
@@ -36,7 +40,13 @@ function App() {
             <Route path='contact' element={<StudentViewContact/>}/>
             
           </Route>
-
+          <Route path='adminview'>
+            <Route index element={<Navigate to="foundations" replace/>} />
+            <Route path='foundations' element={<AdminViewFoundation/>} />
+            <Route path='scholarships' element={<AdminViewScholarship/>} />
+            <Route path='announcements' element={<AdminViewAnnouncement/>} />
+            <Route path='applicants' element={<AdminViewApplicant/>} />
+          </Route>
           <Route path='*' element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
