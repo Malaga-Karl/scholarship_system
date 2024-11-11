@@ -62,7 +62,7 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
     {/* <Box> */}
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, backgroundColor:"white" }}
       >
         <Toolbar>
         <Box sx={{display:"flex", alignItems:"center"}}>
