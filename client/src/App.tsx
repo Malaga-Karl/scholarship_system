@@ -13,6 +13,7 @@ import AdminViewFoundation from './pages/AdminView/AdminViewFoundation';
 import AdminViewScholarship from './pages/AdminView/AdminViewScholarship';
 import AdminViewAnnouncement from './pages/AdminView/AdminViewAnnouncement';
 import AdminViewApplicant from './pages/AdminView/AdminViewApplicant';
+import AddEditFoundation from './pages/PartnersPage/AddEditPartneredFoundation';
 
 
 function App() {
@@ -42,7 +43,9 @@ function App() {
           </Route>
           <Route path='adminview'>
             <Route index element={<Navigate to="foundations" replace/>} />
-            <Route path='foundations' element={<AdminViewFoundation/>} />
+            <Route path='foundations' element={<AdminViewFoundation/>} >
+              <Route path='addedit' element={<AddEditFoundation/>} />
+            </Route>
             <Route path='scholarships' element={<AdminViewScholarship/>} />
             <Route path='announcements' element={<AdminViewAnnouncement/>} />
             <Route path='applicants' element={<AdminViewApplicant/>} />
