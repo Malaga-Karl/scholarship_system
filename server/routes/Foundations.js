@@ -5,7 +5,7 @@ const router = express.Router();
 const multer = require('multer');
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
-        cb(null, 'uploads');
+        cb(null, 'uploads/foundations/');
     },
     filename: function(req, file, cb){
         const fileName = `${Date.now()}-${file.originalname}`;
@@ -16,17 +16,18 @@ const upload = multer({ storage });
 
 const { Foundations } = require('../models')
 
-router.get("/", async (req, res) => {
+router.get("/getall", async (req, res) => {
     const allFoundations = await Foundations.findAll();
     res.json(allFoundations);
 });
 
-router.post("/", upload.single('file'), async (req, res) => {
+router.post("/add", upload.single('file'), async (req, res) => {
     
     await Foundations.create({
         name: req.body.name,
         description: req.body.description,
-        logoPath: "/" + req.file.filename
+        logo_path: "/foundations/" + req.file.filename,
+        status: req.body.status
     });
     res.json(req.file);
 

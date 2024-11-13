@@ -6,6 +6,14 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
 
+//scrolling images
+import ScrollingImages from './ScrollingImages';
+
+//axios
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+
 // Background Image
 import plmFascade from '../../assets/plmBackground.png';
 
@@ -22,17 +30,44 @@ import logoSm from '../../assets/partners/sm.png';
 
 
 export default function Home(){
+    const [logos, setLogos] = useState<string[]>([]);
+    useEffect(() => {
+        async function fetchAllFoundations() {
+            try {
+                const response = await axios.get('http://localhost:3001/foundations/getall');
+                const imageUrls = response.data.map((foundation: { logo_path: string }) => "http://localhost:3001/uploads"+foundation.logo_path);
+                setLogos(imageUrls);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        fetchAllFoundations();
+    }, []);
+    
 
     const images = [
         logoCfcb,
         logoCharitiyFirst,
         logoCibak,
         logoDost,
-        logoGreen,
         logoL,
         logoLcck,
         logoMegaworld,
         logoSm,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
+        logoGreen,
     ]
 
     const imageStyle = {
@@ -86,16 +121,7 @@ export default function Home(){
                 margin:"0px",
                 padding:"0px",
             }}>
-                <Box sx={{
-                    width:"100vw",
-                    backgroundColor:"rgba(255, 255, 255, 0.533);",
-                    display:"flex",
-                    justifyContent:"space-evenly",
-                    alignItems:"center",
-                    boxShadow: "0px 4px 4px rgba(100, 96, 96, 0.643)"
-                }}> 
-                    {images.map((image, index) => <img src={image} key={index} style={imageStyle}/>)}
-                </Box>
+                <ScrollingImages images={logos} style={imageStyle} />
 
                 <Card sx={{
                         width:"60vw",

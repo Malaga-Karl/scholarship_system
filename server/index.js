@@ -21,14 +21,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const foundationsRouter = require('./routes/Foundations');
 app.use("/foundations", foundationsRouter);
 
-const usersRouter = require('./routes/Users');
-app.use("/users", usersRouter);
-
-const announcementRouter = require('./routes/Announcements');
-app.use("/announcements", announcementRouter);
-
-db.sequelize.sync().then(()=>{
-    app.listen(port, ()=>{
-        console.log(`Server Running on port { ${port} }`);
+db.sequelize.sync({ force: false }).then(()=>{
+        app.listen(port, ()=>{
+            console.log(`Server Running on port { ${port} }`);
+        });
+    }).catch((err) => {
+        console.error('Error syncing database:', err);
     });
-});
