@@ -77,7 +77,7 @@ const messages:Mail[] = [
 
 export default function StudentViewContact(){
     const [mailIndex, setMailIndex] = useState(1)
-    const hasMessage:boolean = true;
+    const hasMessage:boolean = false;
 
     return(
         <StudentViewTemplate active="contact">
