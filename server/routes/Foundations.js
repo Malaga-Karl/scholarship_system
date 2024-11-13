@@ -17,8 +17,11 @@ const upload = multer({ storage });
 const { Foundations } = require('../models')
 
 router.get("/getall", async (req, res) => {
-    const allFoundations = await Foundations.findAll();
-    res.json(allFoundations);
+    const allFoundations = await Foundations.findAll({
+        where: { status: 'active' } // This filters results to where status is "active"
+      });
+      res.json(allFoundations);
+  
 });
 
 router.post("/add", upload.single('file'), async (req, res) => {

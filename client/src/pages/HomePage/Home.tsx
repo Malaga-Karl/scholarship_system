@@ -24,6 +24,8 @@ export default function Home(){
             try {
                 const response = await axios.get('http://localhost:3001/foundations/getall');
                 const imageUrls = response.data.map((foundation: { logo_path: string }) => "http://localhost:3001/uploads"+foundation.logo_path);
+                //add a way to know if it is empty
+                
                 setLogos(imageUrls);
             } catch (error) {
                 console.error('Error fetching data:', error);
