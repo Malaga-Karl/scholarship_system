@@ -13,20 +13,8 @@ import ScrollingImages from './ScrollingImages';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-
 // Background Image
 import plmFascade from '../../assets/plmBackground.png';
-
-// Partner Logos
-import logoCfcb from '../../assets/partners/cfbc.png';
-import logoCharitiyFirst from '../../assets/partners/charityFirst.png';
-import logoCibak from '../../assets/partners/cibak.png';
-import logoDost from '../../assets/partners/dost.png';
-import logoGreen from '../../assets/partners/green.png';
-import logoL from '../../assets/partners/L.png';
-import logoLcck from '../../assets/partners/lcck.png';
-import logoMegaworld from '../../assets/partners/megaworld.png';
-import logoSm from '../../assets/partners/sm.png';
 
 
 export default function Home(){
@@ -44,31 +32,6 @@ export default function Home(){
 
         fetchAllFoundations();
     }, []);
-    
-
-    const images = [
-        logoCfcb,
-        logoCharitiyFirst,
-        logoCibak,
-        logoDost,
-        logoL,
-        logoLcck,
-        logoMegaworld,
-        logoSm,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-        logoGreen,
-    ]
 
     const imageStyle = {
         padding:"10px"
