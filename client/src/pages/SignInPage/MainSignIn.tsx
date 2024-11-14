@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios, { AxiosError } from 'axios';
 // Image and MUI Imports
 import SignInBackground from '../../assets/signInImage.png';
 import Box from '@mui/material/Box';
@@ -12,6 +11,7 @@ import FormGroup from '@mui/material/FormGroup';
 import { FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel, OutlinedInput, CircularProgress } from '@mui/material';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
+import axios from 'axios';
 
 export default function MainSignIn() {
     const [showPassword, setShowPassword] = useState(false);
@@ -51,6 +51,8 @@ export default function MainSignIn() {
             setLoading(true);
             try {
                 const response = await axios.post('http://localhost:3001/user/login', { email, password });
+                
+                //needs to store the user informations (response.data.user{})
 
                 if (response.data.token) {
                     localStorage.setItem('authToken', response.data.token); //idk what this is for yet
