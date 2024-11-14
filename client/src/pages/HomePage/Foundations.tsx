@@ -27,14 +27,25 @@ const logotype = {
     maxWidth: "100px",
 };
 
-function FoundationCard({ fou1, fou2, fou3 }: { fou1: FoundationData; fou2: FoundationData; fou3: FoundationData }) {
+function FoundationCard({ fou1, fou2, fou3, fade }: { fou1: FoundationData; fou2: FoundationData; fou3: FoundationData; fade: boolean }) {
     return (
         <div style={{ display: "flex", gap: "30px", flexDirection: "row", alignItems: "center", width: "500px" }}>
+            {/* Left Image */}
             <Box width={150}>
-                <img src={fou1.image} style={logotype} alt={fou1.name} />
+                <img
+                    src={fou1.image}
+                    alt={fou1.name}
+                    style={{
+                        ...logotype,
+                        opacity: fade ? 0.3 : 0.5, // Reduced opacity for left image
+                        transition: "opacity 0.5s ease-in-out",
+                    }}
+                />
                 <Typography
                     variant="body1"
                     sx={{
+                        opacity: fade ? 0.3 : 0.5, // Reduced opacity for left image
+                        transition: "opacity 0.5s ease-in-out",
                         ...boldStyle,
                         overflow: "hidden",
                         whiteSpace: "nowrap",
@@ -44,17 +55,39 @@ function FoundationCard({ fou1, fou2, fou3 }: { fou1: FoundationData; fou2: Foun
                     {fou1.name}
                 </Typography>
             </Box>
+            {/* Center Image */}
             <Box width={300}>
-                <img src={fou2.image} style={{ scale: 2, maxWidth:"200px"}} alt={fou2.name} />
+                <img
+                    src={fou2.image}
+                    alt={fou2.name}
+                    style={{
+                        scale: 2,
+                        maxWidth: "200px",
+                        minWidth: "200px",
+                        opacity: fade ? 0 : 1, // Full opacity for center image
+                        transition: "opacity 0.5s ease-in-out",
+                    }}
+                />
                 <Typography variant="body1" sx={boldStyle}>
                     {fou2.name}
                 </Typography>
             </Box>
+            {/* Right Image */}
             <Box width={100}>
-                <img src={fou3.image} style={logotype} alt={fou3.name} />
+                <img
+                    src={fou3.image}
+                    alt={fou3.name}
+                    style={{
+                        ...logotype,
+                        opacity: fade ? 0.3 : 0.5, // Reduced opacity for right image
+                        transition: "opacity 0.5s ease-in-out",
+                    }}
+                />
                 <Typography
                     variant="body1"
                     sx={{
+                        opacity: fade ? 0.3 : 0.5, // Reduced opacity for right image
+                        transition: "opacity 0.5s ease-in-out",
                         ...boldStyle,
                         overflow: "hidden",
                         whiteSpace: "nowrap",
@@ -69,9 +102,10 @@ function FoundationCard({ fou1, fou2, fou3 }: { fou1: FoundationData; fou2: Foun
 }
 
 export default function Foundations() {
-    // State to track the currently displayed foundation index
     const [currentIndex, setCurrentIndex] = useState(0);
     const [foundations, setFoundations] = useState<FoundationData[]>([]);
+    const [fade, setFade] = useState(false); // State to handle fade effect
+    const [isTransitioning, setIsTransitioning] = useState(false); // Disable buttons during transition
 
     useEffect(() => {
         async function fetchAllFoundations() {
@@ -90,13 +124,26 @@ export default function Foundations() {
         fetchAllFoundations();
     }, []);
 
-    // Helper functions to navigate through foundations
     const handleNext = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % foundations.length);
+        if (isTransitioning) return; // Prevent if already transitioning
+        setIsTransitioning(true); // Set transitioning state
+        setFade(true); // Trigger fade effect
+        setTimeout(() => {
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % foundations.length);
+            setFade(false); // Reset fade effect
+            setIsTransitioning(false); // Reset transition state after timeout
+        }, 500); // Delay to match the duration of the opacity transition
     };
 
     const handlePrevious = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + foundations.length) % foundations.length);
+        if (isTransitioning) return; // Prevent if already transitioning
+        setIsTransitioning(true); // Set transitioning state
+        setFade(true); // Trigger fade effect
+        setTimeout(() => {
+            setCurrentIndex((prevIndex) => (prevIndex - 1 + foundations.length) % foundations.length);
+            setFade(false); // Reset fade effect
+            setIsTransitioning(false); // Reset transition state after timeout
+        }, 500); // Delay to match the duration of the opacity transition
     };
 
     return (
@@ -104,10 +151,14 @@ export default function Foundations() {
             <Typography variant="h3" className="banner" sx={boldStyle}>
                 Our Partnered Foundations
             </Typography>
-            <Container sx={{ display: "flex", alignItems: "center", padding: "50px", justifyContent: "space-around" }}>
-                <ArrowBackIosIcon onClick={handlePrevious} style={{ cursor: 'pointer' }} />
+            <Container sx={{ display: "flex", alignItems: "center", maxHeight:"300px", minHeight:"300px", justifyContent: "space-around" }}>
+                <ArrowBackIosIcon
+                    onClick={handlePrevious}
+                    style={{ cursor: isTransitioning ? 'not-allowed' : 'pointer', opacity: isTransitioning ? 0.5 : 1 }}
+                />
                 {foundations.length > 0 ? (
                     <FoundationCard
+                        fade={fade} // Pass the fade state to control image transition
                         fou1={{
                             name: foundations[(currentIndex + 1) % foundations.length].name,
                             image: foundations[(currentIndex + 1) % foundations.length].image,
@@ -126,7 +177,10 @@ export default function Foundations() {
                         No foundations available.
                     </Typography>
                 )}
-                <ArrowForwardIosIcon onClick={handleNext} style={{ cursor: 'pointer' }} />
+                <ArrowForwardIosIcon
+                    onClick={handleNext}
+                    style={{ cursor: isTransitioning ? 'not-allowed' : 'pointer', opacity: isTransitioning ? 0.5 : 1 }}
+                />
             </Container>
         </div>
     );

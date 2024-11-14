@@ -20,6 +20,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //Routers/middleware?
 const foundationsRouter = require('./routes/Foundations');
 app.use("/foundations", foundationsRouter);
+const announcementsRouter = require('./routes/Announcements');
+app.use("/announcements", announcementsRouter);
+const loginRouter = require('./routes/UserAuthentication');
+app.use("/user", loginRouter);
 
 db.sequelize.sync({ force: false }).then(()=>{
         app.listen(port, ()=>{
