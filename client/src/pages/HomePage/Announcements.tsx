@@ -22,6 +22,10 @@ export type NewsProps = {
     image: string,
     title: string,
     content?: string
+    desc?: string[]
+    content2?: string
+    content3?: string
+    content4?: string
 }
 
 const announcements: NewsProps[] = [
