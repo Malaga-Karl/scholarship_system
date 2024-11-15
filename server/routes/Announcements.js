@@ -13,19 +13,25 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const { Announcements } = require('../models')
+const { AnnouncementHeader } = require('../models')
 
 router.get("/latest4", async (req, res) => {
-    const latest4 = await Announcements.findAll({
+    const latest4 = await AnnouncementHeader.findAll({
         limit: 4,
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        where: {
+            status: "active",
+        }
     });
     res.json(latest4);
 });
 
 router.get("/all", async (req, res) => {
-    const allAnnouncements = await Announcements.findAll({
-        order: [['createdAt', 'DESC']]
+    const allAnnouncements = await AnnouncementHeader.findAll({
+        order: [['createdAt', 'DESC']],
+        where: {
+            status: "active",
+        }
     });
     res.json(allAnnouncements);
 });
@@ -33,10 +39,11 @@ router.get("/all", async (req, res) => {
 
 router.post("/create", upload.single('file'), async (req, res) => {
     
-    await Announcements.create({
-        post_header: req.body.post_header,
+    await AnnouncementHeader.create({
+        title: req.body.title,
         description: req.body.description,
-        coverImagePath: "/announcements/" + req.file.filename
+        cover_path: "/announcements/" + req.file.filename,
+        status: "active",
     });
     res.json(req.file);
 
