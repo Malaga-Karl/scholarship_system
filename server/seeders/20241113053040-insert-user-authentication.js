@@ -8,7 +8,7 @@ module.exports = {
       {
         user_id: '202101310',
         email: 'chas@gmail.com',
-        password_hash: 'chas',
+        password_hash: '$2b$12$1PK9iqCpDDL1vrtU4JLa0.PqpSD82g9ldl51wsyTh63YUj.UinYLi',
         failed_login_attempts: 0,
         account_locked: false,
         password_reset_token: null,
@@ -25,7 +25,7 @@ module.exports = {
         last_name: 'Conchas',
         phone_number: '09202672998',
         gender: 'M',
-        profile_picture_url: '',
+        profile_picture_url: '/profiles/conchas_profile.jpg',
         notification_settings: 'Y',
         createdAt: new Date(),
         updatedAt: new Date(),

@@ -8,7 +8,7 @@ module.exports = {
       {
         title: 'New Feature Release',
         description: 'We have just released a major update to improve performance and add new features.',
-        cover_path: 'https://example.com/path-to-image1.jpg',
+        cover_path: '/announcements/new_feature.jpg',
         status: 'active',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -16,7 +16,7 @@ module.exports = {
       {
         title: 'Scheduled Maintenance',
         description: 'Our platform will be down for scheduled maintenance on 15th November from 12 AM to 4 AM.',
-        cover_path: 'https://example.com/path-to-image2.jpg',
+        cover_path: '/announcements/maintenance.png',
         status: 'active',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -24,15 +24,15 @@ module.exports = {
       {
         title: 'Holiday Announcement',
         description: 'Our offices will be closed for the holidays from 24th December to 1st January.',
-        cover_path: 'https://example.com/path-to-image3.jpg',
+        cover_path: '/announcements/holiday.png',
         status: 'active',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        title: 'Conchas The Wonderer',
-        description: 'I Shall Cleanse This World Of NIGGERS.',
-        cover_path: 'https://example.com/path-to-image3.jpg',
+        title: 'Bossing! kumusta ang buhay-buhay?',
+        description: 'How is life indeed? are you having a wonderful life?',
+        cover_path: '/announcements/bossing.jpg',
         status: 'active',
         createdAt: new Date(),
         updatedAt: new Date(),
