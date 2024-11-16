@@ -56,6 +56,7 @@ export default function MainSignIn() {
 
                 if (response.data.token) {
                     localStorage.setItem('authToken', response.data.token); //idk what this is for yet
+                    localStorage.setItem('userInfo', JSON.stringify(response.data.user)); // Store user info in localStorage
                     window.location.href = "studentview";
                 }
             } catch (error) {

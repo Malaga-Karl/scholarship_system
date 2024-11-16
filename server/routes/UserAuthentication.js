@@ -63,7 +63,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/add", upload.single('file'), async (req, res) => {
-    const { email, password, first_name, last_name, phone_number, gender } = req.body;
+    const { email, password, first_name, last_name, phone_number, gender, course, department } = req.body;
     try{
         // Hash the password with bcrypt
         const saltRounds = 10;
@@ -80,6 +80,8 @@ router.post("/add", upload.single('file'), async (req, res) => {
             phone_number: phone_number,
             gender: gender,
             profile_picture_url: "/profiles/" + req.file.filename,
+            course: course,
+            department: department,
         });
 
         res.json({ message: "User created successfully", file: req.file, data: req.data });

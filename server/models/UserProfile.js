@@ -18,20 +18,27 @@ module.exports = (sequelize, DataTypes) => {
       },
       phone_number: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       gender: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       profile_picture_url: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       notification_settings: {
         type: DataTypes.CHAR(1),
-        allowNull: true,
-    
+        allowNull: false,
+      },
+      course: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      department: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
     });
   
