@@ -10,14 +10,15 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 //Component Imports
 import { boldStyle } from '../HomePage/Announcements'
+import SpecificFoundation from './SpecificPartner'
 
 //Image Imports
 import {FoundationProps} from '../HomePage/Foundations'
 import { useParams } from 'react-router-dom'
+
 import SpecificFoundation from './SpecificPartner'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-
 
 function FoundationCard({image, name, id}: FoundationProps){
     return(
