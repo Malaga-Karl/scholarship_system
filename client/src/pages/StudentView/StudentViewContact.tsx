@@ -12,6 +12,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 import imgEmptyMail from '../../assets/emptymail.png';
 import Delete from '@mui/icons-material/DeleteOutlineOutlined';
 import {useState} from 'react'
+import { Outlet } from 'react-router-dom';
 import Colors from '../../colors'
 
 type EmailInfo = {
@@ -42,7 +43,7 @@ const messages:Mail[] = [
         },
         sentTime:"5:55",
         subject:"This is testing",
-        body:"Dear little bitch\n\nI need you to know, how much i fucking hate ur ass. Never in my life i discovered someone so severely disgusting as you. You are the worst person in the world and I envy dead people that they can't experience ur stupid ass"
+        body:"Hello Testing!"
     },
     {
         id:2,
@@ -87,7 +88,7 @@ export default function StudentViewContact(){
             >
                 <Toolbar />
                 <Box sx={{display:"flex"}}>
-                    <Button variant="contained" sx={{marginBottom:3, justifySelf:"left"}}>Create Mail</Button>
+                    <Button variant="contained" sx={{marginBottom:3, justifySelf:"left"}} onClick={() => window.location.href = 'contact/new'}>Create Mail</Button>
                 </Box>
                 {!hasMessage ? (
                     <EmptyMail/>
@@ -95,6 +96,7 @@ export default function StudentViewContact(){
                     <HasMail id={mailIndex} setMailIndex={setMailIndex}/>
                 )}
             </Box>
+            <Outlet/>
         </StudentViewTemplate>
     );
 }
