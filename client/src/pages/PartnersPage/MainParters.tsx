@@ -10,7 +10,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 //Component Imports
 import { boldStyle } from '../HomePage/Announcements'
-import SpecificFoundation from './SpecificPartner'
+// import SpecificFoundation from './SpecificPartner'
 
 //Image Imports
 import {FoundationProps} from '../HomePage/Foundations'
