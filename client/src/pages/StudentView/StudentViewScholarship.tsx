@@ -18,7 +18,7 @@ const scholarships : Scholarship[] = [
     {
         id: 1,
         image: imgCharityFirst,
-        title: "Charity First Foundation Scholarship",
+        title: "Charity First Scholarship",
         slots: 16,
         deadline: "August 9, 2024",
         desc: `

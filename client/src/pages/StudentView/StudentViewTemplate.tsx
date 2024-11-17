@@ -27,6 +27,7 @@ import logoPLM from '../../assets/footerLogos/plm_iconlogo.png';
 
 const drawerWidth = 300;
 
+        {/*needs to get user credetials, will do later/////////////////////////////////////////////////////////////////////////////////*/}
 
 const navTabs = [
     {page:"Dashboard", path:"dashboard", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
@@ -111,7 +112,8 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
         </List>
 
         <Divider sx={{backgroundColor: 'white'}}/>
-        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}}>Log Out</Button>
+        {/*Needs to have a logout logic, will do later/////////////////////////////////////////////////////////////////////////////////*/}
+        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}} onClick={() => {window.location.href="../signin"}}>Log Out</Button>
       </Drawer>
       <Box sx={{width:`calc(100vw - ${drawerWidth}px)`, flexGrow:"2"}}>
         {children}

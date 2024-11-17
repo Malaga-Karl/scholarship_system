@@ -1,13 +1,14 @@
 // models/AnnouncementHeader.js
+
 module.exports = (sequelize, DataTypes) => {
-    const Foundations = sequelize.define('Foundations', {
-      foundation_id: {
+    const AnnouncementHeader = sequelize.define('AnnouncementHeader', {
+      announcement_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      name: {
+      title: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -15,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: true, // Description is optional
       },
-      logo_path: { //for the cover image
+      cover_path: { //for the cover image
         type: DataTypes.TEXT,
         allowNull: true, 
       },
@@ -26,9 +27,9 @@ module.exports = (sequelize, DataTypes) => {
       }
     }, {
       timestamps: true, // Automatically add `createdAt` and `updatedAt`
-      tableName: 'Foundations', // Explicit table name
+      tableName: 'announcementheaders', // Explicit table name
     });
   
-    return Foundations;
+    return AnnouncementHeader;
   };
   
