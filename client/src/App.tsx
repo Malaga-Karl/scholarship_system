@@ -15,6 +15,8 @@ import AdminViewAnnouncement from './pages/AdminView/AdminViewAnnouncement';
 import AdminViewApplicant from './pages/AdminView/AdminViewApplicant';
 import AddEditFoundation from './pages/PartnersPage/AddEditPartneredFoundation';
 import NewMail from './pages/StudentView/NewMail';
+import Forms from './pages/StudentView/Forms';
+import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
 
 
 function App() {
@@ -34,8 +36,10 @@ function App() {
           <Route path='signin' element={<SignInPage/>}/>
           <Route path='studentview'>
             <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path='dashboard' element={<StudentViewScholarship/>}>
+            <Route path='dashboard' element={<StudentViewScholarshipTemplate/>}>
+              <Route index element={<StudentViewScholarship/>}/>
               <Route path='apply/:id' element={<StudentViewScholarship/>}/>
+              <Route path='apply/:id/forms' element={<Forms/>}/>
             </Route>
             {/* <Route path='dashboard' element={<StudentViewDashboard/>}/> */}
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>

@@ -151,46 +151,44 @@ export default function StudentViewScholarship(){
     const {id} = useParams();
     const specificScholarship = id ? scholarships.find((announcement) => announcement.id === parseInt(id)) : null
     return(
-        <StudentViewTemplate active="dashboard">
-            <>
-                <Toolbar/>
-                {id ? (
-                    <>
-                        {specificScholarship ? (
-                            SpecificScholarshipTemplate({...specificScholarship})
-                        ) : (
-                            <Typography variant="h3">Id Not Found</Typography> 
-                        )}
-                    </>
-                ) : (
-                    <>
+        <>
+            <Toolbar/>
+            {id ? (
+                <>
+                    {specificScholarship ? (
+                        SpecificScholarshipTemplate({...specificScholarship})
+                    ) : (
+                        <Typography variant="h3">Id Not Found</Typography> 
+                    )}
+                </>
+            ) : (
+                <>
+                    <Box>
                         <Box>
-                            <Box>
-                                <p>scholarships available</p>
-                                <Switch defaultChecked
-                                    checked={ScholarSwitch} // Check if the switch is on
-                                    onChange={handleSwitchChange}
-                                    />
-                            </Box>
+                            <p>scholarships available</p>
+                            <Switch defaultChecked
+                                checked={ScholarSwitch} // Check if the switch is on
+                                onChange={handleSwitchChange}
+                                />
+                        </Box>
+                    
+                    </Box>
+                    <Box sx={{display:"flex", flexDirection:"row", justifyContent:"center",flexWrap:"wrap", gap:"50px"}}>
+                        {switcher.length > 0 ? (
+                            switcher.map((scholarship, index) => (
+                                <SvScholarship key={index} {...scholarship}/>
+                            ))
+                        ) : (
+                            <>
+                                <Typography variant='h1'>There are currently no available scholarship offers 😞</Typography>
+                                <Typography variant='body1' mt={5}>Please come back later or contact the RGO Admin for more information</Typography>
+                            </>
+                        )}
                         
-                        </Box>
-                        <Box sx={{display:"flex", flexDirection:"row", justifyContent:"center",flexWrap:"wrap", gap:"50px"}}>
-                            {switcher.length > 0 ? (
-                                switcher.map((scholarship, index) => (
-                                    <SvScholarship key={index} {...scholarship}/>
-                                ))
-                            ) : (
-                                <>
-                                    <Typography variant='h1'>There are currently no available scholarship offers 😞</Typography>
-                                    <Typography variant='body1' mt={5}>Please come back later or contact the RGO Admin for more information</Typography>
-                                </>
-                            )}
-                            
-                        </Box>
-                    </>
-                )}
-            </>
-        </StudentViewTemplate>
+                    </Box>
+                </>
+            )}
+        </>
     );
 }
     
