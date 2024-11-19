@@ -17,6 +17,7 @@ import AddEditFoundation from './pages/PartnersPage/AddEditPartneredFoundation';
 import NewMail from './pages/StudentView/NewMail';
 import Forms from './pages/StudentView/Forms';
 import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
+import AddEditScholarship from './pages/AdminView/AdminAddEditScholarship';
 
 
 function App() {
@@ -52,7 +53,9 @@ function App() {
             <Route path='foundations' element={<AdminViewFoundation/>} >
               <Route path='addedit' element={<AddEditFoundation/>} />
             </Route>
-            <Route path='scholarships' element={<AdminViewScholarship/>} />
+            <Route path='scholarships' element={<AdminViewScholarship/>}>
+              <Route path='addedit' element={<AddEditScholarship/>} />
+            </Route>
             <Route path='announcements' element={<AdminViewAnnouncement/>} />
             <Route path='applicants' element={<AdminViewApplicant/>} />
           </Route>
