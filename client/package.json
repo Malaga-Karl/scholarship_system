@@ -17,8 +17,6 @@
     "@mui/styled-engine-sc": "^6.1.2",
     "@mui/x-date-pickers": "^7.22.2",
     "axios": "^1.7.7",
-    "dayjs": "^1.11.13",
-    "rc-input-number": "^9.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "scholarship": "file:",
