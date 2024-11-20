@@ -1,6 +1,6 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 
 export default function AddEditFoundation(){
