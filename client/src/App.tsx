@@ -17,6 +17,7 @@ import AddEditFoundation from './pages/PartnersPage/AddEditPartneredFoundation';
 import NewMail from './pages/StudentView/NewMail';
 import Forms from './pages/StudentView/Forms';
 import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
+import PDFElement from './pages/StudentView/Pdftest';
 
 
 function App() {

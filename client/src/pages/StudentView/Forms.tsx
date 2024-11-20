@@ -11,13 +11,13 @@ import RadioGroup from "@mui/material/RadioGroup"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import Radio from "@mui/material/Radio"
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import IconButton from "@mui/material/IconButton"
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 // import { useParams } from "react-router-dom"
 
 function FirstForm(){
     return(
         <>
+            <Typography variant="h4">SCHOLARSHIP APPLICATION FORM</Typography>
             <Typography variant="h5" sx={{color:"white", backgroundColor:"black"}}>Personal Information</Typography>
             <Box sx={{textAlign:"left", padding:3}}>
                 <Typography variant="h5">Name:</Typography>

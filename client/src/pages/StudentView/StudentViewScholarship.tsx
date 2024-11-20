@@ -142,6 +142,11 @@ const scholarships : Scholarship[] = [
 ]
 
 export default function StudentViewScholarship(){
+    const [hasApplied, setApplied] = useState(false);
+    const handleApplication = () => {
+        setApplied(prevState => !prevState);
+    }
+
     const [ScholarSwitch, setScholarSwitch] = useState(true); 
     const handleSwitchChange = () => {
         setScholarSwitch(prevState => !prevState); // Toggle the switch state
@@ -153,8 +158,10 @@ export default function StudentViewScholarship(){
     return(
         <>
             <Toolbar/>
-            {id ? (
+            {!hasApplied ? (
                 <>
+                    {id ? (
+                    <>
                     {specificScholarship ? (
                         SpecificScholarshipTemplate({...specificScholarship})
                     ) : (
@@ -169,6 +176,10 @@ export default function StudentViewScholarship(){
                             <Switch defaultChecked
                                 checked={ScholarSwitch} // Check if the switch is on
                                 onChange={handleSwitchChange}
+                                />
+                            <Switch defaultChecked
+                                checked={hasApplied} // Check if the switch is on
+                                onChange={handleApplication}
                                 />
                         </Box>
                     
@@ -188,6 +199,19 @@ export default function StudentViewScholarship(){
                     </Box>
                 </>
             )}
+                </>
+            ) : (
+                <>
+                    <Switch defaultChecked checked={hasApplied} onChange={handleApplication}/>
+                    <Box width="80vw">
+                        <Box sx={{display:"flex", justifyContent:"center"}}>
+                            <img src={imgCharityFirst} alt="charfirst" />
+                            <Typography variant="h4">Charity First Foundation Scholarship 2024-2025</Typography>
+                        </Box>
+                    </Box>
+                </>
+            )}
+            
         </>
     );
 }
