@@ -13,6 +13,7 @@ import imgCharityFirst from '../../assets/partners/charityfirst.png';
 import imgCibak from '../../assets/partners/cibak.png';
 import { useState } from "react";
 import SpecificScholarshipTemplate from "./SpecificScholarship";
+import Button from "@mui/material/Button";
 
 const scholarships : Scholarship[] = [
     {
@@ -203,10 +204,211 @@ export default function StudentViewScholarship(){
             ) : (
                 <>
                     <Switch defaultChecked checked={hasApplied} onChange={handleApplication}/>
-                    <Box width="80vw">
-                        <Box sx={{display:"flex", justifyContent:"center"}}>
-                            <img src={imgCharityFirst} alt="charfirst" />
-                            <Typography variant="h4">Charity First Foundation Scholarship 2024-2025</Typography>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                        height: '100vh'
+                    }}>
+                        <Box sx={{
+                            display:"flex",
+                            border: 'ridge',
+                            borderRadius: '16px',
+                            justifyContent: 'center',
+                            alignItems: 'flex-start',
+                            width: '1150px',
+                            height: '880px'
+                        }}>
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    marginTop: '10px',
+                                    width: '1050px',
+                                    justifyContent: 'flex-start'
+                                }}>
+                                    <img src={imgCharityFirst} alt="charfirst" style={{
+                                        width: 'auto',
+                                        height: '110px',
+                                        marginRight: '60px'
+                                    }} />
+                                    <Box sx={{
+                                        display:'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        maxWidth: '700px',
+                                        maxHeight: '110px',
+                                        marginLeft: '20px',
+                                    }}>
+                                        <Typography sx={{
+                                            fontSize: '45px',
+                                            fontWeight: 'bold'
+                                        }}>
+                                            Charity First Foundation Scholarship 2024-2025
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'flex-start',
+                                    marginTop: '20px',
+                                    height: '620px',
+                                    marginBottom: '15px'
+                                }}>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        <Box sx={{
+                                            // height: '100px',
+                                            width: '515px',
+                                            borderRadius: '16px',
+                                            backgroundColor: 'rgb(32,84,189)',
+                                            marginBottom: '20px'
+                                        }}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                py: '5px', // Padding for top and bottom
+                                                px: '15px', // Padding for left and right
+                                                flexDirection: 'column',
+                                                alignItems: 'flex-start',
+                                            }}>
+                                                <Typography sx={{
+                                                    fontSize: '30px',
+                                                    fontWeight: 'bold',
+                                                    color: 'white'
+                                                }}>
+                                                    Requirements:
+                                                </Typography>
+                                                <ul style={{
+                                                    marginTop: '-2px',
+                                                    color: 'white',
+                                                    textAlign: 'left'
+                                                }}>
+                                                    <li>Application form</li>
+                                                    <li>Complete Grades (SHS or 1st Year College)</li>
+                                                    <li>Incoming 1st Year and 2nd Year College Only</li>
+                                                    <li>Latest Copy of Utility Bills and Printed House Picture (inside and out)</li>
+                                                    <li>Birth Certificate, Valid ID’s, 2×2 ID Picture and Certificate of Indigency</li>
+                                                    <li>DSWD Social Case Study Report, DSWD 4p’s ID</li>
+                                                    <li>Sketch of Home Address from Major Landmark and Medical and X-Ray Result </li>
+                                                </ul>
+                                                <Typography sx={{
+                                                    fontSize: '30px',
+                                                    fontWeight: 'bold',
+                                                    color: 'white'
+                                                }}>
+                                                    Benefits
+                                                </Typography>
+                                                <ul style={{
+                                                    marginTop: '-2px',
+                                                    color: 'white',
+                                                    textAlign: 'left'
+                                                }}>
+                                                    <li>Transportation and Meal Allowance</li>
+                                                    <li>Dormitory Fee and Allowance</li>
+                                                    <li>Books and Uniform Allowance</li>
+                                                    <li>Desktop and Internet Allowance</li>
+                                                    <li>Life Skills and Motivational Seminars</li>
+                                                </ul>
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            height: '103px',
+                                            width: '515px',
+                                            borderRadius: '16px',
+                                            backgroundColor: 'rgb(183,28,28)'
+                                        }}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                py: '5px', // padding for top and bottom
+                                                px: '15px', // padding for left and right
+                                                flexDirection: 'column',
+                                                alignItems: 'flex-start'
+                                            }}>
+                                                <Typography sx={{
+                                                    fontSize: '30px',
+                                                    fontWeight: 'bold',
+                                                    color: 'white'
+                                                }}>
+                                                    Application Deadline:
+                                                </Typography>
+                                                <Typography sx={{
+                                                    fontSize: '15px',
+                                                    // fontWeight: 'bold',
+                                                    textAlign: 'left',
+                                                    color: 'white'
+                                                }}>
+                                                    The application deadline for the Charity First Foundation Scholarship is <b>August 9, 2024</b> until only.
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        height: '620px',
+                                        width: '515px'
+                                    }}>
+                                        <iframe 
+                                            src=""          // Insert iframe compatible pdf link here
+                                            width='515px'
+                                            height='618px'
+                                        >
+                                        </iframe>
+                                    </Box>
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    height: '60px',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between'
+                                    }}>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'flex-start',
+                                        }}>
+                                            <Typography sx={{
+                                                fontSize: '20px',
+                                                fontWeight: 'bold'
+                                            }}>
+                                                Scholarship Application Status
+                                            </Typography>
+                                            <Typography sx={{
+                                                fontSize: '20px'
+                                            }}>
+                                                Pending
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                        <Button variant="contained" sx={{
+                                            backgroundColor: '#BF9B30',
+                                            height: '45px',
+                                            width: '250px',
+                                            borderRadius: '5px',
+                                            textTransform: 'capitalize',
+                                            fontSize: '18px'
+                                        }}>
+                                            Update Application Form
+                                        </Button>
+                                    </Box>
+                                </Box>
+                            </Box>
                         </Box>
                     </Box>
                 </>

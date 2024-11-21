@@ -75,9 +75,14 @@ export default function AddEditScholarship(){
             <Box sx={{display: 'flex', marginLeft: '50px', marginRight: '50px', marginBottom: '1px', justifyContent: 'space-between'}}>
                 <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', width: '500px'}}>
                     <Typography variant='h5' sx={{fontWeight: 'bold', marginBottom: '10px'}}>Scholarship Name</Typography>
-                    <TextField variant="standard" sx={{flex:1, width: '500px'}} placeholder="Scholarship Offer"/>
-                    <Box sx={{ fontSize: '0.800rem', color: 'text.secondary', textAlign: 'left', marginBottom: '20px'}}>Name of Scholarship Offer</Box>
-                    <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold', paddingBottom: '10px'}}>Description</Typography>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <TextField variant="standard" sx={{flex:1, width: '500px'}} placeholder="Scholarship Offer"/>
+                        <Box sx={{ fontSize: '0.800rem', color: 'text.secondary', textAlign: 'left', marginBottom: '20px'}}>Name of Scholarship Offer</Box>
+                        <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold'}}>Description</Typography>
+                    </Box>
                     <TextField
                         variant="outlined"
                         multiline
