@@ -2,6 +2,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import ReactQuill from "react-quill";
 
+import axios from "axios";
 import ImageResize from "quill-image-resize-module-react"; // Import the image resize module
 import SendIcon from "@mui/icons-material/Send";
 
@@ -12,11 +13,17 @@ export default function AddEditAnnouncement() {
   const [fileName, setFileName] = useState(""); // To store file name
   const [annImageFile, setAnnImageFile] = useState<File | null>(null); // To store the file itself
   const [annTitle, setAnnTitle] = useState(""); // To store the title
+  const [annDescription, setAnnDescription] = useState(""); // To store the title
   const [editorHtml, setEditorHtml] = useState(""); // State to hold the editor's content
 
   // Handle input change for title
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAnnTitle(event.target.value);
+  };
+
+  // Handle input change for description
+  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAnnDescription(event.target.value);
   };
 
   // Handle file selection
@@ -29,39 +36,51 @@ export default function AddEditAnnouncement() {
   };
 
   // Handle form submission
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     // Check if the Quill editor has content
     if (!editorHtml.trim()) {
       alert("Please enter content in the announcement editor.");
       return;
     }
-
+  
     // Prepare the payload for submission
     const formData = new FormData();
     formData.append("title", annTitle); // Add title
+    formData.append("description", annDescription || ""); // Add description (or empty string if undefined)
     if (annImageFile) {
-      formData.append("image", annImageFile); // Add the selected image file
+      formData.append("file", annImageFile); // Add the selected image file
     }
     formData.append("content", editorHtml); // Add Quill editor content
-
-    // Simulate sending data to the backend
-    console.log("Submitting form with the following data:");
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
+  
+    try {
+      // Send the data to the backend
+      const response = await axios.post("http://localhost:3001/announcements/create", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Ensure proper encoding for form data
+        },
+      });
+  
+      // Handle success response
+      console.log("Form submitted successfully:", response.data);
+      alert("Announcement created successfully!");
+  
+      // Optionally, reset the form
+      setAnnTitle("");
+      setAnnDescription("");
+      setAnnImageFile(null);
+      setFileName("");
+      setEditorHtml("");
+  
+    } catch (error: any) {
+      // Handle error response
+      console.error("Error submitting form:", error);
+      alert("Failed to create the announcement. Please try again.");
     }
-
-    // You can replace this console.log with an actual API call
-    // Example:
-    // fetch('/api/announcement', {
-    //   method: 'POST',
-    //   body: formData,
-    // })
-    // .then(response => response.json())
-    // .then(data => console.log(data))
-    // .catch(error => console.error(error));
   };
+  
+
 
   return (
     <>
@@ -101,6 +120,19 @@ export default function AddEditAnnouncement() {
             required
             value={annTitle} // Bind state to the value of the input
             onChange={handleTitleChange} // Update the state on input change
+          />
+          
+          {/* Title Input */}
+          <TextField
+            label="Announcement Description"
+            variant="outlined"
+            sx={{
+              width: "50%",
+              margin: "0 auto",
+            }}
+            required
+            value={annDescription} // Bind state to the value of the input
+            onChange={handleDescriptionChange} // Update the state on input change
           />
 
           {/* Image Upload */}
