@@ -9,7 +9,9 @@ export default function AnnouncementTemplate({title, date, image, content, id}:N
             <img src={image} alt="announcement"/>
             <Typography variant="h3">{title}</Typography>
             <Typography variant="h5">{date}</Typography>
-            <Typography variant="body1">{content}</Typography>
+            <Typography variant="body1">{content}
+                <Typography variant="h5">Hello</Typography>
+            </Typography>
             
             <Box mt={10} pb={5} sx={{display:"flex", justifyContent:"space-around"}}>
                 <Button variant="contained" color="error">Back to Announcements</Button>

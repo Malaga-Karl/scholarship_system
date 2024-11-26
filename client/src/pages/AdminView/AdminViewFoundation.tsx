@@ -8,6 +8,10 @@ import Button from '@mui/material/Button';
 import charity from '../../assets/partners/charityFirst.png';
 import lcck from '../../assets/partners/lcck.png';
 import green from '../../assets/partners/green.png';
+import cibak from '../../assets/partners/cibak.png';
+import cfbc from '../../assets/partners/cfbc.png';
+import dost from '../../assets/partners/dost.png';
+import sm from '../../assets/partners/sm.png';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -39,6 +43,26 @@ const FoundationArray : FoundationListType[] = [
         name:"Buddhist Compassion Relief Tzu Chi Foundation, Philippines",
         picture:green,
         desc:"In 2001, a group of Chinese-Filipino businessmen and women decided to pool their resources together to extend help to those affected by natural calamities. "
+    },
+    {
+        name:"Foundation 1",
+        picture:cfbc,
+        desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    {
+        name:"Foundation 2",
+        picture:cibak,
+        desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    {
+        name:"Foundation 3",
+        picture:dost,
+        desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    }, 
+    {
+        name:"Foundation 4",
+        picture:sm,
+        desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     },
 ]
 
