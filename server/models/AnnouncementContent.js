@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
       content: {
         type: DataTypes.TEXT('long'),
         allowNull: false, // Status is mandatory (e.g., active, archived)
-        defaultValue: 'No Content', // Default status can be "active"
       }
     }, {
       timestamps: true, // Automatically add `createdAt` and `updatedAt`

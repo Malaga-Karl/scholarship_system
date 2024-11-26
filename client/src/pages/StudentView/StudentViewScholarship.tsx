@@ -11,9 +11,10 @@ import SvScholarship from "../../components/SvScholarship";
 import imgDost from '../../assets/partners/dost.png';
 import imgCharityFirst from '../../assets/partners/charityfirst.png';
 import imgCibak from '../../assets/partners/cibak.png';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SpecificScholarshipTemplate from "./SpecificScholarship";
 import Button from "@mui/material/Button";
+import axios from "axios";
 
 const scholarships : Scholarship[] = [
     {
@@ -142,7 +143,76 @@ const scholarships : Scholarship[] = [
     }
 ]
 
+
+
+type Scholarship = {
+    scholarship_id: number;
+    image: string;
+    title: string;
+    slots: number;
+    deadline: string;
+    scholarship_description: string;
+    eligibility: string[];
+    reqs: string[];
+    benefits: string[];
+  };
+  
+  type Foundation = {
+    foundation_id: number;
+    name: string;
+    description: string;
+    logo_path: string;
+    status: string;
+    scholarships: Scholarship[];
+  };
+
 export default function StudentViewScholarship(){
+    const [foundations, setFoundations] = useState<Foundation[]>([]); // State to store foundations data
+    const [loading, setLoading] = useState<boolean>(true); // State to track loading status
+    const [error, setError] = useState<string | null>(null); // State to store errors
+
+    useEffect(() => {
+        const fetchFoundationsWithScholarships = async () => {
+        try {
+            // Fetch data from the API
+            const response = await axios.get('http://localhost:3001/foundations/getallFS');
+            
+            //console.log(response);
+            // Map and store the data in state
+            const data: Foundation[] = response.data.map((foundation: Foundation) => ({
+                foundation_id: foundation.foundation_id,
+                name: foundation.name,
+                description: foundation.description,
+                logo_path: `http://localhost:3001/uploads/${foundation.logo_path}`,
+                status: foundation.status,
+                scholarships: foundation.scholarships.map((scholarship: Scholarship) => ({
+                    id: scholarship.scholarship_id,
+                    image: foundation.logo_path, // Assuming logo_path is used as image for scholarship
+                    title: scholarship.title,
+                    slots: scholarship.slots,
+                    deadline: scholarship.deadline,
+                    desc: scholarship.scholarship_description,
+                    eligibility: scholarship.eligibility, // Safely split string
+                    reqs: scholarship.reqs, // Safely split string
+                    benefits: scholarship.benefits, // Safely split string
+                })),
+            }));
+            
+            // Update state with fetched data
+            console.log(data);
+            setFoundations(data);
+        } catch (err) {
+            // Handle errors
+            console.error(err);
+            setError('An error occurred while fetching data');
+        } finally {
+            setLoading(false); // Set loading to false after the request is complete
+        }
+        };
+
+        fetchFoundationsWithScholarships();
+    }, []); // Empty dependency array means this runs once when the component mounts
+
     const [hasApplied, setApplied] = useState(false);
     const handleApplication = () => {
         setApplied(prevState => !prevState);
@@ -152,10 +222,19 @@ export default function StudentViewScholarship(){
     const handleSwitchChange = () => {
         setScholarSwitch(prevState => !prevState); // Toggle the switch state
     };
-    const switcher = ScholarSwitch ? scholarships : []; 
 
     const {id} = useParams();
-    const specificScholarship = id ? scholarships.find((announcement) => announcement.id === parseInt(id)) : null
+    const specificScholarship = id ? foundations.find((foundation) => foundation.foundation_id === parseInt(id)) : null
+    
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+    if (error) {
+        return <div style={{margin:'100px auto'}}>
+            {error}
+            </div>;
+    }
+    
     return(
         <>
             <Toolbar/>
@@ -164,7 +243,23 @@ export default function StudentViewScholarship(){
                     {id ? (
                     <>
                     {specificScholarship ? (
-                        SpecificScholarshipTemplate({...specificScholarship})
+                        <SpecificScholarshipTemplate
+                            key={id}
+                            image={specificScholarship?.logo_path}
+                            title={specificScholarship?.scholarships[0].title}
+                            id={specificScholarship?.foundation_id}
+                            slots={specificScholarship?.scholarships[0].slots}
+                            deadline={
+                                new Date(specificScholarship?.scholarships[0].deadline).toLocaleDateString('en-US', {
+                                month: '2-digit',
+                                day: '2-digit',
+                                year: 'numeric',
+                                })}
+                            desc={specificScholarship?.scholarships[0].scholarship_description}
+                            reqs={specificScholarship?.scholarships[0].reqs}
+                            benefits={specificScholarship?.scholarships[0].benefits}
+                            eligibility={specificScholarship?.scholarships[0].eligibility}
+                        />
                     ) : (
                         <Typography variant="h3">Id Not Found</Typography> 
                     )}
@@ -185,10 +280,26 @@ export default function StudentViewScholarship(){
                         </Box>
                     
                     </Box>
+                    {/*for showing all the of the available scholarships*/}
                     <Box sx={{display:"flex", flexDirection:"row", justifyContent:"center",flexWrap:"wrap", gap:"50px"}}>
-                        {switcher.length > 0 ? (
-                            switcher.map((scholarship, index) => (
-                                <SvScholarship key={index} {...scholarship}/>
+                        {foundations.length > 0 ? (
+                            foundations.map((scholarship, index) => (
+                                <SvScholarship key={index} 
+                                    image={scholarship?.logo_path}
+                                    title={scholarship?.scholarships[0].title}
+                                    id={scholarship?.foundation_id}
+                                    slots={scholarship?.scholarships[0].slots}
+                                    deadline={
+                                        new Date(scholarship?.scholarships[0].deadline).toLocaleDateString('en-US', {
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        year: 'numeric',
+                                      })}
+                                    desc={scholarship?.scholarships[0].scholarship_description}
+                                    reqs={scholarship?.scholarships[0].reqs}
+                                    benefits={scholarship?.scholarships[0].benefits}
+                                    eligibility={scholarship?.scholarships[0].eligibility}
+                                />
                             ))
                         ) : (
                             <>

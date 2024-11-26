@@ -9,7 +9,6 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
-import AlvinKalbo from '../../assets/albinkalbo.jpg';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -24,6 +23,12 @@ import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
 
 import logoPLM from '../../assets/footerLogos/plm_iconlogo.png';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+
+
+//add error for when being accessed directly
 
 const drawerWidth = 300;
 
@@ -56,14 +61,65 @@ type StudentViewTemplateProps = {
   active: 'dashboard' | 'scholarship' | 'announcements' | 'contact';
   children: React.ReactNode;
 };
+const storedData = localStorage.getItem('userInfo') ?? '';
+let userID:{ user_id:string, email:string } = {user_id:'', email:''};
+if (storedData) {
+  userID = JSON.parse(storedData);
+  console.log(userID);
+}
+const formatNumber = (num:number) => {
+  const numStr = num.toString(); // Convert to string if it's not already
+  const year = numStr.slice(0, 4); // First 4 digits
+  const rest = numStr.slice(4);    // Remaining digits
+  return `${year}-${rest}`;
+};
 
-export default function StudentViewTemplate({active, children}:StudentViewTemplateProps) {
+
+
+export default function  StudentViewTemplate({active, children}:StudentViewTemplateProps) {
+  const [userInfo, setUserInfo] = useState<{ user_id: number, first_name: string, last_name: string, phone_number: string, gender: string, profile_picture_url: string, course:string, department:string} | null>(null);
+
+  useEffect(() => {
+    async function fetchUserInfo() {
+        try {
+            const tempUID: string = userID.user_id;
+            const response = await axios.get('http://localhost:3001/user/getUserInfo', {
+                params: { user_id: tempUID }
+            });
+
+            // Assuming response.data is a single user object
+            const user = response.data;
+            const info = {
+                user_id: user.user_id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                phone_number: user.phone_number,
+                gender: user.gender,
+                profile_picture_url: 'http://localhost:3001/uploads'+user.profile_picture_url,
+                course: user.course, 
+                department: user.department,
+            };
+
+            setUserInfo(info);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const serverError = error.response.data?.message || 'An error occurred during login. Please try again.';
+                console.log(serverError);
+            }
+            console.log("error T_T");
+        }
+    }
+
+    fetchUserInfo();
+  }, []);
+
+
   return (
     <Box sx={{ display: 'flex'}}>
     {/* <Box> */}
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, backgroundColor:"white" }}
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
       >
         <Toolbar>
         <Box sx={{display:"flex", alignItems:"center"}}>
@@ -93,12 +149,22 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
             height: 100,
             margin:"0 auto",
             marginBottom: "30px"
-        }} src={AlvinKalbo}/>
-
+        }} src={userInfo?.profile_picture_url}/>
+        {/* needs to add a course and department */}
         <Typography variant='body1' mb={2}>Welcome,</Typography>
-        <Typography variant='h5' sx={{fontWeight:'bold'}}>Juan Dela Cruz</Typography>
-        <Typography variant='body1'>2021-00000</Typography>
-        <Typography variant='body1'>BS Computer Science</Typography>
+        <Typography variant='h5' sx={{fontWeight:'bold'}}>
+          {
+            userInfo?.last_name + ', ' + userInfo?.first_name
+          }
+        </Typography>
+        <Typography variant='body1'>
+          {formatNumber(userInfo?.user_id ?? 0)}
+        </Typography>
+        <Typography variant='body1'>
+          {
+            userInfo?.course
+          }
+        </Typography>
         <Button variant='contained' endIcon={<CreateOutlinedIcon/>} sx={{backgroundColor:"rgb(191, 155, 48)", width:"70%", margin:"30px auto"}}>Update profile</Button>
         <Divider sx={{backgroundColor:"rgba(255,255,255,0.6)", width:"85%", margin:"0 auto"}}/>
    
@@ -108,12 +174,17 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
               <ListItemButton href={"/studentview/"+nav.path}>
                    {nav.page}
                   </ListItemButton>
-            </ListItem>))}
+            </ListItem>))} 
         </List>
 
         <Divider sx={{backgroundColor: 'white'}}/>
         {/*Needs to have a logout logic, will do later/////////////////////////////////////////////////////////////////////////////////*/}
-        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}} onClick={() => {window.location.href="../signin"}}>Log Out</Button>
+        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}} 
+        onClick={() => {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userInfo');
+          window.location.href="../signin"
+        }}>Log Out</Button>
       </Drawer>
       <Box sx={{width:`calc(100vw - ${drawerWidth}px)`, flexGrow:"2"}}>
         {children}

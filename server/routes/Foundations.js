@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const { Foundations } = require('../models')
+const { Foundations, Scholarships } = require('../models')
 
 router.get("/getall", async (req, res) => {
     const allFoundations = await Foundations.findAll({
@@ -34,10 +34,27 @@ router.post("/add", upload.single('file'), async (req, res) => {
     });
     res.json(req.file);
 
-})
+});
 
 
-
+router.get("/getallFS", async (req, res) => {
+    try {
+      const allFoundations = await Foundations.findAll({
+        where: { status: 'active' }, // Fetch only active foundations
+        include: [
+          {
+            model: Scholarships,
+            as: 'scholarships', // Alias as defined in the association
+          },
+        ],
+      });
+  
+      res.json(allFoundations); // Respond with the fetched data
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "An error occurred while fetching foundations and scholarships." });
+    }
+  });
 
 
 module.exports = router;

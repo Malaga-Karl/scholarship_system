@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      middle_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       phone_number: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -31,8 +35,15 @@ module.exports = (sequelize, DataTypes) => {
       notification_settings: {
         type: DataTypes.CHAR(1),
         allowNull: true,
-    
       },
+      course:{
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      department:{
+        type: DataTypes.STRING,
+        allowNull: false,
+      }
     });
   
     // Define the association: one-to-one relationship with the Authentication model

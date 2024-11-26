@@ -224,7 +224,7 @@ export default function Form(){
                     <Button variant="outlined" onClick={() => index > 0 ? setIndex(index-1) : null}>Back</Button>
                     {
                         index == formPages.length-1 ? (
-                            <Button variant="contained" sx={{backgroundColor:Colors.gold}} onClick={() => window.location.href = "/studentview/dashboard/"}>
+                            <Button variant="contained" sx={{backgroundColor:Colors.gold}} onClick={() => window.location.href = "/studentview/"}>
                                 Submit Form
                             </Button>
                         ) : (
