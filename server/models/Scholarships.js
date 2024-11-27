@@ -28,10 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       eligibility: {
         type: DataTypes.STRING, // Comma-separated string
         allowNull: false,
-        get() {
-          const value = this.getDataValue('eligibility');
-          return value ? value.split(',') : [];
-        },
+        // get() {
+        //   const value = this.getDataValue('eligibility');
+        //   return value ? value.split(',') : [];
+        // },
         set(value) {
           this.setDataValue('eligibility', Array.isArray(value) ? value.join(',') : value);
         },
@@ -39,10 +39,10 @@ module.exports = (sequelize, DataTypes) => {
       reqs: {
         type: DataTypes.STRING, // Comma-separated string
         allowNull: false,
-        get() {
-          const value = this.getDataValue('reqs');
-          return value ? value.split(',') : [];
-        },
+        // get() {
+        //   const value = this.getDataValue('reqs');
+        //   return value ? value.split(',') : [];
+        // },
         set(value) {
           this.setDataValue('reqs', Array.isArray(value) ? value.join(',') : value);
         },
@@ -50,10 +50,10 @@ module.exports = (sequelize, DataTypes) => {
       benefits: {
         type: DataTypes.STRING, // Comma-separated string
         allowNull: false,
-        get() {
-          const value = this.getDataValue('benefits');
-          return value ? value.split(',') : [];
-        },
+        // get() {
+        //   const value = this.getDataValue('benefits');
+        //   return value ? value.split(',') : [];
+        // },
         set(value) {
           this.setDataValue('benefits', Array.isArray(value) ? value.join(',') : value);
         },

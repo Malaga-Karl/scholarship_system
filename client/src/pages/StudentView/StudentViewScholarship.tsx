@@ -34,6 +34,26 @@ type Scholarship = {
     status: string;
     scholarships: Scholarship[];
   };
+  type Scholarshipdb = {
+    scholarship_id: number;
+    image: string;
+    title: string;
+    slots: number;
+    deadline: string;
+    scholarship_description: string;
+    eligibility: string;
+    reqs: string;
+    benefits: string;
+  };
+  
+  type Foundationdb = {
+    foundation_id: number;
+    name: string;
+    description: string;
+    logo_path: string;
+    status: string;
+    scholarships: Scholarshipdb[];
+  };
 
 export default function StudentViewScholarship(){
     const [foundations, setFoundations] = useState<Foundation[]>([]); // State to store foundations data
@@ -48,22 +68,22 @@ export default function StudentViewScholarship(){
             
             //console.log(response);
             // Map and store the data in state
-            const data: Foundation[] = response.data.map((foundation: Foundation) => ({
+            const data = response.data.map((foundation: Foundationdb) => ({
                 foundation_id: foundation.foundation_id,
                 name: foundation.name,
                 description: foundation.description,
                 logo_path: `http://localhost:3001/uploads/${foundation.logo_path}`,
                 status: foundation.status,
-                scholarships: foundation.scholarships.map((scholarship: Scholarship) => ({
+                scholarships: foundation.scholarships.map((scholarship: Scholarshipdb) => ({
                     id: scholarship.scholarship_id,
                     image: foundation.logo_path, // Assuming logo_path is used as image for scholarship
                     title: scholarship.title,
                     slots: scholarship.slots,
                     deadline: scholarship.deadline,
                     desc: scholarship.scholarship_description,
-                    eligibility: scholarship.eligibility, // Safely split string
-                    reqs: scholarship.reqs, // Safely split string
-                    benefits: scholarship.benefits, // Safely split string
+                    eligibility: scholarship.eligibility.split(','), // Safely split string
+                    reqs: scholarship.reqs.split(','), // Safely split string
+                    benefits: scholarship.benefits.split(','), // Safely split string
                 })),
             }));
             

@@ -8,7 +8,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import axios from "axios";
 
 // Custom Number Input Component with Increment/Decrement
 const CustomNumberInput: React.FC<{
@@ -108,38 +109,11 @@ export default function AddEditScholarship(){
     //added stuff, fuckign designers, you guys sucks at front-ending niggers
     //Description///////////////////////////////////////////////////////////////////////////////////////
     // State to store the list of input fields
-    const [descriptionInputFields, setdescriptionInputFields] = useState([{ id: Date.now()}]);
-    const [descriptionInputValues, setdescriptionInputValues] = useState<{ [key: number]: string }>({});
+    const [description, setDescription] = useState('');
 
-    const handleDescriptionRemoveField = (id: number) => {
-        if(descriptionInputFields.length > 1){
-            setdescriptionInputFields(descriptionInputFields.filter((field) => field.id !== id));
-            // Optionally remove the value from the inputValues as well
-            const updatedValues = { ...descriptionInputValues };
-            delete updatedValues[id];
-            setdescriptionInputValues(updatedValues);
-        }
-    };
-
-    // Handle the addition of a new input field
-    const handleDescriptionAddField = (index: number) => {
-        const newField = { id: Date.now()}; // New input field with a unique id
-        const updatedFields = [...descriptionInputFields];
-        let counter = 0;
-        for(let i = 0; i < descriptionInputFields.length; i++)
-            if(index === descriptionInputFields[i].id)
-                counter = i;
-        updatedFields.splice(counter + 1, 0, newField); // Insert at the given index + 1 (after the selected index)
-        setdescriptionInputFields(updatedFields);
-    };
-
-    // Handle the input change
-    const handleDescriptionInputChange = (id: number, value: string) => {
-        setdescriptionInputValues((prevValues) => ({ //prev values is a case to case state, i think it will loop through every object inside values idk
-        ...prevValues,//copies the current state of prevValues
-        [id]: value,
-        }));
-    };
+    const handleDescriptionChange = (event:any) =>{
+        setDescription(event.target.value)
+    }
 
     //Eligibility///////////////////////////////////////////////////////////////////////////////////////
     // State to store the list of input fields
@@ -248,32 +222,97 @@ export default function AddEditScholarship(){
 
     
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Prevent default form submission (page reload)
-
-        //needs checking of all inputs here
-
-        const convertObjectToArrayD = Object.values(descriptionInputValues);
+    
+        // Convert the objects to arrays
         const convertObjectToArrayE = Object.values(eligibilityInputValues);
         const convertObjectToArrayR = Object.values(requirementInputValues);
-        const convertObjectToArrayB = Object.values(benefitsInputFields);
-        console.log('Submitted Title: ', title);
-        console.log('Submitted Descriptions values:', convertObjectToArrayD);
-        console.log('Submitted Eligibility values:', convertObjectToArrayE);
-        console.log('Submitted Requirements values:', convertObjectToArrayR);
-        console.log('Submitted Benefits values:', convertObjectToArrayB);
-        console.log('Submitted Deadline: ', deadline);
-        console.log('Submited Slots: ', slotsLeft);
-
-
-
-        //needs the API shi here
-    }
+        const convertObjectToArrayB = Object.values(benefitsInputValues);
+    
+        // Create FormData object
+        const formData = new FormData();
+        formData.append('foundation_id', foundation.toString());
+        formData.append('title', title);
+        formData.append('slots', slotsLeft.toString());
+        formData.append('deadline', deadline ? deadline.toISOString() : '');  // Ensure proper date format
+        formData.append('scholarship_description', description);
+        formData.append('eligibility', convertObjectToArrayE.join(','));  // Join array to string
+        formData.append('reqs', convertObjectToArrayR.join(','));  // Join array to string
+        formData.append('benefits', convertObjectToArrayB.join(','));  // Join array to string
+    
+        try {
+            // Send the data to the backend using Axios
+            const response = await axios.post("http://localhost:3001/foundations/add_scholarship", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Ensure proper encoding for form data
+                },
+            });
+    
+            // Handle success response
+            console.log("Form submitted successfully:", response.data);
+            alert("Scholarship created successfully!");
+    
+            // Reset form values after successful submission
+            setDeadline(null);
+            setDescription('');
+            setTitle('');
+            setSlotsLeft(0);
+            setFoundation('');
+            setbenefitsInputValues([]);
+            setbenefitsInputFields([]);
+            seteligibilityInputValues([]);
+            seteligibilityInputFields([]);
+            setrequirementInputValues([]);
+            setrequirementInputFields([]);
+        } catch (error: any) {
+            console.error("Error submitting form:", error);
+            alert("Failed to create the Scholarship. Please try again.");
+        }
+    };
+    
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
     };
 
+    // Foundation type
+    interface Foundation {
+        foundation_id: number;
+        name: string;
+    }
+
+
+    //getting all the foundations that does not have scholarships yet
+    const [noFScholarship,setNoFScholarship] = useState<Foundation[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchFoundationsWithoutScholarships = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get<Foundation[]>(
+                    'http://localhost:3001/foundations/no_scholarship'
+                );
+                setNoFScholarship(response.data);
+            } catch (err: any) {
+                setError(err.message || 'Failed to fetch foundations T_T aggggggghhhhhhhhhhhhh my head hurts');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchFoundationsWithoutScholarships();
+    }, []);
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        return <p>Error: {error}</p>;
+    }
 
     return(
         <Box sx={{display: 'flex', flexDirection: 'column', margin:'80px auto 0 auto', width: '90%', height: 'auto', border: 'ridge', borderRadius: '15px', padding: '20px'}}>
@@ -310,69 +349,43 @@ export default function AddEditScholarship(){
                                 value={foundation}
                                 onChange={handleFoundationChange}
                             >
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                {noFScholarship.map((foundation)=>{
+                                    return (
+                                        <MenuItem value={foundation.foundation_id}>{foundation.name}</MenuItem>
+                                    );
+                                })}
                             </Select>
                         </FormControl>
-                        <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold'}}>Description</Typography>
                         {/*Description*/}
-                        <Box
-                            boxSizing="border-box"
-                            width="100%"
-                            border="1px solid black"
-                            height="130px"
-                            margin="0 0 20px 0"
-                            borderRadius="10px"
-                            overflow="auto"
-                            padding="20px"
-                            sx={{
-                                ...scrollbarDesign,
-                            }}
-                            >
-                            {descriptionInputFields.map((field) => (
-                                <Box
-                                key={field.id}
-                                display="flex"
-                                alignItems="center"
-                                marginBottom="10px"
-                                >
-                                {/* Button to remove the input field */}
-                                <Button
-                                    variant="text"
-                                    color="secondary"
-                                    sx={{ marginRight: '10px' }}
-                                    onClick={() => handleDescriptionRemoveField(field.id)}
-                                >
-                                    <RemoveCircleOutlineIcon color="error" />
-                                </Button>
-
-                                {/* Input field */}
-                                <TextField
-                                    variant="standard"
-                                    fullWidth
-                                    value={descriptionInputValues[field.id] || ''} // Bind value to the state
-                                    onChange={(e) => handleDescriptionInputChange(field.id, e.target.value)} // Update state on change
-                                    sx={{
-                                    '& .MuiInputBase-root': {
-                                        fontSize: '14px',
-                                        padding: '2px 10px', // Adjust the padding
-                                        borderRadius: '16px',
+                        <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold'}}>Description</Typography>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width:'100%',
+                        }}>
+                            <TextField
+                                value={description}
+                                onChange={handleDescriptionChange}
+                                variant="outlined"
+                                minRows={4}
+                                maxRows={4} // Restricts to a maximum of 4 rows
+                                multiline
+                                fullWidth
+                                placeholder="Scholarship Description"
+                                required
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "10px", // Set border radius for the input field
                                     },
-                                    }}
-                                />
+                                    marginBottom: "10px",
+                                    "& .MuiOutlinedInput-input": {
+                                        overflowY: "auto", // Enables vertical scrolling
+                                        ...scrollbarDesign, // Apply the scrollbar design here
+                                    },
+                                }}
+                            />
 
-                                {/* Button to add a new input field below */}
-                                <Button
-                                    variant="text"
-                                    color="primary"
-                                    sx={{ marginLeft: '10px' }}
-                                    onClick={() => handleDescriptionAddField(field.id)}
-                                >
-                                    <AddCircleOutlineIcon color="success"/>
-                                </Button>
-                                </Box>
-                            ))}
+
                         </Box>
                         {/*Eligibility Criteria*/}
                         <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold', paddingBottom: '10px'}}>Eligibility Criteria</Typography>
