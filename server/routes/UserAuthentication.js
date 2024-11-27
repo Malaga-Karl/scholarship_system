@@ -37,10 +37,13 @@ router.post("/login", async (req, res) => {
 
     try {
         // Find user by email
-        const user = await UserAuthentication.findOne({ email });
+        const user = await UserAuthentication.findOne({
+            where: { email: email },
+          });
         if (!user) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
+        //return res.json({user: { email: user.email, user_id: user.user_id } });
 
         // Check if password is correct
         const isMatch = await bcrypt.compare(password, user.password_hash);
@@ -53,7 +56,7 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
         // Send token and user info as response
-        res.json({ token, user: { id: user._id, email: user.email, user_id: user.user_id } });
+        res.json({ token, user: { email: user.email, user_id: user.user_id } });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Server error. Please try again later.' });
@@ -88,15 +91,32 @@ router.post("/add", upload.single('file'), async (req, res) => {
         res.status(500).json({ error: 'Failed to login' });
     }
 });
-
 router.get("/getUserInfo", async (req, res) => {
-    const { user_id } = req.body;
-    const response = await UserProfile.findOne({ user_id });
-    if (!response) {
-        return res.status(400).json({ message: `user { ${user_id} } does not have User Profile!`  });
+    const { user_id } = req.query; // Use req.query for GET request parameters
+
+    // Fetch the user profile
+    try {
+        const response = await UserProfile.findOne({
+            where: { user_id: user_id },
+        });
+
+        // If the user profile doesn't exist
+        if (!response) {
+            return res.status(400).json({ 
+                message: `User { ${user_id} } does not have a User Profile!` 
+            });
+        }
+
+        // Return the found user profile
+        return res.json(response);
+    } catch (error) {
+        console.error(error); // Log the error for debugging
+        return res.status(500).json({ 
+            message: "An error occurred while fetching the user profile." 
+        });
     }
-    return res.json(response);
 });
+
 
 
 

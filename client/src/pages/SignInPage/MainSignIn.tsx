@@ -45,6 +45,7 @@ export default function MainSignIn() {
 
     // Handle form submission with Axios and error handling
     const handleSubmit = async () => {
+        console.log({email:email, pass:password});
         setErrors({ ...errors, server: '' });
 
         if (validateInputs()) {
@@ -54,8 +55,13 @@ export default function MainSignIn() {
                 
                 //needs to store the user informations (response.data.user{})
 
-                if (response.data.token) {
-                    localStorage.setItem('authToken', response.data.token); //idk what this is for yet
+                if (response.data.user) {
+                    //localStorage.setItem('authToken', response.data.token); //idk what this is for yet
+                    localStorage.setItem('userInfo', JSON.stringify(response.data.user));
+
+                    setEmail('');
+                    setPassword('');
+                    //console.log(JSON.parse(JSON.stringify(response.data.user)))
                     window.location.href = "studentview";
                 }
             } catch (error) {

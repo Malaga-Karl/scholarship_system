@@ -17,8 +17,9 @@ import AddEditFoundation from './pages/PartnersPage/AddEditPartneredFoundation';
 import NewMail from './pages/StudentView/NewMail';
 import Forms from './pages/StudentView/Forms';
 import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
-import PDFElement from './pages/StudentView/Pdftest';
 import AddEditScholarship from './pages/AdminView/AdminAddEditScholarship';
+import AddEditAnnouncment from './pages/AdminView/AdminAddEditAnnouncement';
+import QuillTest from './pages/AdminView/quillTtest';
 
 function App() {
 
@@ -56,7 +57,10 @@ function App() {
             <Route path='scholarships' element={<AdminViewScholarship/>}>
               <Route path='addedit' element={<AddEditScholarship/>} />
             </Route>
-            <Route path='announcements' element={<AdminViewAnnouncement/>} />
+            <Route path='announcements' element={<AdminViewAnnouncement/>}>
+              <Route path='addedit' element={<AddEditAnnouncment/>} />
+              <Route path='quill' element={<QuillTest/>} />
+            </Route>
             <Route path='applicants' element={<AdminViewApplicant/>} />
           </Route>
           <Route path='*' element={<NotFoundPage />} />

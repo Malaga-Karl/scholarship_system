@@ -1,34 +1,41 @@
-// models/AnnouncementHeader.js
 module.exports = (sequelize, DataTypes) => {
-    const Foundations = sequelize.define('Foundations', {
-      foundation_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true, // Description is optional
-      },
-      logo_path: { //for the cover image
-        type: DataTypes.TEXT,
-        allowNull: true, 
-      },
-      status: {
-        type: DataTypes.STRING,
-        allowNull: false, // Status is mandatory (e.g., active, archived)
-        defaultValue: 'active', // Default status can be "active"
-      }
-    }, {
-      timestamps: true, // Automatically add `createdAt` and `updatedAt`
-      tableName: 'Foundations', // Explicit table name
+  const Foundations = sequelize.define('Foundations', {
+    foundation_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    logo_path: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'active',
+    },
+  }, {
+    timestamps: true,
+    tableName: 'Foundations',
+  });
+
+  Foundations.associate = (models) => {
+    Foundations.hasMany(models.Scholarships, {
+      foreignKey: 'foundation_id',
+      as: 'scholarships',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     });
-  
-    return Foundations;
   };
-  
+
+  return Foundations;
+};
