@@ -16,6 +16,7 @@ import Checkbox from "@mui/material/Checkbox";
 //icons 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 // Custom Number Input Component with Increment/Decrement
 const CustomNumberInput: React.FC<{
@@ -89,22 +90,28 @@ const scrollbarDesign = {
 };
 
 export default function AddEditScholarship(){
-    const [value, setValue] = React.useState<Dayjs | null>(null);  // Default to null
-    const [slotsLeft, setSlotsLeft] = useState<number>(0); // Initial value for slotsLeft
+    const [title, setTitle] = useState('');
+    const [deadline, setDeadline] = useState<Dayjs | null>(null);  // Default to null
+    const [slotsLeft, setSlotsLeft] = useState(0); // Initial value for slotsLeft
     const [isActive, setIsActive] = useState<boolean>(false); // Checkbox state for "Is Active"
+    const [foundation, setFoundation] = useState<number | string>('');
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsActive(event.target.checked);
     };
-
+    
+    const handleFoundationChange = (event: SelectChangeEvent<number | string>) => {
+        setFoundation(event.target.value);
+    };
     
   
     //added stuff, fuckign designers, you guys sucks at front-ending niggers
+    //Description///////////////////////////////////////////////////////////////////////////////////////
     // State to store the list of input fields
     const [descriptionInputFields, setdescriptionInputFields] = useState([{ id: Date.now()}]);
     const [descriptionInputValues, setdescriptionInputValues] = useState<{ [key: number]: string }>({});
 
-    const handleRemoveField = (id: number) => {
+    const handleDescriptionRemoveField = (id: number) => {
         if(descriptionInputFields.length > 1){
             setdescriptionInputFields(descriptionInputFields.filter((field) => field.id !== id));
             // Optionally remove the value from the inputValues as well
@@ -115,7 +122,7 @@ export default function AddEditScholarship(){
     };
 
     // Handle the addition of a new input field
-    const handleAddField = (index: number) => {
+    const handleDescriptionAddField = (index: number) => {
         const newField = { id: Date.now()}; // New input field with a unique id
         const updatedFields = [...descriptionInputFields];
         let counter = 0;
@@ -127,23 +134,149 @@ export default function AddEditScholarship(){
     };
 
     // Handle the input change
-    const handleInputChange = (id: number, value: string) => {
+    const handleDescriptionInputChange = (id: number, value: string) => {
         setdescriptionInputValues((prevValues) => ({ //prev values is a case to case state, i think it will loop through every object inside values idk
         ...prevValues,//copies the current state of prevValues
         [id]: value,
         }));
     };
 
+    //Eligibility///////////////////////////////////////////////////////////////////////////////////////
+    // State to store the list of input fields
+    const [eligibilityInputFields, seteligibilityInputFields] = useState([{ id: Date.now()}]);
+    const [eligibilityInputValues, seteligibilityInputValues] = useState<{ [key: number]: string }>({});
+
+    const handleEligibilityRemoveField = (id: number) => {
+        if(eligibilityInputFields.length > 1){
+            seteligibilityInputFields(eligibilityInputFields.filter((field) => field.id !== id));
+            // Optionally remove the value from the inputValues as well
+            const updatedValues = { ...eligibilityInputValues };
+            delete updatedValues[id];
+            seteligibilityInputValues(updatedValues);
+        }
+    };
+
+    // Handle the addition of a new input field
+    const handleEligibilityAddField = (index: number) => {
+        const newField = { id: Date.now()}; // New input field with a unique id
+        const updatedFields = [...eligibilityInputFields];
+        let counter = 0;
+        for(let i = 0; i < eligibilityInputFields.length; i++)
+            if(index === eligibilityInputFields[i].id)
+                counter = i;
+        updatedFields.splice(counter + 1, 0, newField); // Insert at the given index + 1 (after the selected index)
+        seteligibilityInputFields(updatedFields);
+    };
+
+    // Handle the input change
+    const handleEligibilityInputChange = (id: number, value: string) => {
+        seteligibilityInputValues((prevValues) => ({ //prev values is a case to case state, i think it will loop through every object inside values idk
+        ...prevValues,//copies the current state of prevValues
+        [id]: value,
+        }));
+    };
+
+    //Requirements///////////////////////////////////////////////////////////////////////////////////////
+    // State to store the list of input fields
+    const [requirementInputFields, setrequirementInputFields] = useState([{ id: Date.now()}]);
+    const [requirementInputValues, setrequirementInputValues] = useState<{ [key: number]: string }>({});
+
+    const handleRequirementRemoveField = (id: number) => {
+        if(requirementInputFields.length > 1){
+            setrequirementInputFields(requirementInputFields.filter((field) => field.id !== id));
+            // Optionally remove the value from the inputValues as well
+            const updatedValues = { ...requirementInputValues };
+            delete updatedValues[id];
+            setrequirementInputValues(updatedValues);
+        }
+    };
+
+    // Handle the addition of a new input field
+    const handleRequirementAddField = (index: number) => {
+        const newField = { id: Date.now()}; // New input field with a unique id
+        const updatedFields = [...requirementInputFields];
+        let counter = 0;
+        for(let i = 0; i < requirementInputFields.length; i++)
+            if(index === requirementInputFields[i].id)
+                counter = i;
+        updatedFields.splice(counter + 1, 0, newField); // Insert at the given index + 1 (after the selected index)
+        setrequirementInputFields(updatedFields);
+    };
+
+    // Handle the input change
+    const handleRequirementInputChange = (id: number, value: string) => {
+        setrequirementInputValues((prevValues) => ({ //prev values is a case to case state, i think it will loop through every object inside values idk
+        ...prevValues,//copies the current state of prevValues
+        [id]: value,
+        }));
+    };
+
+    //Benefits///////////////////////////////////////////////////////////////////////////////////////
+    // State to store the list of input fields
+    const [benefitsInputFields, setbenefitsInputFields] = useState([{ id: Date.now()}]);
+    const [benefitsInputValues, setbenefitsInputValues] = useState<{ [key: number]: string }>({});
+
+    const handleBenefitRemoveField = (id: number) => {
+        if(benefitsInputFields.length > 1){
+            setbenefitsInputFields(benefitsInputFields.filter((field) => field.id !== id));
+            // Optionally remove the value from the inputValues as well
+            const updatedValues = { ...benefitsInputValues };
+            delete updatedValues[id];
+            setbenefitsInputValues(updatedValues);
+        }
+    };
+
+    // Handle the addition of a new input field
+    const handleBenefitAddField = (index: number) => {
+        const newField = { id: Date.now()}; // New input field with a unique id
+        const updatedFields = [...benefitsInputFields];
+        let counter = 0;
+        for(let i = 0; i < benefitsInputFields.length; i++)
+            if(index === benefitsInputFields[i].id)
+                counter = i;
+        updatedFields.splice(counter + 1, 0, newField); // Insert at the given index + 1 (after the selected index)
+        setbenefitsInputFields(updatedFields);
+    };
+
+    // Handle the input change
+    const handleBenefitInputChange = (id: number, value: string) => {
+        setbenefitsInputValues((prevValues) => ({ //prev values is a case to case state, i think it will loop through every object inside values idk
+        ...prevValues,//copies the current state of prevValues
+        [id]: value,
+        }));
+    };
+
+    
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault(); // Prevent default form submission (page reload)
 
-        const convertObjectToArray = Object.values(descriptionInputValues);
-        console.log('Submitted values:', convertObjectToArray);
+        //needs checking of all inputs here
+
+        const convertObjectToArrayD = Object.values(descriptionInputValues);
+        const convertObjectToArrayE = Object.values(eligibilityInputValues);
+        const convertObjectToArrayR = Object.values(requirementInputValues);
+        const convertObjectToArrayB = Object.values(benefitsInputFields);
+        console.log('Submitted Title: ', title);
+        console.log('Submitted Descriptions values:', convertObjectToArrayD);
+        console.log('Submitted Eligibility values:', convertObjectToArrayE);
+        console.log('Submitted Requirements values:', convertObjectToArrayR);
+        console.log('Submitted Benefits values:', convertObjectToArrayB);
+        console.log('Submitted Deadline: ', deadline);
+        console.log('Submited Slots: ', slotsLeft);
+
+
+
+        //needs the API shi here
     }
+
+    const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTitle(event.target.value);
+    };
 
 
     return(
-        <Box sx={{display: 'flex', flexDirection: 'column', margin:'80px auto 0 auto', width: '90%', height: '600px', border: 'ridge', borderRadius: '15px', padding: '20px'}}>
+        <Box sx={{display: 'flex', flexDirection: 'column', margin:'80px auto 0 auto', width: '90%', height: 'auto', border: 'ridge', borderRadius: '15px', padding: '20px'}}>
             <Button startIcon={<ArrowBack/>} sx={{alignSelf: 'flex-start', backgroundColor: 'transparent', border: 'none', color: 'black', textTransform: 'capitalize', fontSize: '20px', marginBottom: '5px'}}>Go Back</Button>
             
             <form onSubmit={handleSubmit}>
@@ -157,9 +290,31 @@ export default function AddEditScholarship(){
                             display: 'flex',
                             flexDirection: 'column'
                         }}>
-                            <TextField variant="standard" sx={{flex:1, width: '500px'}} placeholder="Scholarship Offer"/>
+                            <TextField 
+                                value={title}
+                                onChange={handleTitleChange}
+                                variant="standard" 
+                                sx={{flex:1, width: '500px'}} 
+                                placeholder="Scholarship Offer"
+                                required
+                            />
                             <Box sx={{ fontSize: '0.800rem', color: 'text.secondary', textAlign: 'left', marginBottom: '20px'}}>Name of Scholarship Offer</Box>
                         </Box>
+                        {/* Foundation Selector */}
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: '100%' }}>
+                            <InputLabel id="foundation_selector" >Foundation</InputLabel>
+                            <Select
+                                labelId="foundation_selector"
+                                id="foundation_selector_select"
+                                label="Foundation"
+                                value={foundation}
+                                onChange={handleFoundationChange}
+                            >
+                                <MenuItem value={10}>Ten</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem>
+                            </Select>
+                        </FormControl>
                         <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold'}}>Description</Typography>
                         {/*Description*/}
                         <Box
@@ -187,7 +342,7 @@ export default function AddEditScholarship(){
                                     variant="text"
                                     color="secondary"
                                     sx={{ marginRight: '10px' }}
-                                    onClick={() => handleRemoveField(field.id)}
+                                    onClick={() => handleDescriptionRemoveField(field.id)}
                                 >
                                     <RemoveCircleOutlineIcon color="error" />
                                 </Button>
@@ -197,7 +352,7 @@ export default function AddEditScholarship(){
                                     variant="standard"
                                     fullWidth
                                     value={descriptionInputValues[field.id] || ''} // Bind value to the state
-                                    onChange={(e) => handleInputChange(field.id, e.target.value)} // Update state on change
+                                    onChange={(e) => handleDescriptionInputChange(field.id, e.target.value)} // Update state on change
                                     sx={{
                                     '& .MuiInputBase-root': {
                                         fontSize: '14px',
@@ -212,7 +367,7 @@ export default function AddEditScholarship(){
                                     variant="text"
                                     color="primary"
                                     sx={{ marginLeft: '10px' }}
-                                    onClick={() => handleAddField(field.id)}
+                                    onClick={() => handleDescriptionAddField(field.id)}
                                 >
                                     <AddCircleOutlineIcon color="success"/>
                                 </Button>
@@ -234,7 +389,7 @@ export default function AddEditScholarship(){
                                 ...scrollbarDesign,
                             }}
                             >
-                            {descriptionInputFields.map((field) => (
+                            {eligibilityInputFields.map((field) => (
                                 <Box
                                 key={field.id}
                                 display="flex"
@@ -246,7 +401,7 @@ export default function AddEditScholarship(){
                                     variant="text"
                                     color="secondary"
                                     sx={{ marginRight: '10px' }}
-                                    onClick={() => handleRemoveField(field.id)}
+                                    onClick={() => handleEligibilityRemoveField(field.id)}
                                 >
                                     <RemoveCircleOutlineIcon color="error" />
                                 </Button>
@@ -255,8 +410,8 @@ export default function AddEditScholarship(){
                                 <TextField
                                     variant="standard"
                                     fullWidth
-                                    value={descriptionInputValues[field.id] || ''} // Bind value to the state
-                                    onChange={(e) => handleInputChange(field.id, e.target.value)} // Update state on change
+                                    value={eligibilityInputValues[field.id] || ''} // Bind value to the state
+                                    onChange={(e) => handleEligibilityInputChange(field.id, e.target.value)} // Update state on change
                                     sx={{
                                     '& .MuiInputBase-root': {
                                         fontSize: '14px',
@@ -271,7 +426,7 @@ export default function AddEditScholarship(){
                                     variant="text"
                                     color="primary"
                                     sx={{ marginLeft: '10px' }}
-                                    onClick={() => handleAddField(field.id)}
+                                    onClick={() => handleEligibilityAddField(field.id)}
                                 >
                                     <AddCircleOutlineIcon color="success"/>
                                 </Button>
@@ -281,51 +436,139 @@ export default function AddEditScholarship(){
                         
                     </Box>
                     <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', width: '500px'}}>
+                        {/*Requirements*/}
                         <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold', paddingBottom: '10px'}}>Requirements</Typography>
-                        <TextField
-                            variant="outlined"
-                            multiline
-                            rows={5} // Defines the number of visible rows in the TextArea
-                            // value={description}
-                            // onChange={descriptionHandleChange}
-                            fullWidth
+                        <Box
+                            boxSizing="border-box"
+                            width="100%"
+                            border="1px solid black"
+                            height="130px"
+                            margin="0 0 20px 0"
+                            borderRadius="10px"
+                            overflow="auto"
+                            padding="20px"
                             sx={{
-                            '& .MuiInputBase-root': {
-                                padding: '10px', // You can adjust the padding as needed
-                                borderRadius: '16px',
-                                marginBottom: '20px',
-                            }
-                            }}
-                        />
+                                ...scrollbarDesign,}}
+                        >
+                            {requirementInputFields.map((field) => (    
+                                <Box
+                                key={field.id}
+                                display="flex"
+                                alignItems="center"
+                                marginBottom="10px"
+                                >
+                                {/* Button to remove the input field */}
+                                <Button
+                                    variant="text"
+                                    color="secondary"
+                                    sx={{ marginRight: '10px' }}
+                                    onClick={() => handleRequirementRemoveField(field.id)}
+                                >
+                                    <RemoveCircleOutlineIcon color="error" />
+                                </Button>
+
+                                {/* Input field */}
+                                <TextField
+                                    variant="standard"
+                                    fullWidth
+                                    value={requirementInputValues[field.id] || ''} // Bind value to the state
+                                    onChange={(e) => handleRequirementInputChange(field.id, e.target.value)} // Update state on change
+                                    sx={{
+                                    '& .MuiInputBase-root': {
+                                        fontSize: '14px',
+                                        padding: '2px 10px', // Adjust the padding
+                                        borderRadius: '16px',
+                                    },
+                                    }}
+                                />
+
+                                {/* Button to add a new input field below */}
+                                <Button
+                                    variant="text"
+                                    color="primary"
+                                    sx={{ marginLeft: '10px' }}
+                                    onClick={() => handleRequirementAddField(field.id)}
+                                >
+                                    <AddCircleOutlineIcon color="success"/>
+                                </Button>
+                                </Box>
+                            ))}
+                        </Box>
+                        {/*Benefits*/}
                         <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold', paddingBottom: '5px'}}>Benefits</Typography>
-                        <TextField
-                            variant="outlined"
-                            multiline
-                            rows={5} // Defines the number of visible rows in the TextArea
-                            // value={description}
-                            // onChange={descriptionHandleChange}
-                            fullWidth
+                        <Box
+                            boxSizing="border-box"
+                            width="100%"
+                            border="1px solid black"
+                            height="130px"
+                            margin="0 0 20px 0"
+                            borderRadius="10px"
+                            overflow="auto"
+                            padding="20px"
                             sx={{
-                            '& .MuiInputBase-root': {
-                                padding: '10px', // You can adjust the padding as needed
-                                borderRadius: '16px',
-                                marginBottom: '20px'
-                            }
-                            }}
-                        />
-                        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px'}}>
+                                ...scrollbarDesign,}}
+                        >
+                            {benefitsInputFields.map((field) => (    
+                                <Box
+                                key={field.id}
+                                display="flex"
+                                alignItems="center"
+                                marginBottom="10px"
+                                >
+                                {/* Button to remove the input field */}
+                                <Button
+                                    variant="text"
+                                    color="secondary"
+                                    sx={{ marginRight: '10px' }}
+                                    onClick={() => handleBenefitRemoveField(field.id)}
+                                >
+                                    <RemoveCircleOutlineIcon color="error" />
+                                </Button>
+
+                                {/* Input field */}
+                                <TextField
+                                    variant="standard"
+                                    fullWidth
+                                    value={benefitsInputValues[field.id] || ''} // Bind value to the state
+                                    onChange={(e) => handleBenefitInputChange(field.id, e.target.value)} // Update state on change
+                                    sx={{
+                                    '& .MuiInputBase-root': {
+                                        fontSize: '14px',
+                                        padding: '2px 10px', // Adjust the padding
+                                        borderRadius: '16px',
+                                    },
+                                    }}
+                                />
+
+                                {/* Button to add a new input field below */}
+                                <Button
+                                    variant="text"
+                                    color="primary"
+                                    sx={{ marginLeft: '10px' }}
+                                    onClick={() => handleBenefitAddField(field.id)}
+                                >
+                                    <AddCircleOutlineIcon color="success"/>
+                                </Button>
+                                </Box>
+                            ))}
+                        </Box>
+                        <Box sx={{
+                                display: 'flex', 
+                                justifyContent: 'space-between', 
+                                alignItems: 'center', 
+                                marginBottom: '7px'
+                            }}>
                             <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold', paddingRight: '18px'}}>Deadline</Typography>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DemoContainer components={['DatePicker', 'DatePicker']}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                <DemoContainer  components={['DatePicker', 'DatePicker']}>
                                     <DatePicker
-                                    value={value}
-                                    onChange={(newValue) => setValue(newValue)}
+                                    
+                                    value={deadline}
+                                    onChange={(newValue) => setDeadline(newValue)}
                                     sx={{width: '200px',
                                         fontSize: '0.8rem', // Adjust the font size inside the input
                                         '.MuiInputBase-input': {
-                                            // padding: '4px 8px'
-                                            height: '3px',
-                                            overflow: 'hidden'
+                                            height: '10px'
                                         }
                                     }}
                                     />
