@@ -5,6 +5,12 @@
   text-align: center;
 }
 
+body{
+  
+  align-items: start !important; 
+  justify-items: start !important; 
+}
+
 .banner {
   background-color: rgb(191, 155, 48);
   width: 100vw;

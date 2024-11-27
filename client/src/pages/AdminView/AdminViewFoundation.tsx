@@ -1,3 +1,4 @@
+import { Outlet } from "react-router-dom";
 import AdminTemplate from "./AdminTemplate";
 
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -117,7 +118,8 @@ function FoundList(){
 export default function AdminViewAnnouncement(){
     return(
         <AdminTemplate active="foundations">
-            <FoundList/>
+            {/* <h1>Foundation</h1> */}
+            <Outlet />
         </AdminTemplate>
     )
 }

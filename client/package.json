@@ -12,11 +12,18 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^6.1.2",
-    "@mui/material": "^6.1.2",
+    "@mui/icons-material": "^6.1.7",
+    "@mui/material": "^6.1.7",
     "@mui/styled-engine-sc": "^6.1.2",
+    "@mui/x-date-pickers": "^7.22.2",
+    "axios": "^1.7.7",
+    "quill": "^2.0.2",
+    "quill-image-resize-module": "^3.0.0",
+    "quill-image-resize-module-react": "^3.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-quill": "^2.0.0",
+    "scholarship": "file:",
     "styled-components": "^6.1.13"
   },
   "devDependencies": {

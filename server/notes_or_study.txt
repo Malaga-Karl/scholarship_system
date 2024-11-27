@@ -1,0 +1,8 @@
+client_side
+    -   axios(input/output)
+    -   mui-forms
+    -   usestates and useeffects
+
+server_side
+    -   jwt tokens (in the login)
+    -   bycrypt (in the login)

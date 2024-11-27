@@ -9,48 +9,27 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-//Image Imports
-import newsPlmScholar from '../../assets/announcements/plmscholar.png'
-import newsDostScholar from '../../assets/announcements/dost.png'
-import newsLamudiScholar from '../../assets/announcements/lamudi.png'
-import newsMegaworldScholar from '../../assets/announcements/megaworld.png'
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export type NewsProps = {
-    id?: number,
+    id: number,
     date: string,
     image: string,
     title: string,
     content?: string
+    desc?: string[]
+    content2?: string
+    content3?: string
+    content4?: string
 }
-
-const announcements: NewsProps[] = [
-    {
-        id: 1,
-        title: "DOST S&T Undergraduate Scholarship Program 2024",
-        date: "September 21, 2024",
-        image: newsDostScholar,
-    },
-    {
-        id: 2,
-        title: "Lamudi Philippines Undergraduate Scholarship Program",
-        date: "August 05, 2024",
-        image: newsLamudiScholar,
-    },
-    {
-        id: 3,
-        title: "Megaworld College Scholarship Program 2024",
-        date: "October 1, 2024",
-        image: newsMegaworldScholar,
-    }
-]
 
 export const boldStyle = {
     fontWeight:"bold",
     lineHeight:"normal",
 }
 
-export function BigNews({date, image, title, content, id}: NewsProps){
+export function BigNews({id, date, image, title, content}: NewsProps){
     return(
         <Card sx={{
             maxWidth:450,
@@ -77,7 +56,7 @@ export function BigNews({date, image, title, content, id}: NewsProps){
     )
 }
 
-function SmallNews({date, image, title}: NewsProps){
+function SmallNews({id, date, image, title}: NewsProps){
     return(
         <Card sx={{
             maxWidth:500,
@@ -97,7 +76,20 @@ function SmallNews({date, image, title}: NewsProps){
                 <CardContent sx={{
                     padding:"5px",
                 }}>
-                    <Typography variant='h6' textAlign="left" sx={{fontWeight:"700", lineHeight:"normal"}}>{title}</Typography>
+                    <Typography variant='h6' textAlign="left" 
+                        sx={{
+                            fontWeight: "700",
+                            lineHeight: "1em",   // Adjust to ensure 1 line height = 1em
+                            minHeight: "2em",
+                            maxHeight: "2em",    // Limits the height to 2 lines
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            WebkitLineClamp: 2,  // Ensures text wraps to only 2 lines
+
+                        }}
+                    >{title}</Typography>
                     {/* <Typography variant='body2'>{content}</Typography> */}
                 </CardContent>
                 <CardActions sx={{
@@ -105,14 +97,49 @@ function SmallNews({date, image, title}: NewsProps){
                     justifyContent:"space-between",
                 }}>
                     <Typography variant='body2'>{date}</Typography>
-                    <Button variant='contained' sx={{backgroundColor:"rgb(191, 155, 48)"}}>Read More</Button>
+                    <Button variant='contained' sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={()=>window.location.href = '/announcements/' + id}>Read More</Button>
                 </CardActions>
             </div>
         </Card>
     )
 }
 
+type announcement = {
+    announcement_id:number,
+    title:string,
+    description:string,
+    cover_path:string,
+    status:string,
+    createdAt:Date
+}
+
 export default function Announcements(){
+
+    const [firstAnnouncement, setFirstAnnouncement] = useState<announcement | null>(null);
+    const [announcements, setOtherAnnouncements] = useState<announcement[]>([]);
+
+    useEffect(() => {
+        async function fetchLatestAnnouncements() {
+            try {
+                const response = await axios.get('http://localhost:3001/announcements/latest4');
+                const getAnnouncements = response.data.map((announcement:announcement) => ({
+                    announcement_id: announcement.announcement_id,
+                    title: announcement.title,
+                    cover_path: `http://localhost:3001/uploads${announcement.cover_path}`,
+                    description: announcement.description,
+                    status: announcement.status,
+                    createdAt: announcement.createdAt,
+                }));
+                // Separate the first and the rest
+                setFirstAnnouncement(getAnnouncements[0] || null);
+                setOtherAnnouncements(getAnnouncements.slice(1));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        fetchLatestAnnouncements();
+    }, []);
 
     const annStyle = {
         backgroundColor:"rgb(183, 28, 28)",
@@ -128,11 +155,19 @@ export default function Announcements(){
                 justifyContent:"center",
             }}>
                 <BigNews
-                    id={1}
-                    date='September 30, 2021' 
-                    image={newsPlmScholar} 
-                    title='PLM Scholar Application Now Open' 
-                    content='The PLM Scholarship System is now open for applications for the 2022-2023 academic year. Apply now and get the chance to receive financial aid and educational support.'
+                    id={firstAnnouncement?.announcement_id ?? 0}
+                    date={
+                        firstAnnouncement?.createdAt ? new Date(firstAnnouncement.createdAt)
+                        .toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        }) : ''
+                    }
+
+                    image={firstAnnouncement?.cover_path ?? ''}
+                    title={firstAnnouncement?.title ?? ''}
+                    content={firstAnnouncement?.description}
                 />
                 <Divider orientation="vertical" variant="middle" flexItem sx={{
                     backgroundColor:"rgb(191, 155, 48)",
@@ -144,8 +179,22 @@ export default function Announcements(){
                     flexDirection:"column",
                     justifyContent:"space-around",
                 }}>
-                    {announcements.map((news, index) => <SmallNews key={index} {...news}/>)}
-                    <Button variant='text' sx={{color:"rgb(255, 255, 255)"}}>See more<ArrowForwardIcon></ArrowForwardIcon></Button>
+                    {announcements.map((news, index) => <SmallNews 
+                        id={news.announcement_id ?? 0} 
+                        date={
+                            news?.createdAt ? new Date(news.createdAt)
+                            .toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            }) : ''
+                        }
+    
+                        image={news?.cover_path ?? ''}
+                        title={news?.title ?? ''}
+                        content={news?.description}
+                    />)}
+                    <Button variant='text' sx={{color:"rgb(255, 255, 255)"}} onClick={()=>window.location.href = '/announcements'}>See more<ArrowForwardIcon></ArrowForwardIcon></Button>
                 </Box>
             </Box>
         </div>
