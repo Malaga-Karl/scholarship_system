@@ -25,6 +25,8 @@ import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCale
 import logoPLM from '../../assets/footerLogos/plm_iconlogo.png';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useMsal } from '@azure/msal-react';
 
 
 
@@ -61,57 +63,48 @@ type StudentViewTemplateProps = {
   active: 'dashboard' | 'scholarship' | 'announcements' | 'contact';
   children: React.ReactNode;
 };
-const storedData = localStorage.getItem('userInfo') ?? '';
-let userID:{ user_id:string, email:string } = {user_id:'', email:''};
-if (storedData) {
-  userID = JSON.parse(storedData);
-  console.log(userID);
-}
-const formatNumber = (num:number) => {
-  const numStr = num.toString(); // Convert to string if it's not already
-  const year = numStr.slice(0, 4); // First 4 digits
-  const rest = numStr.slice(4);    // Remaining digits
-  return `${year}-${rest}`;
-};
+// const storedData = localStorage.getItem('userInfo') ?? '';
+// let userID:{ user_id:string, email:string } = {user_id:'', email:''};
+// if (storedData) {
+//   userID = JSON.parse(storedData);
+//   console.log(userID);
+// }
+// const formatNumber = (num:number) => {
+//   const numStr = num.toString(); // Convert to string if it's not already
+//   const year = numStr.slice(0, 4); // First 4 digits
+//   const rest = numStr.slice(4);    // Remaining digits
+//   return `${year}-${rest}`;
+// };
 
 
 
 export default function  StudentViewTemplate({active, children}:StudentViewTemplateProps) {
-  const [userInfo, setUserInfo] = useState<{ user_id: number, first_name: string, last_name: string, phone_number: string, gender: string, profile_picture_url: string, course:string, department:string} | null>(null);
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const navigate = useNavigate();
+  const { instance } = useMsal();
 
   useEffect(() => {
-    async function fetchUserInfo() {
-        try {
-            const tempUID: string = userID.user_id;
-            const response = await axios.get('http://localhost:3001/user/getUserInfo', {
-                params: { user_id: tempUID }
-            });
-
-            // Assuming response.data is a single user object
-            const user = response.data;
-            const info = {
-                user_id: user.user_id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                phone_number: user.phone_number,
-                gender: user.gender,
-                profile_picture_url: 'http://localhost:3001/uploads'+user.profile_picture_url,
-                course: user.course, 
-                department: user.department,
-            };
-
-            setUserInfo(info);
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                const serverError = error.response.data?.message || 'An error occurred during login. Please try again.';
-                console.log(serverError);
-            }
-            console.log("error T_T");
-        }
-    }
-
-    fetchUserInfo();
+    console.log("useEffect triggered");
+    const call = () => {
+      const storedUser = localStorage.getItem('userInfo');
+      if (storedUser) {
+        console.log(storedUser);
+        setUserInfo(JSON.parse(storedUser));
+      }
+    };
+    call();
   }, []);
+
+  //logout logic
+  const handleLogout = async (): Promise<void> => {
+    try {
+      await instance.logoutPopup(); // Logs out and clears session
+      localStorage.removeItem('userInfo'); // Clear user info from localStorage
+      navigate('/signin'); // Navigate back to the login page or home
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
 
 
   return (
@@ -144,27 +137,29 @@ export default function  StudentViewTemplate({active, children}:StudentViewTempl
         anchor="left"
       >
         <CustomDrawerNav/>
+        {/* Thhe student information! */}
         <Avatar sx={{
             width: 100,
             height: 100,
             margin:"0 auto",
             marginBottom: "30px"
-        }} src={userInfo?.profile_picture_url}/>
+        }} 
+          src={userInfo?.profilePictureUrl} 
+          alt={`${userInfo?.displayName}'s Profile`} 
+        />
         {/* needs to add a course and department */}
-        <Typography variant='body1' mb={2}>Welcome,</Typography>
+        <Typography variant='body1' mb={2}>Welcome,<br/></Typography>
         <Typography variant='h5' sx={{fontWeight:'bold'}}>
-          {
-            userInfo?.last_name + ', ' + userInfo?.first_name
-          }
+          {userInfo?.displayName}
         </Typography>
         <Typography variant='body1'>
-          {formatNumber(userInfo?.user_id ?? 0)}
+          {userInfo?.mail}
         </Typography>
         <Typography variant='body1'>
-          {
-            userInfo?.course
-          }
+          {userInfo?.mobilePhone}
         </Typography>
+
+
         <Button variant='contained' endIcon={<CreateOutlinedIcon/>} sx={{backgroundColor:"rgb(191, 155, 48)", width:"70%", margin:"30px auto"}}>Update profile</Button>
         <Divider sx={{backgroundColor:"rgba(255,255,255,0.6)", width:"85%", margin:"0 auto"}}/>
    
@@ -180,11 +175,7 @@ export default function  StudentViewTemplate({active, children}:StudentViewTempl
         <Divider sx={{backgroundColor: 'white'}}/>
         {/*Needs to have a logout logic, will do later/////////////////////////////////////////////////////////////////////////////////*/}
         <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}} 
-        onClick={() => {
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('userInfo');
-          window.location.href="../signin"
-        }}>Log Out</Button>
+        onClick={handleLogout}>Log Out</Button>
       </Drawer>
       <Box sx={{width:`calc(100vw - ${drawerWidth}px)`, flexGrow:"2"}}>
         {children}

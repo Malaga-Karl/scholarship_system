@@ -20,6 +20,8 @@ import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewSchol
 import AddEditScholarship from './pages/AdminView/AdminAddEditScholarship';
 import AddEditAnnouncment from './pages/AdminView/AdminAddEditAnnouncement';
 import QuillTest from './pages/AdminView/quillTtest';
+import DebugPage from './pages/Debug/DebugPage';
+import Test from './pages/StudentView/TestEmails';
 
 function App() {
 
@@ -28,6 +30,7 @@ function App() {
       <BrowserRouter>
         <Routes>            
           <Route path='/' element={<HomePage/>}/>
+          <Route path='debug' element={<DebugPage/>}/>
           <Route path='home' index element={<HomePage/>}/>
           <Route path='announcements' element={<AnnouncementsPage/>}>
             <Route path=':id' element={<AnnouncementsPage/>}/>
@@ -46,6 +49,7 @@ function App() {
             {/* <Route path='dashboard' element={<StudentViewDashboard/>}/> */}
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>
             <Route path='contact' element={<StudentViewContact/>}/>
+            {/*<Route path='contact' element={<Test/>}/>*/}
             <Route path='contact/new' element={<NewMail/>}/>
             
           </Route>
