@@ -14,18 +14,18 @@ import imgEmptyMail from "../../assets/emptymail.png";
 import Delete from "@mui/icons-material/DeleteOutlineOutlined";
 
 type EmailInfo = {
-name: string;
-email: string;
+    name: string;
+    email: string;
 };
 
 type Mail = {
-id: string;
-sender: EmailInfo;
-receiver: EmailInfo;
-sentTime: string;
-subject: string;
-cc?: string[];
-body: string;
+    id: string;
+    sender: EmailInfo;
+    receiver: EmailInfo;
+    sentTime: string;
+    subject: string;
+    cc?: string[];
+    body: string;
 };
 
 export default function StudentViewContact() {
@@ -36,6 +36,7 @@ const [accessToken, setAccessToken] = useState<string | null>(null);
 const { instance } = useMsal(); // Get MSAL instance
 const isAuthenticated = useIsAuthenticated(); // Check if the user is authenticated
 
+//this can be placed in 1 file tho T_T, but I don't want to fuck this shit up
 const fetchAccessToken = async (): Promise<string> => {
     if (accessToken) return accessToken; // Use cached token if available
 
@@ -72,7 +73,7 @@ const fetchEmails = async (): Promise<void> => {
     try {
     setLoading(true); // Set loading to true when starting to fetch
     const token = await fetchAccessToken();
-    const emailResponse = await axios.get("https://graph.microsoft.com/v1.0/me/messages?$top=100", {
+    const emailResponse = await axios.get("https://graph.microsoft.com/v1.0/me/messages?$top=10", {
         headers: {
         Authorization: `Bearer ${token}`,
         },
@@ -155,34 +156,39 @@ function HasMail({ id, setMailIndex, emails, accessToken }: HasMailProp) {
     return (
     <Box sx={{ display: "flex", height: "100%", width: "100%" }}>
         {/* Left Side (Inbox) */}
-        <Box 
-        sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "25%", // Fix width for Inbox to 25% of the container
-            maxWidth: "300px", // Limit maximum width
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-            maxHeight: "75vh",
-            overflowY: "auto",
-        }}
-        >
-        <Typography variant="h6" sx={{ fontWeight: "bold", padding: 2 }}>
-            Inbox ({emails.length})
-        </Typography>
-        <Box>
-            {emails.map((email) => (
-            <MailListItem
-                key={email.id}
-                receiver={email.receiver}
-                body={email.body}
-                id={email.id}
-                sender={email.sender}
-                subject={email.subject}
-                sentTime={email.sentTime}
-                onClick={() => setMailIndex(email.id)}
-            />
-            ))}
-        </Box>
+        <Box
+            display={"flex"}
+            flexDirection={"column"}
+        >   
+            <Typography variant="h6" sx={{ fontWeight: "bold", padding: 2, borderBottom:"1px solid black" }}>
+                Inbox ({emails.length})
+            </Typography>
+            <Box 
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%", // Fix width for Inbox to 25% of the container
+                    maxWidth: "300px", // Limit maximum width
+                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                    maxHeight: "75vh",
+                    overflowY: "auto",
+                }}
+                >
+                <Box>
+                    {emails.map((email) => (
+                    <MailListItem
+                        key={email.id}
+                        receiver={email.receiver}
+                        body={email.body}
+                        id={email.id}
+                        sender={email.sender}
+                        subject={email.subject}
+                        sentTime={email.sentTime}
+                        onClick={() => setMailIndex(email.id)}
+                    />
+                    ))}
+                </Box>
+            </Box>
         </Box>
     
         {/* Right Side (Specific Email) */}
