@@ -67,8 +67,6 @@ export default function AnnouncementTemplate({title, date, image, content, desc,
             <Box dangerouslySetInnerHTML={{ __html: announcement.content?.content || ""}}>
 
             </Box>
-
-
             <Box mt={10} pb={5} sx={{display:"flex", justifyContent:"space-around"}}>
                 <Button variant="contained" color="error" onClick={() => window.location.href = '/announcements'}>Back to Announcements</Button>
                 <Button variant="contained" onClick={() => { window.location.href = '/announcements/' + (Number(id) + 1); }}> Next </Button>

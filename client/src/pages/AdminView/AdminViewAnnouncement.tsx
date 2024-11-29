@@ -40,6 +40,26 @@ const FoundationArray : FoundationListType[] = [
         content:"The DOST-SEI Undergraduate Scholarship is a prestigious program supporting Filipino students aiming for higher education in science and technology.",
         date:"September 21,2024",
     },
+    {
+      title:"Announcement 1",
+      content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      date:"September 21,2024",
+    },
+    {
+      title:"Announcement 2",
+      content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      date:"September 21,2024",
+    },
+    {
+      title:"Announcement 3",
+      content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      date:"September 21,2024",
+    },
+    {
+      title:"Announcement 4",
+      content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      date:"September 21,2024",
+    },
 ]
 
 function FoundationList({title, date, content}:FoundationListType){

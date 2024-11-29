@@ -31,7 +31,7 @@ const drawerWidth = 300;
 const navTabs = [
     {page:"Partnered Foundations", path:"foundations", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
     {page:"Scholarships", path:"scholarships", active:<CampaignIcon/>, inactive:<CampaignOutlinedIcon/>},
-    {page:"Announcments", path:"announcements", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
+    {page:"Announcements", path:"announcements", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
     {page:"Applicants", path:"applicants", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
 ];
 

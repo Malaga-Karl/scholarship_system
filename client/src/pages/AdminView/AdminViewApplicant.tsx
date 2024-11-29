@@ -14,6 +14,7 @@ import Paper from '@mui/material/Paper';
 
 
 
+
 type FoundationListType = {
     name:string,
     program:string,

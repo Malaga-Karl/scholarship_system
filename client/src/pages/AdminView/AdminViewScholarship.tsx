@@ -42,6 +42,30 @@ const FoundationArray : FoundationListType[] = [
         deadline:"March 31,2024",
         slots:"3/20 Slots"
     },
+    {
+      name:"Foundation 1 Scholarship Offer",
+      desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      deadline:"September 11, 2001",
+      slots:"20/20 Slots"
+  },
+  {
+    name:"Foundation 2 Scholarship Offer",
+    desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    deadline:"September 11, 2001",
+    slots:"20/20 Slots"
+  },
+  {
+    name:"Foundation 3 Scholarship Offer",
+    desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    deadline:"September 11, 2001",
+    slots:"20/20 Slots"
+  },
+  {
+    name:"Foundation 4 Scholarship Offer",
+    desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    deadline:"September 11, 2001",
+    slots:"20/20 Slots"
+  },
 ]
 
 function FoundationList({name, deadline, desc, slots}:FoundationListType){
