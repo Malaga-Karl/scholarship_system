@@ -72,36 +72,50 @@ export default function NewMail() {
     
     //this can be placed in 1 file tho T_T, but I don't want to fuck this shit up
     const fetchAccessToken = async (): Promise<string> => {
-        if (accessToken) return accessToken; // Use cached token if available
-    
-        if (!isAuthenticated) {
-        throw new Error("User is not authenticated");
-        }
-    
-        try {
-        let activeAccount = instance.getActiveAccount();
-        if (!activeAccount) {
-            const accounts = instance.getAllAccounts();
-            if (accounts.length === 0) {
-            throw new Error("No accounts found. Please log in again.");
-            }
-            activeAccount = accounts[0];
-            instance.setActiveAccount(activeAccount);
-        }
-    
-        const tokenResponse = await instance.acquireTokenSilent({
-            scopes: ["Mail.Read"],
-            account: activeAccount,
-        });
-    
-        const newAccessToken = tokenResponse.accessToken;
-        setAccessToken(newAccessToken);
-        return newAccessToken;
-        } catch (err: any) {
-            console.error("Error acquiring access token:", err);
-            throw new Error("Error acquiring access token: " + (err.message || "Unknown error"));
-        }
-    };
+      if (accessToken) return accessToken; // Use cached token if available
+  
+      if (!isAuthenticated) {
+          throw new Error("User is not authenticated");
+      }
+  
+      try {
+          let activeAccount = instance.getActiveAccount();
+          if (!activeAccount) {
+              const accounts = instance.getAllAccounts();
+              if (accounts.length === 0) {
+                  throw new Error("No accounts found. Please log in again.");
+              }
+              activeAccount = accounts[0];
+              instance.setActiveAccount(activeAccount);
+          }
+  
+          // Attempt silent token acquisition
+          const tokenResponse = await instance.acquireTokenSilent({
+              scopes: ["Mail.Send"],
+              account: activeAccount,
+          });
+  
+          const newAccessToken = tokenResponse.accessToken;
+          setAccessToken(newAccessToken);
+          return newAccessToken;
+      } catch (err: any) {
+          console.warn("Silent token acquisition failed. Attempting interactive login...", err);
+  
+          // Trigger interactive consent prompt
+          try {
+              const tokenResponse = await instance.acquireTokenPopup({
+                  scopes: ["Mail.Send"], // Ensure Mail.Send is included
+              });
+              const newAccessToken = tokenResponse.accessToken;
+              setAccessToken(newAccessToken);
+              return newAccessToken;
+          } catch (popupErr) {
+              console.error("Interactive token acquisition failed:", popupErr);
+              throw new Error(`Error acquiring access token: ${popupErr.message || "Unknown error"}`);
+          }
+      }
+  };
+  
 
     // Handle send (integrate with Graph API)
     const handleSend = async () => {
@@ -142,17 +156,17 @@ export default function NewMail() {
         
             if (response.ok) {
                 console.log("Email sent successfully!");
+                alert("Email Sent Successfully!");
+                setLoading(false);
             } else {
                 const errorData = await response.json();
-                setErrors('Error in sending Email:' + errorData)
-                console.error("Error sending email:", errorData);
+                setErrors(`Error in sending Email: ${errorData.message || "Unknown error"}`);
+                console.error("Error sending email :", errorData);
             }
             setCc('');
             setTo('');
             setEditorContent('');
             setSubject('');
-            alert("Email Set Successfully!");
-            setLoading(false);
         } catch (error) {
             setErrors('Error in sending Email:' + error)
             console.error("Error during API call:", error);
@@ -239,12 +253,26 @@ export default function NewMail() {
             sx={{ marginTop: 2, width: "100%" }}
           />
           <Box sx={{ marginTop: 2 }}>
-            <ReactQuill
-              theme="snow"
+          <ReactQuill
               value={editorContent}
-              onChange={setEditorContent}
-              formats={quillFormats}
-              style={{ height: `${minRows * 1.5}em` , marginBottom:'60px'}}
+              onChange={setEditorContent} // Update the editor content in state
+              modules={{
+                toolbar: [
+                  [{ header: "1" }, { header: "2" }, { font: [] }],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["bold", "italic", "underline"],
+                  ["link", "image"], // Include image button
+                  [{ align: [] }],
+                  [{ size: ["small", "medium", "large", "huge"] }],
+                  ["clean"], // Clear content
+                ],
+                imageResize: {
+                  // Optionally, set maxWidth or minWidth for resizing images
+                  modules: ["Resize", "DisplaySize"],
+                },
+              }}
+              formats={{...quillFormats}}
+              style={{ height: "300px", marginBottom: "70px" }} // Set the editor's height
             />
           </Box>
           <Box mt={1} sx={{ display: "flex", justifyContent: "space-between" }}>
