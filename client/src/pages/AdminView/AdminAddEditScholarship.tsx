@@ -243,7 +243,7 @@ export default function AddEditScholarship(){
     
         try {
             // Send the data to the backend using Axios
-            const response = await axios.post("http://localhost:3001/foundations/add_scholarship", formData, {
+            const response = await axios.post("/foundations/add_scholarship", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data", // Ensure proper encoding for form data
                 },
@@ -293,7 +293,7 @@ export default function AddEditScholarship(){
             try {
                 setLoading(true);
                 const response = await axios.get<Foundation[]>(
-                    'http://localhost:3001/foundations/no_scholarship'
+                    '/foundations/no_scholarship'
                 );
                 setNoFScholarship(response.data);
             } catch (err: any) {

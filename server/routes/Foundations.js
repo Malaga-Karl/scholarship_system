@@ -77,6 +77,18 @@ router.get("/no_scholarship", async (req, res) =>{
 
 });
 
+
+router.get("/getAllScholarships", async (req, res) =>{
+  try {
+    const foundations = await Scholarships.findAll();
+
+    res.status(200).json(foundations);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch foundations without scholarships' });
+  }
+});
+
 // Handle POST request for adding a scholarship
 router.post('/add_scholarship', upload.none(), async (req, res) => {
   try {

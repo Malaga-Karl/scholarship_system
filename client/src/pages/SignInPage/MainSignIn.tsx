@@ -7,7 +7,7 @@ import { msalConfig, loginRequest } from '../../authConfig';
 import { PublicClientApplication } from '@azure/msal-browser';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 import SignInBackground from '../../assets/signInImage.png';
 
 // Initialize MSAL instance
@@ -80,6 +80,17 @@ export default function MainSignIn(): JSX.Element {
       // Store user info in state and localStorage
       setUserInfo(userWithPhoto);
       localStorage.setItem('userInfo', JSON.stringify(userWithPhoto));
+
+      try{
+        const current_email = user.mail;
+        const first_name = user.givenName;
+        const last_name = user.surname;
+        await axios.post('/user/add', { email: current_email, first_name: first_name, last_name: last_name });
+      }
+      catch(err:any){
+        alert(err);
+        setError('Error in adding user to the database: ' + (err.message || 'Unknown error'));
+      }
     } catch (err: any) {
       setError('Error fetching user profile: ' + (err.message || 'Unknown error'));
     }

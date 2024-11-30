@@ -1,4 +1,3 @@
-import AdminTemplate from "../../template/AdminViewTemplate";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -11,70 +10,38 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Box, InputAdornment, Pagination, TextField, Typography } from "@mui/material";
 import { Search } from "@mui/icons-material";
+import axios from '../../axiosConfig'
+import { useEffect, useState } from 'react';
 
 
-
-type FoundationListType = {
-    title:string,
-    content:string,
-    date:string;
-    
-
+type AnnouncementType = {
+  announcement_id:number,
+  title:string,
+  description:string,
+  createdAt:string;
 }
 
-const FoundationArray : FoundationListType[] = [
-    {
-        title:"The PLM Scholars Foundation Inc. is now accepting applications",
-        content:"Attention aspiring PLM Students! If you're passionate about your education and eager to make a difference, here’s your chance to unlock endless possibilities.",
-        date:"September 23,2024"
 
-    },
-    {
-        title:"Resource Generation Office Announcement",
-        content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        date:"September 22,2024",
-    },
-    {
-        title:"DOST S&T Undergraduate Scholarship Program 2024",
-        content:"The DOST-SEI Undergraduate Scholarship is a prestigious program supporting Filipino students aiming for higher education in science and technology.",
-        date:"September 21,2024",
-    },
-    {
-      title:"Announcement 1",
-      content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date:"September 21,2024",
-    },
-    {
-      title:"Announcement 2",
-      content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date:"September 21,2024",
-    },
-    {
-      title:"Announcement 3",
-      content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date:"September 21,2024",
-    },
-    {
-      title:"Announcement 4",
-      content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date:"September 21,2024",
-    },
-]
-
-function FoundationList({title, date, content}:FoundationListType){
+function FoundationList({announcement_id, title, createdAt, description}:AnnouncementType){
     return(
         
             <TableRow
-              key={title}
+              key={announcement_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
             >
               
               <TableCell align="center">{title} </TableCell>
-              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "315px"}}>{content}</TableCell>
-              <TableCell align="center">{date}</TableCell>
+              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "315px"}}>{description}</TableCell>
+              <TableCell align="center">{
+                new Intl.DateTimeFormat("en-US",{
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric', 
+                }).format(new Date(createdAt))
+              }</TableCell>
               <TableCell align="center">
               <Stack direction="row" spacing={1}>
                 <Button color= "secondary"sx={{boxShadow:2,padding: "5px",minHeight:"10px",minWidth:"10px",color:"black"}}><VisibilityOutlinedIcon/></Button>
@@ -93,6 +60,28 @@ function FoundList(){
       "Published Date",
       "Actions"
     ]
+
+    const [announcements, setAnnouncements] = useState<AnnouncementType[]>([])
+    try{
+      useEffect(()=>{
+        const fetchScholarships = async () =>{
+          const response = await axios.get('/announcements/all');
+          const data = response.data.map((annoucement:AnnouncementType)=>({
+              announcement_id: annoucement.announcement_id,
+              title: annoucement.title,
+              description: annoucement.description,
+              createdAt: annoucement.createdAt,
+
+          }));
+          console.log(data);
+          setAnnouncements(data);
+        }
+        fetchScholarships();
+      }, []);
+    }catch(error:any){
+      console.log("Error in fetching Announcements:> " + error);
+    }
+
  return (
     <>
         <TableContainer component={Paper}>
@@ -103,7 +92,7 @@ function FoundList(){
           </TableRow>
         </TableHead>
         <TableBody>
-        {FoundationArray.map((dots) => <FoundationList {...dots}/>)}
+        {announcements.map((announcement) => <FoundationList {...announcement}/>)}
         </TableBody>
         </Table>
         </TableContainer>

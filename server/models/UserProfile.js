@@ -5,6 +5,14 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             allowNull: false,
         },
+        first_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        last_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         scholarship_status: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -17,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
 
     // Define associations
     UserProfile.associate = (models) => {
-        UserProfile.hasMany(models.ScholarshipStatus, {
+        UserProfile.belongsTo(models.ScholarshipStatus, {
             foreignKey: 'scholarship_status', // Matches column in UserProfile
             as: 'ScholarshipStatus',
             onDelete: 'SET NULL',

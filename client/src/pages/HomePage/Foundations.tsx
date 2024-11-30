@@ -7,7 +7,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 // Style Imports
 import { boldStyle } from './Announcements';
 import { Box } from '@mui/material';
-import axios from 'axios';
+import axios, { axiosBase } from '../../axiosConfig';
 
 export type FoundationProps = {
     id: number;
@@ -110,10 +110,10 @@ export default function Foundations() {
     useEffect(() => {
         async function fetchAllFoundations() {
             try {
-                const response = await axios.get('http://localhost:3001/foundations/getall');
+                const response = await axios.get('/foundations/getall');
                 const getFoundations = response.data.map((foundation: { name: string; logo_path: string }) => ({
                     name: foundation.name,
-                    image: `http://localhost:3001/uploads${foundation.logo_path}`,
+                    image: `${axiosBase}/uploads${foundation.logo_path}`,
                 }));
                 setFoundations(getFoundations);
             } catch (error) {

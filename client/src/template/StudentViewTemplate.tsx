@@ -13,7 +13,6 @@ import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import SideNavbar, { StudentActiveType } from '../components/StudentNavbar';
 
 import logoPLM from '../assets/footerLogos/plm_iconlogo.png';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
@@ -60,13 +59,12 @@ function CustomDrawerNav(){
 
 
 export default function  StudentViewTemplate() {
-  const [userInfo, setUserInfo] = useState<any>(null);
   const [active, setActive] = useState<StudentActiveType>('dashboard')
   const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState<any>(null);
   const { instance } = useMsal();
 
   useEffect(() => {
-    console.log("useEffect triggered");
     const call = () => {
       const storedUser = localStorage.getItem('userInfo');
       if (storedUser) {

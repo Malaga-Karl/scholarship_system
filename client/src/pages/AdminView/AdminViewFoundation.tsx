@@ -1,18 +1,9 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import AdminTemplate from "../../template/AdminViewTemplate";
-
+import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import charity from '../../assets/partners/charityFirst.png';
-import lcck from '../../assets/partners/lcck.png';
-import green from '../../assets/partners/green.png';
-import cibak from '../../assets/partners/cibak.png';
-import cfbc from '../../assets/partners/cfbc.png';
-import dost from '../../assets/partners/dost.png';
-import sm from '../../assets/partners/sm.png';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -22,64 +13,29 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, InputAdornment, Pagination, TextField, Typography } from "@mui/material";
 import { Search } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import axios, { axiosBase } from "../../axiosConfig";
 
 
 
 type FoundationListType = {
+    foundation_id:number,
     name:string,
-    picture:string,
-    desc:string
+    logo_path:string,
+    description:string
 }
 
-const FoundationArray : FoundationListType[] = [
-    {
-        name:"Charity First Foundation Inc.",
-        picture:charity,
-        desc:"In 2001, a group of Chinese-Filipino businessmen and women decided to pool their resources together to extend help to those affected by natural calamities. "
-    },
-    {
-        name:"Luis Co Chi Kiat Foundation Inc.",
-        picture:lcck,
-        desc:"Recognizing the overwhelming problems plaguing the country, the group committed to being part of the solution."
-    },
-    {
-        name:"Buddhist Compassion Relief Tzu Chi Foundation, Philippines",
-        picture:green,
-        desc:"In 2001, a group of Chinese-Filipino businessmen and women decided to pool their resources together to extend help to those affected by natural calamities. "
-    },
-    {
-        name:"Foundation 1",
-        picture:cfbc,
-        desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    },
-    {
-        name:"Foundation 2",
-        picture:cibak,
-        desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    },
-    {
-        name:"Foundation 3",
-        picture:dost,
-        desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    }, 
-    {
-        name:"Foundation 4",
-        picture:sm,
-        desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    },
-]
+function FoundationList({foundation_id, name, logo_path, description}:FoundationListType){
 
-function FoundationList({name, picture, desc}:FoundationListType){
     return(
-        
             <TableRow
-              key={name}
+              key={foundation_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
             >
               
-              <TableCell align="center"><img src={picture} alt="Item"/> </TableCell>
+              <TableCell align="center"><img src={logo_path} alt="Item"/> </TableCell>
               <TableCell align="center">{name}</TableCell>
-              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "415px"}}>{desc}</TableCell>
+              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "415px"}}>{description}</TableCell>
               <TableCell align="center">
               <Stack direction="row" spacing={1}>
                 <Button color= "secondary"sx={{boxShadow:2,padding: "5px",minHeight:"10px",minWidth:"10px",color:"black"}}><VisibilityOutlinedIcon/></Button>
@@ -91,13 +47,35 @@ function FoundationList({name, picture, desc}:FoundationListType){
     )
 }
 
-function FoundList(){
+function FoundList (){
     const cells : string[] = [
         "Foundation Logo",
         "Foundation Name",
         "Description",
         "Actions"
     ]
+
+    const [foundations, setFoundations] = useState<FoundationListType[]>([]);
+
+    try{
+        useEffect(()=>{
+            const fetchFoundations = async () =>{
+                const response = await axios.get('/foundations/getall');
+                const data = response.data.map((foundation:FoundationListType)=>({
+                    foundation_id: foundation.foundation_id,
+                    name: foundation.name,
+                    logo_path: `${axiosBase}/uploads${foundation.logo_path}`,
+                    description: foundation.description,
+
+                }));
+                setFoundations(data);
+            }
+            fetchFoundations();
+        }, []);
+    }catch(error:any){
+        console.log("Error in fetching foundations:> " + error);
+    }
+
  return (
     <>
         <TableContainer component={Paper}>
@@ -108,7 +86,7 @@ function FoundList(){
           </TableRow>
         </TableHead>
         <TableBody>
-        {FoundationArray.map((dots) => <FoundationList {...dots}/>)}
+        {foundations.map((foundation) => <FoundationList {...foundation}/>)}
         </TableBody>
         </Table>
         </TableContainer>

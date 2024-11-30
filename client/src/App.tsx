@@ -51,10 +51,9 @@ function App() {
 
             {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
             {/* <Route path='/studentview' element={<Navigate to={'dashboard'}/>}/> */}
-            <Route path='dashboard' element={<StudentViewScholarship/>}>
-              <Route path='apply/:id' element={<StudentViewScholarship/>}/>
-              <Route path='apply/:id/forms' element={<Forms/>}/>
-            </Route>
+            <Route path='dashboard' element={<StudentViewScholarship/>} />
+            <Route path='dashboard/apply/:id' element={<StudentViewScholarship/>}/>
+            <Route path='dashboard/apply/:id/forms' element={<Forms/>}/>
             {/* <Route path='dashboard' element={<StudentViewDashboard/>}/> */}
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>
             <Route path='contact' element={<StudentViewContact/>}/>

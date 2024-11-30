@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import SpecificScholarshipTemplate from "./SpecificScholarship";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import { axiosBase } from "../../axiosConfig";
 
 
 type Scholarship = {
@@ -64,7 +65,7 @@ export default function StudentViewScholarship(){
         const fetchFoundationsWithScholarships = async () => {
         try {
             // Fetch data from the API
-            const response = await axios.get('http://localhost:3001/foundations/getallFS');
+            const response = await axios.get('/foundations/getallFS');
             
             //console.log(response);
             // Map and store the data in state
@@ -72,7 +73,7 @@ export default function StudentViewScholarship(){
                 foundation_id: foundation.foundation_id,
                 name: foundation.name,
                 description: foundation.description,
-                logo_path: `http://localhost:3001/uploads/${foundation.logo_path}`,
+                logo_path: `${axiosBase}/uploads/${foundation.logo_path}`,
                 status: foundation.status,
                 scholarships: foundation.scholarships.map((scholarship: Scholarshipdb) => ({
                     id: scholarship.scholarship_id,

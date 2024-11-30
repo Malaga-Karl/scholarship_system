@@ -53,7 +53,7 @@ export default function AddEditFoundation(){
         //api submit
         try {
             // Send the data to the backend
-            const response = await axios.post("http://localhost:3001/foundations/add", formData, {
+            const response = await axios.post("/foundations/add", formData, {
               headers: {
                 "Content-Type": "multipart/form-data", // Ensure proper encoding for form data
               },

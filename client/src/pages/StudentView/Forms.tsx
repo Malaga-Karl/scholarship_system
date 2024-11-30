@@ -468,24 +468,24 @@ function ThirdForm({ data, handleChange, handleSiblingChange, addSibling, remove
                         variant="standard"
                         sx={{ flex: 1 }}
                         label="House/ Block/ Lot No."
-                        name="houseNo"
-                        value={parentAddress.houseNo}
+                        name="houseNop"
+                        value={parentAddress.houseNop}
                         onChange={(e) => handleChange(e)}
                     />
                     <TextField
                         variant="standard"
                         sx={{ flex: 1 }}
                         label="Street"
-                        name="street"
-                        value={parentAddress.street}
+                        name="streetp"
+                        value={parentAddress.streetp}
                         onChange={(e) => handleChange(e)}
                     />
                     <TextField
                         variant="standard"
                         sx={{ flex: 1 }}
                         label="Subdivision/ Village"
-                        name="subdivision"
-                        value={parentAddress.subdivision}
+                        name="subdivisionp"
+                        value={parentAddress.subdivisionp}
                         onChange={(e) => handleChange(e)}
                     />
                 </Box>
@@ -494,24 +494,24 @@ function ThirdForm({ data, handleChange, handleSiblingChange, addSibling, remove
                         variant="standard"
                         sx={{ flex: 1 }}
                         label="Barangay"
-                        name="barangay"
-                        value={parentAddress.barangay}
+                        name="barangayp"
+                        value={parentAddress.barangayp}
                         onChange={(e) => handleChange(e)}
                     />
                     <TextField
                         variant="standard"
                         sx={{ flex: 1 }}
                         label="City"
-                        name="city"
-                        value={parentAddress.city}
+                        name="cityp"
+                        value={parentAddress.cityp}
                         onChange={(e) => handleChange(e)}
                     />
                     <TextField
                         variant="standard"
                         sx={{ flex: 1 }}
                         label="Province"
-                        name="province"
-                        value={parentAddress.province}
+                        name="provincep"
+                        value={parentAddress.provincep}
                         onChange={(e) => handleChange(e)}
                     />
                 </Box>
@@ -520,16 +520,16 @@ function ThirdForm({ data, handleChange, handleSiblingChange, addSibling, remove
                         variant="standard"
                         sx={{ flex: 1 }}
                         label="Mobile Number"
-                        name="mobile"
-                        value={parentAddress.mobile}
+                        name="mobilep"
+                        value={parentAddress.mobilep}
                         onChange={(e) => handleChange(e)}
                     />
                     <TextField
                         variant="standard"
                         sx={{ flex: 1 }}
                         label="Landline"
-                        name="landline"
-                        value={parentAddress.landline}
+                        name="landlinep"
+                        value={parentAddress.landlinep}
                         onChange={(e) => handleChange(e)}
                     />
                 </Box>
@@ -569,7 +569,7 @@ export default function Form(){
         age: "",
         birthdate: "",
         religion: "",
-        mobile: "",
+        mobileNumber: "",
         landline: "",
         email: "",
 
@@ -622,7 +622,7 @@ export default function Form(){
         const { name, value } = event.target;
     
         // Check if the field belongs to parentAddress
-        if (["houseNo", "street", "subdivision", "barangay", "city", "province", "mobile", "landline"].includes(name)) {
+        if (["houseNop", "streetp", "subdivisionp", "barangayp", "cityp", "provincep", "mobilep", "landlinep"].includes(name)) {
             setFormData((prevData) => ({
                 ...prevData,
                 parentAddress: {

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   ScholarshipStatus.associate = (models) => {
-      ScholarshipStatus.belongsTo(models.UserProfile, {
+      ScholarshipStatus.hasMany(models.UserProfile, {
           foreignKey: 'scholarship_status', // Matches column in UserProfile
           as: 'userProfiles',
           onDelete: 'SET NULL',

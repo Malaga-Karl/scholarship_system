@@ -11,7 +11,7 @@ import FormGroup from '@mui/material/FormGroup';
 import { FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel, OutlinedInput, CircularProgress } from '@mui/material';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 
 export default function MainSignIn() {
     const [showPassword, setShowPassword] = useState(false);
@@ -51,7 +51,7 @@ export default function MainSignIn() {
         if (validateInputs()) {
             setLoading(true);
             try {
-                const response = await axios.post('http://localhost:3001/user/login', { email, password });
+                const response = await axios.post('/user/login', { email, password });
                 
                 //needs to store the user informations (response.data.user{})
 

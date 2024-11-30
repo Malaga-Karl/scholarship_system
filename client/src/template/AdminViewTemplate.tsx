@@ -14,9 +14,10 @@ import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 
 
 import logoPLM from '../assets/footerLogos/plm_iconlogo.png';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AdminNavbar from '../components/AdminNavbar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useMsal } from '@azure/msal-react';
 
 const drawerWidth = 300;
 
@@ -40,7 +41,34 @@ export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'appl
 export default function AdminTemplate() {
   
   const [active, setActive] = useState<AdminActiveType>('foundations')
+  const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const { instance } = useMsal();
   
+  //user info fetching
+  useEffect(() => {
+    const call = () => {
+      const storedUser = localStorage.getItem('userInfo');
+      if (storedUser) {
+        console.log(storedUser);
+        setUserInfo(JSON.parse(storedUser));
+      }
+    };
+    call();
+  }, []);
+
+  
+  //logout logic
+  const handleLogout = async (): Promise<void> => {
+    try {
+      await instance.logoutPopup(); // Logs out and clears session
+      localStorage.removeItem('userInfo'); // Clear user info from localStorage
+      navigate('/signin'); // Navigate back to the login page or home
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
+
   return (
     <Box sx={{ display: 'flex'}}>
     {/* <Box> */}
@@ -76,19 +104,29 @@ export default function AdminTemplate() {
             height: 100,
             margin:"0 auto",
             marginBottom: "30px"
-        }} src={AlvinKalbo}/>
+        }} 
+        src={userInfo?.profilePictureUrl} 
+        alt={`${userInfo?.displayName}'s Profile`} />
 
-        <Typography variant='body1' mb={2}>Welcome,</Typography>
-        <Typography variant='h5' sx={{fontWeight:'bold'}}>Juan Dela Cruz</Typography>
-        <Typography variant='body1'>2021-00000</Typography>
-        <Typography variant='body1'>BS Computer Science</Typography>
+        <Typography variant='body1' mb={2}>
+          Welcome,
+          <br/></Typography>
+        <Typography variant='h5' sx={{fontWeight:'bold'}}>
+          {userInfo?.displayName}
+        </Typography>
+        <Typography variant='body1'>
+          {userInfo?.mail}
+        </Typography>
+        <Typography variant='body1'>
+          {userInfo?.mobilePhone}
+        </Typography>
         <Button variant='contained' endIcon={<CreateOutlinedIcon/>} sx={{backgroundColor:"rgb(191, 155, 48)", width:"70%", margin:"30px auto"}}>Update profile</Button>
         <Divider sx={{backgroundColor:"rgba(255,255,255,0.6)", width:"85%", margin:"0 auto"}}/>
    
         <AdminNavbar active={active} setActive={setActive}/>
 
         <Divider sx={{backgroundColor: 'white'}}/>
-        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}}>Log Out</Button>
+        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}} onClick={handleLogout}>Log Out</Button>
       </Drawer>
       <Box sx={{width:`calc(100vw - ${drawerWidth}px)`, flexGrow:"2"}}>
         <Outlet/>

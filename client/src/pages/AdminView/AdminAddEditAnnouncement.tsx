@@ -1,8 +1,7 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import ReactQuill from "react-quill";
-
-import axios from "axios";
+import axios from '../../axiosConfig';
 import ImageResize from "quill-image-resize-module-react"; // Import the image resize module
 import SendIcon from "@mui/icons-material/Send";
 
@@ -56,7 +55,7 @@ export default function AddEditAnnouncement() {
   
     try {
       // Send the data to the backend
-      const response = await axios.post("http://localhost:3001/announcements/create", formData, {
+      const response = await axios.post("/announcements/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Ensure proper encoding for form data
         },

@@ -1,4 +1,3 @@
-import AdminTemplate from "../../template/AdminViewTemplate";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -11,76 +10,40 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Box, InputAdornment, Pagination, TextField, Typography } from "@mui/material";
 import Search from "@mui/icons-material/Search";
+import { useEffect, useState } from 'react';
+import axios from '../../axiosConfig';
 
 
-
-type FoundationListType = {
-    name:string,
-    desc:string,
-    deadline:string,
-    slots:string;
+type ScholarshipType = {
+  scholarship_id: number,
+  title:string,
+  scholarship_description:string,
+  deadline:string,
+  slots:number;
 
 }
 
-const FoundationArray : FoundationListType[] = [
-    {
-        name:"Charity First Foundation Inc.",
-        desc:"In 2001, a group of Chinese-Filipino businessmen and women decided to pool their resources together to extend help to those affected by natural calamities. ",
-        deadline:"August 09,2024",
-        slots:"20/20 Slots"
-    },
-    {
-        name:"DOST Scholarship 2024-2025",
-        desc:"Recognizing the overwhelming problems plaguing the country, the group committed to being part of the solution.",
-        deadline:"May 31,2024",
-        slots:"16/20 Slots"
-    },
-    {
-        name:"SM Foundation College Scholarship 2024-2025",
-        desc:"In 2001, a group of Chinese-Filipino businessmen and women decided to pool their resources together to extend help to those affected by natural calamities. ",
-        deadline:"March 31,2024",
-        slots:"3/20 Slots"
-    },
-    {
-      name:"Foundation 1 Scholarship Offer",
-      desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      deadline:"September 11, 2001",
-      slots:"20/20 Slots"
-  },
-  {
-    name:"Foundation 2 Scholarship Offer",
-    desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    deadline:"September 11, 2001",
-    slots:"20/20 Slots"
-  },
-  {
-    name:"Foundation 3 Scholarship Offer",
-    desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    deadline:"September 11, 2001",
-    slots:"20/20 Slots"
-  },
-  {
-    name:"Foundation 4 Scholarship Offer",
-    desc:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    deadline:"September 11, 2001",
-    slots:"20/20 Slots"
-  },
-]
-
-function FoundationList({name, deadline, desc, slots}:FoundationListType){
+function FoundationList({scholarship_id, title, deadline, scholarship_description, slots}:ScholarshipType){
     return(
         
             <TableRow
-              key={name}
+              key={scholarship_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
             >
               
-              <TableCell align="center">{name} </TableCell>
-              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "415px"}}>{desc}</TableCell>
-              <TableCell align="center">{deadline}</TableCell>
+              <TableCell align="center">{title} </TableCell>
+              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "415px"}}>{scholarship_description}</TableCell>
+              <TableCell align="center">
+              {new Intl.DateTimeFormat('en-US', { 
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric', 
+              }).format(new Date(deadline))}
+              </TableCell>
+              {/* I need to have calculation for the slots */}
               <TableCell align="center">{slots}</TableCell>
               <TableCell align="center">
               <Stack direction="row" spacing={1}>
@@ -102,6 +65,29 @@ function FoundList(){
       "Actions"
     ]
 
+    const [scholarships, setScholarships] = useState<ScholarshipType[]>([]);
+
+    try{
+      useEffect(()=>{
+        const fetchScholarships = async () =>{
+          const response = await axios.get('/foundations/getAllScholarships');
+          const data = response.data.map((scholarship:ScholarshipType)=>({
+              scholarship_id: scholarship.scholarship_id,
+              title: scholarship.title,
+              scholarship_description: scholarship.scholarship_description,
+              deadline: scholarship.deadline,
+              slots: scholarship.slots,
+
+          }));
+          console.log(data);
+          setScholarships(data);
+        }
+        fetchScholarships();
+      }, []);
+    }catch(error:any){
+      console.log("Error in fetching Scholarships:> " + error);
+    }
+
   
  return (
     <>
@@ -113,7 +99,7 @@ function FoundList(){
           </TableRow>
         </TableHead>
         <TableBody>
-        {FoundationArray.map((dots) => <FoundationList {...dots}/>)}        </TableBody>
+        {scholarships.map((scholarship) => <FoundationList {...scholarship}/>)}        </TableBody>
         </Table>
         </TableContainer>
     </>

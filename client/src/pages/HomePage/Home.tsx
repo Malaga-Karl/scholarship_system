@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import ScrollingImages from './ScrollingImages';
 
 //axios
-import axios from 'axios';
+import axios, { axiosBase } from '../../axiosConfig';
 import { useEffect, useState } from 'react';
 
 // Background Image
@@ -22,8 +22,8 @@ export default function Home(){
     useEffect(() => {
         async function fetchAllFoundations() {
             try {
-                const response = await axios.get('http://localhost:3001/foundations/getall');
-                const imageUrls = response.data.map((foundation: { logo_path: string }) => "http://localhost:3001/uploads"+foundation.logo_path);
+                const response = await axios.get('/foundations/getall');
+                const imageUrls = response.data.map((foundation: { logo_path: string }) => `${axiosBase}/uploads`+foundation.logo_path);
                 //add a way to know if it is empty
                 
                 setLogos(imageUrls);
