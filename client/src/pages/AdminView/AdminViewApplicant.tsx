@@ -1,4 +1,4 @@
-import AdminTemplate from "./AdminTemplate";
+import AdminTemplate from "../../template/AdminViewTemplate";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -140,7 +140,7 @@ function FoundList(){
 
 export default function AdminViewApplicant(){
     return(
-        <AdminTemplate active="applicants">
+        <>
             <Typography sx={{
                 fontSize: '40px',
                 fontWeight: 'bold',
@@ -205,6 +205,6 @@ export default function AdminViewApplicant(){
                     marginTop: '0.5%'
                 }}
             />
-        </AdminTemplate>
+        </>
     )
 }

@@ -24,6 +24,7 @@ import DebugPage from './pages/Debug/DebugPage';
 // import Test from './pages/StudentView/TestEmails';
 import HomeTemplate from './template/HomeTemplate';
 import StudentViewTemplate from './template/StudentViewTemplate';
+import AdminViewTemplate from './template/AdminViewTemplate';
 
 function App() {
 
@@ -61,8 +62,9 @@ function App() {
             <Route path='contact/new' element={<NewMail/>}/>
             
           </Route>
-          <Route path='adminview'>
-            <Route index element={<Navigate to="foundations" replace/>} />
+
+          <Route path='/adminview' element={<AdminViewTemplate/>}>
+            {/* <Route index element={<Navigate to="foundations" replace/>} /> */}
             <Route path='foundations' element={<AdminViewFoundation/>} >
               <Route path='addedit' element={<AddEditFoundation/>} />
             </Route>
@@ -74,6 +76,7 @@ function App() {
               <Route path='quill' element={<QuillTest/>} />
             </Route>
             <Route path='applicants' element={<AdminViewApplicant/>} />
+            
           </Route>
           <Route path='*' element={<NotFoundPage />} />
         </Routes>

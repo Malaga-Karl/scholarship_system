@@ -10,7 +10,7 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
-import SideNavbar, { StudentActiveType } from '../components/SideNavbar';
+import SideNavbar, { StudentActiveType } from '../components/StudentNavbar';
 
 import logoPLM from '../assets/footerLogos/plm_iconlogo.png';
 import axios from 'axios';

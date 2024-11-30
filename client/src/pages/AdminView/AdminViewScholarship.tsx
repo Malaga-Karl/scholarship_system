@@ -1,4 +1,4 @@
-import AdminTemplate from "./AdminTemplate";
+import AdminTemplate from "../../template/AdminViewTemplate";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -122,7 +122,7 @@ function FoundList(){
 
 export default function AdminViewApplicant(){
     return(
-        <AdminTemplate active="scholarships">
+        <>
           <Box sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -189,6 +189,6 @@ export default function AdminViewApplicant(){
                 }}
             />
             {/* <Outlet /> */}
-        </AdminTemplate>
+        </>
     )
 }

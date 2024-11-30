@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import AdminTemplate from "./AdminTemplate";
+import AdminTemplate from "../../template/AdminViewTemplate";
 
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
@@ -119,7 +119,7 @@ function FoundList(){
 
 export default function AdminViewAnnouncement(){
     return(
-        <AdminTemplate active="foundations">
+        <>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -187,6 +187,6 @@ export default function AdminViewAnnouncement(){
                     }}
                 />
             </Box>
-        </AdminTemplate>
+        </>
     )
 }
