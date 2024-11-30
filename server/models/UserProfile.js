@@ -1,59 +1,28 @@
 module.exports = (sequelize, DataTypes) => {
     const UserProfile = sequelize.define("UserProfile", {
-      user_id: {
-          type: DataTypes.STRING(9), // Sets the field to a string with a max length of 9
-          primaryKey: true,
-          allowNull: false,
-          validate: {
-              len: [9, 9] // Ensures the string has exactly 9 characters
-          }
-      },
-      first_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      last_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      middle_name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      phone_number: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      gender: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      profile_picture_url: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      notification_settings: {
-        type: DataTypes.CHAR(1),
-        allowNull: true,
-      },
-      course:{
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      department:{
-        type: DataTypes.STRING,
-        allowNull: false,
-      }
+        account_email: {
+            type: DataTypes.STRING,
+            primaryKey: true,
+            allowNull: false,
+        },
+        scholarship_status: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'ScholarshipStatus', // Matches table name
+                key: 'status_id', // Matches primary key in ScholarshipStatus
+            },
+        },
     });
-  
-    // Define the association: one-to-one relationship with the Authentication model
+
+    // Define associations
     UserProfile.associate = (models) => {
-        UserProfile.belongsTo(models.UserAuthentication, {
-        foreignKey: 'user_id',
-        onDelete: 'CASCADE',
-      });
+        UserProfile.hasMany(models.ScholarshipStatus, {
+            foreignKey: 'scholarship_status', // Matches column in UserProfile
+            as: 'ScholarshipStatus',
+            onDelete: 'SET NULL',
+        });
     };
-  
+
     return UserProfile;
-  };
-  
+};

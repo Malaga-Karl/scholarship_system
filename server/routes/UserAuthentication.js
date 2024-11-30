@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-const { UserAuthentication, UserProfile } = require('../models')
+const { UserProfile } = require('../models')
 
 
 // Secret key for JWT, ideally store this in an environment variable
@@ -65,30 +65,22 @@ router.post("/login", async (req, res) => {
 
 });
 
-router.post("/add", upload.single('file'), async (req, res) => {
-    const { email, password, first_name, last_name, phone_number, gender } = req.body;
+router.post("/add", upload.none(), async (req, res) => {
+    const { email } = req.body;
     try{
-        // Hash the password with bcrypt
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const user = await UserAuthentication.create({
-            email: email,
-            password: hashedPassword
-        });
 
-        await UserProfile.create({
-            user_id: user.id,
-            first_name: first_name,
-            last_name: last_name,
-            phone_number: phone_number,
-            gender: gender,
-            profile_picture_url: "/profiles/" + req.file.filename,
-        });
+        
 
-        res.json({ message: "User created successfully", file: req.file, data: req.data });
+        // await UserProfile.create({
+        //     account_email: email,
+        //     status: 1
+
+        // });
+
+        res.json({ message: "User status created successfully", file: req.file, data: req.data });
     }catch(error){
-        console.error('Error logging in:', error);
-        res.status(500).json({ error: 'Failed to login' });
+        console.error('Error in adding status:', error);
+        res.status(500).json({ error: 'Error in adding status' });
     }
 });
 router.get("/getUserInfo", async (req, res) => {

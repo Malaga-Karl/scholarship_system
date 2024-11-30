@@ -73,7 +73,8 @@ const fetchEmails = async (): Promise<void> => {
     try {
     setLoading(true); // Set loading to true when starting to fetch
     const token = await fetchAccessToken();
-    const emailResponse = await axios.get("https://graph.microsoft.com/v1.0/me/messages?$top=10", {
+    const targetEmail = 'gcomiguel2021@plm.edu.ph';
+    const emailResponse = await axios.get(`https://graph.microsoft.com/v1.0/me/messages?$filter=from/emailAddress/address eq '${targetEmail}'`, {
         headers: {
         Authorization: `Bearer ${token}`,
         },
@@ -212,17 +213,41 @@ function HasMail({ id, setMailIndex, emails, accessToken }: HasMailProp) {
       
 }
 
-function MailListItem({ receiver, subject, sentTime, onClick }: Mail & { onClick: () => void }) {
+function MailListItem({ sender, subject, sentTime, onClick }: Mail & { onClick: () => void }) {
 return (
     <Card sx={{ marginBottom: 1 }}>
     <CardActionArea onClick={onClick}>
         <CardContent sx={{ padding: 1, display: "flex", flexDirection: "column" }}>
         <Typography variant="body1" sx={{ fontWeight: "bold", alignSelf: "start" }}>
-            {receiver.name}
+            {sender.name}
         </Typography>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="body2">{subject}</Typography>
-            <Typography variant="body2">{sentTime}</Typography>
+        <Box sx={{ 
+            display: "flex", 
+            justifyContent: "space-between",
+            flexDirection:"column"
+        }}>
+            <Typography 
+                variant="body2" 
+                textAlign={"left"}
+                style={{
+                    maxHeight: "2em", 
+                    whiteSpace: "nowrap", 
+                    overflowX: "hidden", 
+                    textOverflow: "ellipsis"
+                }}
+            >{subject}</Typography>
+            <Typography variant="body2" textAlign={"left"}>
+                {
+                    sentTime ? new Date(sentTime)
+                    .toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' ,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    }) : ''
+                }
+            </Typography>
         </Box>
         </CardContent>
     </CardActionArea>
