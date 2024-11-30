@@ -143,7 +143,7 @@ export default function AdminViewApplicant(){
             <Typography sx={{
                 fontSize: '40px',
                 fontWeight: 'bold',
-                marginTop: '4%'
+                marginTop: '5%'
             }}>LIST OF APPLICANTS</Typography>
             <Box sx={{
                 display: 'flex',
@@ -178,7 +178,7 @@ export default function AdminViewApplicant(){
                 <Button variant='contained' sx={{
                     height: '100%',
                     width: '176px',
-                    background: 'blue',
+                    background: '#2054BD',
                     color: 'white',
                     borderRadius: '5px'
                 }}>Generate Report</Button>
