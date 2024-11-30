@@ -22,6 +22,7 @@ import AddEditAnnouncment from './pages/AdminView/AdminAddEditAnnouncement';
 import QuillTest from './pages/AdminView/quillTtest';
 import DebugPage from './pages/Debug/DebugPage';
 import Test from './pages/StudentView/TestEmails';
+import HomeTemplate from './template/HomeTemplate';
 
 function App() {
 
@@ -29,16 +30,18 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>            
-          <Route path='/' element={<HomePage/>}/>
-          <Route path='debug' element={<DebugPage/>}/>
-          <Route path='home' index element={<HomePage/>}/>
-          <Route path='announcements' element={<AnnouncementsPage/>}>
-            <Route path=':id' element={<AnnouncementsPage/>}/>
+          <Route path='/' element={<HomeTemplate/>}>
+            <Route path='/' element={<Navigate to={'home'}/>}/>
+            <Route path='debug' element={<DebugPage/>}/>
+            <Route path='home' index element={<HomePage/>}/>
+            <Route path='announcements' element={<AnnouncementsPage/>}>
+              <Route path=':id' element={<AnnouncementsPage/>}/>
+            </Route>
+            <Route path='partners' element={<PartnersPage/>}>
+              <Route path=':id' element={<PartnersPage/>}/>
+            </Route>  
+            <Route path='signin' element={<SignInPage/>}/>
           </Route>
-          <Route path='partners' element={<PartnersPage/>}>
-            <Route path=':id' element={<PartnersPage/>}/>
-          </Route>  
-          <Route path='signin' element={<SignInPage/>}/>
           <Route path='studentview'>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path='dashboard' element={<StudentViewScholarshipTemplate/>}>

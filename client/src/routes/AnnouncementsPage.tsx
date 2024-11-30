@@ -5,7 +5,6 @@ import Footer from "../components/Footer"
 export default function AnnouncementsPage(){
     return(
         <>
-            <Navbar active="announcements"/>
             <MainAnnouncements/>
             <Footer/>
         </>
