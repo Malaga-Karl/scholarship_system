@@ -9,32 +9,16 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
-import AlvinKalbo from '../../assets/albinkalbo.jpg';
+import AlvinKalbo from '../assets/albinkalbo.jpg';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import SchoolIcon from '@mui/icons-material/School';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 
-import CampaignIcon from '@mui/icons-material/Campaign';
-import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 
-import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
-import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
-
-import logoPLM from '../../assets/footerLogos/plm_iconlogo.png';
+import logoPLM from '../assets/footerLogos/plm_iconlogo.png';
+import { useState } from 'react';
+import AdminNavbar from '../components/AdminNavbar';
+import { Outlet } from 'react-router-dom';
 
 const drawerWidth = 300;
-
-
-const navTabs = [
-    {page:"Partnered Foundations", path:"foundations", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
-    {page:"Scholarships", path:"scholarships", active:<CampaignIcon/>, inactive:<CampaignOutlinedIcon/>},
-    {page:"Announcements", path:"announcements", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
-    {page:"Applicants", path:"applicants", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
-];
-
 
 function CustomDrawerNav(){
     return (
@@ -51,12 +35,12 @@ function CustomDrawerNav(){
     )
 }
 
-type AdminViewTemplateProps = {
-  active: 'foundations' | 'scholarships' | 'announcements' | 'applicants';
-  children: React.ReactNode;
-};
+export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'
 
-export default function AdminTemplate({active, children}:AdminViewTemplateProps) {
+export default function AdminTemplate() {
+  
+  const [active, setActive] = useState<AdminActiveType>('foundations')
+  
   return (
     <Box sx={{ display: 'flex'}}>
     {/* <Box> */}
@@ -101,20 +85,13 @@ export default function AdminTemplate({active, children}:AdminViewTemplateProps)
         <Button variant='contained' endIcon={<CreateOutlinedIcon/>} sx={{backgroundColor:"rgb(191, 155, 48)", width:"70%", margin:"30px auto"}}>Update profile</Button>
         <Divider sx={{backgroundColor:"rgba(255,255,255,0.6)", width:"85%", margin:"0 auto"}}/>
    
-        <List>
-          {navTabs.map((nav) => (
-            <ListItem key={nav.page} className={active === nav.path ? "drawer--active" : ""}>
-              <ListItemButton href={"/adminview/"+nav.path}>
-                   {nav.page}
-                  </ListItemButton>
-            </ListItem>))}
-        </List>
+        <AdminNavbar active={active} setActive={setActive}/>
 
         <Divider sx={{backgroundColor: 'white'}}/>
         <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}}>Log Out</Button>
       </Drawer>
       <Box sx={{width:`calc(100vw - ${drawerWidth}px)`, flexGrow:"2"}}>
-        {children}
+        <Outlet/>
       </Box>
     </Box>
   );

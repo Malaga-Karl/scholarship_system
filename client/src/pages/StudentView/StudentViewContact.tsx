@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import StudentViewTemplate from "./StudentViewTemplate";
+import StudentViewTemplate from "../../template/StudentViewTemplate";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -110,7 +110,7 @@ useEffect(() => {
 }, [instance, isAuthenticated]);
 
 return (
-    <StudentViewTemplate active="contact">
+    <>
     <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
         <Toolbar />
         <Box sx={{ display: "flex" }}>
@@ -127,7 +127,7 @@ return (
         )}
     </Box>
     <Outlet />
-    </StudentViewTemplate>
+    </>
 );
 }
 

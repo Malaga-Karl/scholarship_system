@@ -1,10 +1,10 @@
-import { Outlet } from "react-router-dom";
-import StudentViewTemplate from "./StudentViewTemplate";
+// import { Outlet } from "react-router-dom";
+// import StudentViewTemplate from "../../template/StudentViewTemplate";
 
-export default function StudentViewScholarshipTemplate(){
-    return(
-        <StudentViewTemplate active="dashboard">
-            <Outlet/>
-        </StudentViewTemplate>
-    )
-}
+// export default function StudentViewScholarshipTemplate(){
+//     return(
+//         <StudentViewTemplate active="dashboard">
+//             <Outlet/>
+//         </StudentViewTemplate>
+//     )
+// }
