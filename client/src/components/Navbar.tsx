@@ -28,7 +28,7 @@ export default function Navbar({active}:{active:'home'|'announcements'|'partners
                 <Toolbar variant="regular" sx={{backgroundColor:"white", justifyContent:"space-between"}}>
                     <img src={plmLogo} style={{padding:"10px", marginLeft:"5%"}}/>
                     <Box sx={{width:"40vw", display:"flex", justifyContent:"space-around", marginRight:"5%"}}>    
-                        {navTabs.map((tab, index) =><Link underline="none" href={"/"+tab.path} key={index} className={active === tab.path ? "nav--active" : ""} sx={{fontWeight:"bold"}} color={active === tab.path ? "error" : ""}>{tab.page} </Link>)}
+                        {navTabs.map((tab, index) =><Link underline="none" href={"/"+tab.path} key={index} className={active === tab.path ? "nav--active" : ""} sx={{fontWeight:"bold"}} color={active === tab.path ? "error" : "black"}>{tab.page} </Link>)}
                         {/* conditional render */}
                         {active !== 'signin' && (
                             <Button 

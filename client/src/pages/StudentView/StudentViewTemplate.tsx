@@ -27,6 +27,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
 
 
 
@@ -112,7 +114,7 @@ export default function  StudentViewTemplate({active, children}:StudentViewTempl
     {/* <Box> */}
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, backgroundColor:"white" }}
       >
         <Toolbar>
         <Box sx={{display:"flex", alignItems:"center"}}>
@@ -167,8 +169,11 @@ export default function  StudentViewTemplate({active, children}:StudentViewTempl
           {navTabs.map((nav) => (
             <ListItem key={nav.page} className={active === nav.path ? "drawer--active" : ""}>
               <ListItemButton href={"/studentview/"+nav.path}>
-                   {nav.page}
-                  </ListItemButton>
+                <ListItemIcon sx={{color:"white"}}>
+                  {active === nav.path ? nav.active : nav.inactive}
+                </ListItemIcon>
+                <ListItemText primary={nav.page}/>     
+              </ListItemButton>
             </ListItem>))} 
         </List>
 
