@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import StudentViewTemplate from "./StudentViewTemplate";
+import StudentViewTemplate from "../../template/StudentViewTemplate";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -185,7 +185,7 @@ export default function NewMail() {
 
 
   return (
-    <StudentViewTemplate active="contact">
+    <>
       {loading? (
         <Box
             height={"100vh"}
@@ -256,6 +256,6 @@ export default function NewMail() {
         </Box>
       </Paper>
       )}
-    </StudentViewTemplate>
+    </>
   );
 }

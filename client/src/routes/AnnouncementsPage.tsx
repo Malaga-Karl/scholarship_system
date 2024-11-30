@@ -1,4 +1,3 @@
-import Navbar from "../components/Navbar"
 import MainAnnouncements from "../pages/AnnouncementsPage/MainAnnouncements"
 import Footer from "../components/Footer"
 

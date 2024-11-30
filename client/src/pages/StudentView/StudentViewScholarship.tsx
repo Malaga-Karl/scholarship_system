@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import StudentViewTemplate from "./StudentViewTemplate";
+import StudentViewTemplate from "../../template/StudentViewTemplate";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Switch from "@mui/material/Switch";

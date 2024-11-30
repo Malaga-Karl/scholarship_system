@@ -10,26 +10,13 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import SchoolIcon from '@mui/icons-material/School';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import SideNavbar, { StudentActiveType } from '../components/SideNavbar';
 
-import CampaignIcon from '@mui/icons-material/Campaign';
-import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
-
-import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
-import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
-
-import logoPLM from '../../assets/footerLogos/plm_iconlogo.png';
+import logoPLM from '../assets/footerLogos/plm_iconlogo.png';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-
 
 
 //add error for when being accessed directly
@@ -37,13 +24,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 const drawerWidth = 300;
 
         {/*needs to get user credetials, will do later/////////////////////////////////////////////////////////////////////////////////*/}
-
-const navTabs = [
-    {page:"Dashboard", path:"dashboard", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
-    {page:"Announcements", path:"announcements", active:<CampaignIcon/>, inactive:<CampaignOutlinedIcon/>},
-    {page:"Contact", path:"contact", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
-];
-
 
 
 function CustomDrawerNav(){
@@ -61,10 +41,9 @@ function CustomDrawerNav(){
     )
 }
 
-type StudentViewTemplateProps = {
-  active: 'dashboard' | 'scholarship' | 'announcements' | 'contact';
-  children: React.ReactNode;
-};
+// type StudentViewTemplateProps = {
+//   active: 'dashboard' | 'scholarship' | 'announcements' | 'contact';
+// };
 // const storedData = localStorage.getItem('userInfo') ?? '';
 // let userID:{ user_id:string, email:string } = {user_id:'', email:''};
 // if (storedData) {
@@ -80,8 +59,9 @@ type StudentViewTemplateProps = {
 
 
 
-export default function  StudentViewTemplate({active, children}:StudentViewTemplateProps) {
+export default function  StudentViewTemplate() {
   const [userInfo, setUserInfo] = useState<any>(null);
+  const [active, setActive] = useState<StudentActiveType>('dashboard')
   const navigate = useNavigate();
   const { instance } = useMsal();
 
@@ -165,17 +145,7 @@ export default function  StudentViewTemplate({active, children}:StudentViewTempl
         <Button variant='contained' endIcon={<CreateOutlinedIcon/>} sx={{backgroundColor:"rgb(191, 155, 48)", width:"70%", margin:"30px auto"}}>Update profile</Button>
         <Divider sx={{backgroundColor:"rgba(255,255,255,0.6)", width:"85%", margin:"0 auto"}}/>
    
-        <List>
-          {navTabs.map((nav) => (
-            <ListItem key={nav.page} className={active === nav.path ? "drawer--active" : ""}>
-              <ListItemButton href={"/studentview/"+nav.path}>
-                <ListItemIcon sx={{color:"white"}}>
-                  {active === nav.path ? nav.active : nav.inactive}
-                </ListItemIcon>
-                <ListItemText primary={nav.page}/>     
-              </ListItemButton>
-            </ListItem>))} 
-        </List>
+        <SideNavbar active={active} setActive={setActive}/>
 
         <Divider sx={{backgroundColor: 'white'}}/>
         {/*Needs to have a logout logic, will do later/////////////////////////////////////////////////////////////////////////////////*/}
@@ -183,7 +153,7 @@ export default function  StudentViewTemplate({active, children}:StudentViewTempl
         onClick={handleLogout}>Log Out</Button>
       </Drawer>
       <Box sx={{width:`calc(100vw - ${drawerWidth}px)`, flexGrow:"2"}}>
-        {children}
+        <Outlet/>
       </Box>
     </Box>
   );

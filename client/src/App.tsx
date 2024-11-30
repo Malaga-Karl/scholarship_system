@@ -16,13 +16,14 @@ import AdminViewApplicant from './pages/AdminView/AdminViewApplicant';
 import AddEditFoundation from './pages/PartnersPage/AddEditPartneredFoundation';
 import NewMail from './pages/StudentView/NewMail';
 import Forms from './pages/StudentView/Forms';
-import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
+// import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
 import AddEditScholarship from './pages/AdminView/AdminAddEditScholarship';
 import AddEditAnnouncment from './pages/AdminView/AdminAddEditAnnouncement';
 import QuillTest from './pages/AdminView/quillTtest';
 import DebugPage from './pages/Debug/DebugPage';
-import Test from './pages/StudentView/TestEmails';
+// import Test from './pages/StudentView/TestEmails';
 import HomeTemplate from './template/HomeTemplate';
+import StudentViewTemplate from './template/StudentViewTemplate';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
       <BrowserRouter>
         <Routes>            
           <Route path='/' element={<HomeTemplate/>}>
+
             <Route path='/' element={<Navigate to={'home'}/>}/>
             <Route path='debug' element={<DebugPage/>}/>
             <Route path='home' index element={<HomePage/>}/>
@@ -41,18 +43,21 @@ function App() {
               <Route path=':id' element={<PartnersPage/>}/>
             </Route>  
             <Route path='signin' element={<SignInPage/>}/>
+
           </Route>
-          <Route path='studentview'>
-            <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path='dashboard' element={<StudentViewScholarshipTemplate/>}>
-              <Route index element={<StudentViewScholarship/>}/>
+
+          <Route path='/studentview' element={<StudentViewTemplate/>}>
+
+            {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
+            {/* <Route path='/studentview' element={<Navigate to={'dashboard'}/>}/> */}
+            <Route path='dashboard' element={<StudentViewScholarship/>}>
               <Route path='apply/:id' element={<StudentViewScholarship/>}/>
               <Route path='apply/:id/forms' element={<Forms/>}/>
             </Route>
             {/* <Route path='dashboard' element={<StudentViewDashboard/>}/> */}
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>
             <Route path='contact' element={<StudentViewContact/>}/>
-            {/*<Route path='contact' element={<Test/>}/>*/}
+            {/* <Route path='contact' element={<Test/>}/> */}
             <Route path='contact/new' element={<NewMail/>}/>
             
           </Route>
