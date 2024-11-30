@@ -95,7 +95,7 @@ function FoundationList({name, deadline, desc, slots}:FoundationListType){
 
 function FoundList(){
     const cells : string[] = [
-      "Foundation Name",
+      "Scholarship Name",
       "Description",
       "Deadline",
       "Slots",
