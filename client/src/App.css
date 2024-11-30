@@ -5,10 +5,9 @@
   text-align: center;
 }
 
-body{
-  
-  align-items: start !important; 
-  justify-items: start !important; 
+body {
+  align-items: start !important;
+  justify-items: start !important;
 }
 
 .banner {
@@ -23,19 +22,7 @@ body{
   position: relative;
   top: 30px;
 }
-.nav--active {
-  position: relative;
-}
-.nav--active::after {
-  content: "";
-  width: 100%;
-  background-color: rgb(191, 155, 48);
-  height: 5px;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
 
 .drawer--active {
-  background-color: rgb(191, 155, 48);
+  background-color: rgba(22, 58, 132, 1);
 }
