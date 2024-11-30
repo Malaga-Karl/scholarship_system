@@ -11,7 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Box, InputAdornment, Pagination, TextField, Typography } from "@mui/material";
 import { Search } from "@mui/icons-material";
 
@@ -114,6 +114,8 @@ function FoundList(){
 
 
 export default function AdminViewApplicant(){
+    const navigate = useNavigate();
+  
     return(
         <>
           <Box sx={{
@@ -164,8 +166,11 @@ export default function AdminViewApplicant(){
                     width: '192px',
                     background: '#2054BD',
                     color: 'white',
-                    borderRadius: '5px'
-                }}>Add Announcement</Button>
+                    borderRadius: '5px',
+                }}
+                  
+                onClick={()=>navigate("addedit")}
+                >Add Announcement</Button>
             </Box>
             <FoundList />
           </Box>

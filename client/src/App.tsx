@@ -65,16 +65,13 @@ function App() {
 
           <Route path='/adminview' element={<AdminViewTemplate/>}>
             {/* <Route index element={<Navigate to="foundations" replace/>} /> */}
-            <Route path='foundations' element={<AdminViewFoundation/>} >
-              <Route path='addedit' element={<AddEditFoundation/>} />
-            </Route>
-            <Route path='scholarships' element={<AdminViewScholarship/>}>
-              <Route path='addedit' element={<AddEditScholarship/>} />
-            </Route>
-            <Route path='announcements' element={<AdminViewAnnouncement/>}>
-              <Route path='addedit' element={<AddEditAnnouncment/>} />
-              <Route path='quill' element={<QuillTest/>} />
-            </Route>
+            <Route path='foundations' element={<AdminViewFoundation/>} />
+            <Route path='foundations/addedit' element={<AddEditFoundation/>} />
+            <Route path='scholarships' element={<AdminViewScholarship/>}/>
+            <Route path='scholarships/addedit' element={<AddEditScholarship/>} />
+            <Route path='announcements' element={<AdminViewAnnouncement/>}/>
+            <Route path='announcements/addedit' element={<AddEditAnnouncment/>} />
+            <Route path='announcements/quill' element={<QuillTest/>} />
             <Route path='applicants' element={<AdminViewApplicant/>} />
             
           </Route>

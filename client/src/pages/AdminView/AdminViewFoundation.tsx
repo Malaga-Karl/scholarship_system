@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import AdminTemplate from "../../template/AdminViewTemplate";
 
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -118,6 +118,8 @@ function FoundList(){
 
 
 export default function AdminViewAnnouncement(){
+    
+    const navigate = useNavigate();
     return(
         <>
             <Box sx={{
@@ -161,13 +163,16 @@ export default function AdminViewAnnouncement(){
                     }}>
 
                     </TextField>
-                    <Button variant='contained' sx={{
-                        height: '100%',
-                        width: '256px',
-                        background: '#2054BD',
-                        color: 'white',
-                        borderRadius: '5px'
-                    }}>Add Partnered Foundation</Button>
+                    <Button variant='contained' 
+                            sx={{
+                                height: '100%',
+                                width: '256px',
+                                background: '#2054BD',
+                                color: 'white',
+                                borderRadius: '5px',
+                            }}
+                            onClick={()=>navigate("addedit")}
+                    >Add Partnered Foundation</Button>
                 </Box>
 
                 <FoundList/>

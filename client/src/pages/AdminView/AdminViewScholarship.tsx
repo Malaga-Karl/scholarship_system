@@ -11,7 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Box, InputAdornment, Pagination, TextField, Typography } from "@mui/material";
 import Search from "@mui/icons-material/Search";
 
@@ -101,6 +101,8 @@ function FoundList(){
       "Slots",
       "Actions"
     ]
+
+  
  return (
     <>
         <TableContainer component={Paper}>
@@ -121,6 +123,8 @@ function FoundList(){
 
 
 export default function AdminViewApplicant(){
+    const navigate = useNavigate();
+
     return(
         <>
           <Box sx={{
@@ -170,7 +174,10 @@ export default function AdminViewApplicant(){
                     background: '#2054BD',
                     color: 'white',
                     borderRadius: '5px'
-                }}>Add Scholarship Offer</Button>
+                }}
+                  
+                onClick={()=>navigate("addedit")}
+                >Add Scholarship Offer</Button>
             </Box>
             <FoundList/>
           </Box>
