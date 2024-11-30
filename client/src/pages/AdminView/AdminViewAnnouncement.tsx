@@ -12,6 +12,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Outlet } from "react-router-dom";
+import { Box, InputAdornment, Pagination, TextField, Typography } from "@mui/material";
+import { Search } from "@mui/icons-material";
 
 
 
@@ -71,7 +73,7 @@ function FoundationList({title, date, content}:FoundationListType){
             >
               
               <TableCell align="center">{title} </TableCell>
-              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "415px"}}>{content}</TableCell>
+              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "315px"}}>{content}</TableCell>
               <TableCell align="center">{date}</TableCell>
               <TableCell align="center">
               <Stack direction="row" spacing={1}>
@@ -114,7 +116,74 @@ function FoundList(){
 export default function AdminViewApplicant(){
     return(
         <AdminTemplate active="announcements">
-              <Outlet />
+          <Box sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              paddingTop: '2%',
+              paddingX: '3%'
+          }}>
+            <Typography sx={{
+                fontSize: '40px',
+                fontWeight: 'bold',
+                marginTop: '5%'
+            }}>
+              LIST OF ANNOUNCEMENTS
+            </Typography>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignContent: 'center',
+                height: '6%',
+                marginBottom: '15px',
+                // marginX: '3%'
+            }}>
+                <TextField sx={{
+                    height: '100%', // Make TextField fill the height of the Box
+                    width: '35%',
+                    '& .MuiOutlinedInput-root': {
+                        height: '100%', // Ensure input area fills the height
+                        padding: '0', // Remove default padding if needed
+                    },
+                    '& .MuiInputBase-input': {
+                        padding: '10px', // Adjust padding for input text
+                        height: 'auto', // Allow height to adjust based on content
+                    }
+                }}
+                placeholder="Search"
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <Search/>
+                        </InputAdornment>
+                    )
+                }}>
+
+                </TextField>
+                <Button variant='contained' sx={{
+                    height: '100%',
+                    width: '192px',
+                    background: '#2054BD',
+                    color: 'white',
+                    borderRadius: '5px'
+                }}>Add Announcement</Button>
+            </Box>
+            <FoundList />
+          </Box>
+
+          <Pagination
+              count={3} // Hardcoded for now, please change upon making it dynamic
+              page={1} // Hardcoded for now, please change upon making it dynamic
+              // onChange={handleChange}
+              variant="outlined" // Optional: change style
+              shape="rounded" // Optional: change shape
+              sx={{
+                  // mt: 2,
+                  display: 'flex',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  marginTop: '0.5%'
+              }}
+          />
         </AdminTemplate>
     )
 }
