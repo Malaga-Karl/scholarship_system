@@ -24,7 +24,7 @@ export default function AnnouncementTemplate({title, date, image, content, desc,
     useEffect(() => {
         const fetchAnnouncement = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/announcements/${id}`);
+            const response = await axios.get(`/announcements/${id}`);
             setAnnouncement(response.data);
             setLoading(false);
         } catch (error) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 import { loginRequest } from '../../authConfig'; // Import your MSAL login request
 import { Box, Button, Paper, Typography, CircularProgress } from '@mui/material'; // Import CircularProgress
 

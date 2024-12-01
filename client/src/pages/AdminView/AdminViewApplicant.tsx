@@ -1,7 +1,4 @@
-import AdminTemplate from "../../template/AdminViewTemplate";
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
@@ -16,91 +13,32 @@ import { Box } from "@mui/material";
 import { TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { MailOutlineOutlined } from "@mui/icons-material";
+import axios from "../../axiosConfig"
+import { useEffect, useState } from 'react';
 
 
-
-type FoundationListType = {
-    name:string,
-    program:string,
-    year:string,
-    scholarship:string,
-    status:string;
-    
-
+type UserType = {
+    account_email:string,
+    first_name:string,
+    last_name:string,
+    scholarship_status:string,
 }
 
-const FoundationArray : FoundationListType[] = [
-    {
-        name:"Juan C. Dela Cruz",
-        program:"Bachelor of Science in Computer Science",
-        year:"4th Year",
-        scholarship:"Charity First Doundation",
-        status:"Approved"
-
-    },
-    {
-        name:"Maria A. Mendoza",
-        program:"Bachelor of Science in Nursing",
-        year:"3rd Year",
-        scholarship:"Luis Co Chi Kiat Foundation",
-        status:"Pending"
-    },
-    {
-        name:"Miguel B. Cruz",
-        program:"Bachelor of Science in Information Technology",
-        year:"2nd Year",
-        scholarship:"Charity First Doundation",
-        status:"Pending"
-    },
-    {
-        name:"Carla R. Reyes",
-        program:"Bachelor of Arts in Psychology",
-        year:"1st Year",
-        scholarship:"Luis Co Chi Kiat Foundation",
-        status:"Approved"
-    },
-    {
-        name:"Daniel C. Santos",
-        program:"Bachelor of Science in Biology",
-        year:"4th Year",
-        scholarship:"Charity First Doundation",
-        status:"Approved"
-    },
-    {
-        name:"Erica D. Lim",
-        program:"Bachelor of Science in Business",
-        year:"3rd Year",
-        scholarship:"Charity First Doundation",
-        status:"Approved"
-    },
-    {
-        name:"Francis E. Tan",
-        program:"Bachelor of Arts in Education",
-        year:"2nd Year",
-        scholarship:"Charity First Doundation",
-        status:"Pending"
-    },
-]
-
-function FoundationList({name, year, program, scholarship, status}:FoundationListType){
+function FoundationList({account_email, first_name, last_name, scholarship_status}:UserType){
     return(
         
             <TableRow
-              key={name}
+              key={account_email}
               sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
             >
               
-              <TableCell align="center">{name} </TableCell>
-              <TableCell align="center">{program}</TableCell>
-              <TableCell align="center">{year}</TableCell>
-              <TableCell align="center">{scholarship}</TableCell>
-              <TableCell align="center">{status}</TableCell>
+              <TableCell align="center">{account_email}</TableCell>
+              <TableCell align="center">{first_name + ' ' + last_name} </TableCell>
+              <TableCell align="center">{scholarship_status}</TableCell>
               <TableCell align="center">
-              <Stack direction="row" spacing={1}>
                 {/* <Button color= "secondary"sx={{boxShadow:2,padding: "5px",minHeight:"10px",minWidth:"10px",color:"black"}}><VisibilityOutlinedIcon/></Button> */}
-                <Button color= "secondary"sx={{boxShadow:2,padding: "5px",minHeight:"10px",minWidth:"10px",color:"black"}}><ModeEditOutlineOutlinedIcon/></Button>
-                <Button color= "secondary"sx={{boxShadow:2,padding: "5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><MailOutlineOutlined/></Button>
-                </Stack>
+                <Button color= "secondary"sx={{boxShadow:2,padding: "5px", marginRight:"5px",minHeight:"10px",minWidth:"10px",color:"black"}}><ModeEditOutlineOutlinedIcon/></Button>
+                <Button color= "secondary"sx={{boxShadow:2,padding: "5px", marginLeft:"5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><MailOutlineOutlined/></Button>
               </TableCell>
             </TableRow>
     )
@@ -108,13 +46,33 @@ function FoundationList({name, year, program, scholarship, status}:FoundationLis
 
 function FoundList(){
     const cells : string[] = [
-      "Applicants Name",
-      "Program",
-      "Year Level",
-      "Scholarship",
+      "Email",
+      "Name",
       "Status",
       "Actions"
     ]
+
+    const [users, setUsers] = useState<UserType[]>([])
+    try{
+      useEffect(()=>{
+        const fetchUsers = async () =>{
+          const response = await axios.get('/user/getUsers');
+          console.log(response.data);
+          const data = response.data.map(({account_email, first_name, last_name, ScholarshipStatus}:{account_email:string, first_name:string, last_name:string, ScholarshipStatus:{name:string}})=>({
+                account_email: account_email,
+                first_name: first_name,
+                last_name: last_name,
+                scholarship_status: ScholarshipStatus.name,
+          }));
+          console.log(data);
+          setUsers(data);
+        }
+        fetchUsers();
+      }, []);
+    }catch(error:any){
+      console.log("Error in fetching Announcements:> " + error);
+    }
+
  return (
     <>
         <TableContainer component={Paper}>
@@ -128,7 +86,7 @@ function FoundList(){
           </TableRow>
         </TableHead>
         <TableBody>
-        {FoundationArray.map((dots) => <FoundationList {...dots}/>)}
+        {users.map((user) => <FoundationList {...user}/>)}
         </TableBody>
         </Table>
         </TableContainer>
