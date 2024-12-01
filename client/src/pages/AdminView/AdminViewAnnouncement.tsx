@@ -1,4 +1,3 @@
-import AdminTemplate from "./AdminTemplate";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -11,47 +10,38 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { useNavigate } from "react-router-dom";
+import { Box, InputAdornment, Pagination, TextField, Typography } from "@mui/material";
+import { Search } from "@mui/icons-material";
+import axios from '../../axiosConfig'
+import { useEffect, useState } from 'react';
 
 
-
-type FoundationListType = {
-    title:string,
-    content:string,
-    date:string;
-    
-
+type AnnouncementType = {
+  announcement_id:number,
+  title:string,
+  description:string,
+  createdAt:string;
 }
 
-const FoundationArray : FoundationListType[] = [
-    {
-        title:"The PLM Scholars Foundation Inc. is now accepting applications",
-        content:"Attention aspiring PLM Students! If you're passionate about your education and eager to make a difference, here’s your chance to unlock endless possibilities.",
-        date:"September 23,2024"
 
-    },
-    {
-        title:"Resource Generation Office Announcement",
-        content:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        date:"September 22,2024",
-    },
-    {
-        title:"DOST S&T Undergraduate Scholarship Program 2024",
-        content:"The DOST-SEI Undergraduate Scholarship is a prestigious program supporting Filipino students aiming for higher education in science and technology.",
-        date:"September 21,2024",
-    },
-]
-
-function FoundationList({title, date, content}:FoundationListType){
+function FoundationList({announcement_id, title, createdAt, description}:AnnouncementType){
     return(
         
             <TableRow
-              key={title}
+              key={announcement_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
             >
               
               <TableCell align="center">{title} </TableCell>
-              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "415px"}}>{content}</TableCell>
-              <TableCell align="center">{date}</TableCell>
+              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "315px"}}>{description}</TableCell>
+              <TableCell align="center">{
+                new Intl.DateTimeFormat("en-US",{
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric', 
+                }).format(new Date(createdAt))
+              }</TableCell>
               <TableCell align="center">
               <Stack direction="row" spacing={1}>
                 <Button color= "secondary"sx={{boxShadow:2,padding: "5px",minHeight:"10px",minWidth:"10px",color:"black"}}><VisibilityOutlinedIcon/></Button>
@@ -70,6 +60,28 @@ function FoundList(){
       "Published Date",
       "Actions"
     ]
+
+    const [announcements, setAnnouncements] = useState<AnnouncementType[]>([])
+    try{
+      useEffect(()=>{
+        const fetchScholarships = async () =>{
+          const response = await axios.get('/announcements/all');
+          const data = response.data.map((annoucement:AnnouncementType)=>({
+              announcement_id: annoucement.announcement_id,
+              title: annoucement.title,
+              description: annoucement.description,
+              createdAt: annoucement.createdAt,
+
+          }));
+          console.log(data);
+          setAnnouncements(data);
+        }
+        fetchScholarships();
+      }, []);
+    }catch(error:any){
+      console.log("Error in fetching Announcements:> " + error);
+    }
+
  return (
     <>
         <TableContainer component={Paper}>
@@ -80,7 +92,7 @@ function FoundList(){
           </TableRow>
         </TableHead>
         <TableBody>
-        {FoundationArray.map((dots) => <FoundationList {...dots}/>)}
+        {announcements.map((announcement) => <FoundationList {...announcement}/>)}
         </TableBody>
         </Table>
         </TableContainer>
@@ -91,9 +103,81 @@ function FoundList(){
 
 
 export default function AdminViewApplicant(){
+    const navigate = useNavigate();
+  
     return(
-        <AdminTemplate active="announcements">
-            <FoundList/>
-        </AdminTemplate>
+        <>
+          <Box sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              paddingTop: '2%',
+              paddingX: '3%'
+          }}>
+            <Typography sx={{
+                fontSize: '40px',
+                fontWeight: 'bold',
+                marginTop: '5%'
+            }}>
+              LIST OF ANNOUNCEMENTS
+            </Typography>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignContent: 'center',
+                height: '6%',
+                marginBottom: '15px',
+                // marginX: '3%'
+            }}>
+                <TextField sx={{
+                    height: '100%', // Make TextField fill the height of the Box
+                    width: '35%',
+                    '& .MuiOutlinedInput-root': {
+                        height: '100%', // Ensure input area fills the height
+                        padding: '0', // Remove default padding if needed
+                    },
+                    '& .MuiInputBase-input': {
+                        padding: '10px', // Adjust padding for input text
+                        height: 'auto', // Allow height to adjust based on content
+                    }
+                }}
+                placeholder="Search"
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <Search/>
+                        </InputAdornment>
+                    )
+                }}>
+
+                </TextField>
+                <Button variant='contained' sx={{
+                    height: '100%',
+                    width: '192px',
+                    background: '#2054BD',
+                    color: 'white',
+                    borderRadius: '5px',
+                }}
+                  
+                onClick={()=>navigate("addedit")}
+                >Add Announcement</Button>
+            </Box>
+            <FoundList />
+          </Box>
+
+          <Pagination
+              count={3} // Hardcoded for now, please change upon making it dynamic
+              page={1} // Hardcoded for now, please change upon making it dynamic
+              // onChange={handleChange}
+              variant="outlined" // Optional: change style
+              shape="rounded" // Optional: change shape
+              sx={{
+                  // mt: 2,
+                  display: 'flex',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  marginTop: '0.5%'
+              }}
+          />
+        </>
     )
 }

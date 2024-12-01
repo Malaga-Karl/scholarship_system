@@ -10,7 +10,7 @@ import Divider from '@mui/material/Divider';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { axiosBase } from '../../axiosConfig';
 
 export type NewsProps = {
     id: number,
@@ -121,11 +121,11 @@ export default function Announcements(){
     useEffect(() => {
         async function fetchLatestAnnouncements() {
             try {
-                const response = await axios.get('http://localhost:3001/announcements/latest4');
+                const response = await axios.get('/announcements/latest4');
                 const getAnnouncements = response.data.map((announcement:announcement) => ({
                     announcement_id: announcement.announcement_id,
                     title: announcement.title,
-                    cover_path: `http://localhost:3001/uploads${announcement.cover_path}`,
+                    cover_path: `${axiosBase}/uploads${announcement.cover_path}`,
                     description: announcement.description,
                     status: announcement.status,
                     createdAt: announcement.createdAt,

@@ -1,173 +1,166 @@
-import React, { useState } from 'react';
-// Image and MUI Imports
-import SignInBackground from '../../assets/signInImage.png';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import for navigation
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
+import { useMsal } from '@azure/msal-react';
+import { msalConfig, loginRequest } from '../../authConfig';
+import { PublicClientApplication } from '@azure/msal-browser';
 import Button from '@mui/material/Button';
-import FormGroup from '@mui/material/FormGroup';
-import { FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel, OutlinedInput, CircularProgress } from '@mui/material';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Visibility from '@mui/icons-material/Visibility';
-import axios from 'axios';
+import CircularProgress from '@mui/material/CircularProgress';
+import axios from '../../axiosConfig';
+import SignInBackground from '../../assets/signInImage.png';
 
-export default function MainSignIn() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState({ email: '', password: '', server: '' });
-    const [loading, setLoading] = useState(false);
+// Initialize MSAL instance
+const msalInstance = new PublicClientApplication(msalConfig);
 
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
-    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => event.preventDefault();
+export default function MainSignIn(): JSX.Element {
+  const { instance, accounts } = useMsal();
+  const navigate = useNavigate(); // React Router navigate hook
+  const [loading, setLoading] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<any>(null); // Consider creating a specific UserInfo type
+  const [error, setError] = useState<string>('');
 
-    // Email validation regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  useEffect(() => {
+    if (accounts.length > 0) {
+      fetchUserProfile();
+    }
+  }, [accounts]);
 
-    // Validate form inputs
-    const validateInputs = () => {
-        let emailError = '';
-        let passwordError = '';
+  // Handle Microsoft login
+  const handleLogin = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      // Perform login
+      const loginResponse = await instance.loginPopup(loginRequest);
+      const accessToken = loginResponse.accessToken;
 
-        if (!email || !emailRegex.test(email)) {
-            emailError = 'Please enter a valid email address.';
-        }
-        
-        if (!password || password.length < 4) {
-            passwordError = 'Password must be at least 4 characters long.';
-        }
+      // Fetch and store user info
+      await fetchUserProfile(accessToken);
+      // Navigate to the next page
+      setError('')
+      navigate('/studentview');
+    } catch (error: any) {
+      setError('Login failed: ' + (error.message || 'Unknown error'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setErrors({ ...errors, email: emailError, password: passwordError });
-        return !emailError && !passwordError;
-    };
+ // Fetch the user profile information from Microsoft Graph API
+  const fetchUserProfile = async (accessToken?: string): Promise<void> => {
+    try {
+      if (!accessToken) {
+        // Get token if not provided
+        const tokenResponse = await instance.acquireTokenSilent(loginRequest);
+        accessToken = tokenResponse.accessToken;
+      }
 
-    // Handle form submission with Axios and error handling
-    const handleSubmit = async () => {
-        setErrors({ ...errors, server: '' });
+      // Fetch user profile
+      const graphResponse = await axios.get('https://graph.microsoft.com/v1.0/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const user = graphResponse.data;
 
-        if (validateInputs()) {
-            setLoading(true);
-            try {
-                const response = await axios.post('http://localhost:3001/user/login', { email, password });
-                
-                //needs to store the user informations (response.data.user{})
+      // Fetch user profile picture
+      const photoResponse = await axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        responseType: 'blob', // Ensure we receive the binary data
+      });
 
-                if (response.data.token) {
-                    localStorage.setItem('authToken', response.data.token); //idk what this is for yet
-                    window.location.href = "studentview";
-                }
-            } catch (error) {
-                // Check if error is an AxiosError and handle accordingly
-                if (axios.isAxiosError(error) && error.response) {
-                    const serverError = error.response.data?.message || 'An error occurred during login. Please try again.';
-                    setErrors({ ...errors, server: serverError });
-                } else {
-                    setErrors({ ...errors, server: 'An unexpected error occurred.' });
-                }
-            } finally {
-                setLoading(false);
-            }
-        }
-    };
+      // Create a URL for the profile picture
+      const profilePictureUrl = URL.createObjectURL(photoResponse.data);
 
-    return (
-        <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '80vh',
-            backgroundImage: `url(${SignInBackground})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-        }}>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                left: '23vw',
-                alignItems: 'start',
-                backgroundColor: 'rgba(255,255,255)',
-                padding: '50px',
-                width: '30vw',
-                borderRadius: '10px',
-                boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.2)'
-            }}>
-                <Typography variant='h5' sx={{
-                    marginBottom: '20px',
-                    fontWeight: 'bold',
-                }}>Sign In</Typography>
+      // Combine user info with profile picture URL
+      const userWithPhoto = { ...user, profilePictureUrl };
 
-                {/* Email Field */}
-                <TextField
-                    variant='outlined'
-                    label='Email Address'
-                    sx={{ marginBottom: '20px', width: '100%' }}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    error={!!errors.email}
-                    helperText={errors.email}
-                />
+      // Store user info in state and localStorage
+      setUserInfo(userWithPhoto);
+      localStorage.setItem('userInfo', JSON.stringify(userWithPhoto));
 
-                {/* Forgot Password Link */}
-                <Link href='#' sx={{ alignSelf: "flex-end", textDecoration: 'none' }}>Forgot Password?</Link>
+      try{
+        const current_email = user.mail;
+        const first_name = user.givenName;
+        const last_name = user.surname;
+        await axios.post('/user/add', { email: current_email, first_name: first_name, last_name: last_name });
+      }
+      catch(err:any){
+        alert(err);
+        setError('Error in adding user to the database: ' + (err.message || 'Unknown error'));
+      }
+    } catch (err: any) {
+      setError('Error fetching user profile: ' + (err.message || 'Unknown error'));
+    }
+  };
 
-                {/* Password Field */}
-                <FormControl sx={{ width: '100%' }} variant="outlined">
-                    <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                    <OutlinedInput
-                        id="outlined-adornment-password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        error={!!errors.password}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        
-                        label="Password"
-                    />
-                    {errors.password && (
-                        <Typography variant="body2" color="error" sx={{ textAlign:"left", mt: 1 }}>
-                            {errors.password}
-                        </Typography>
-                    )}
-                </FormControl>
 
-                {/* Server Error Display */}
-                {errors.server && (
-                    <Typography variant="body2" color="error" sx={{ mt: 2 }}>
-                        {errors.server}
-                    </Typography>
-                )}
-
-                {/* Keep Me Signed In Checkbox */}
-                <FormGroup>
-                    <FormControlLabel control={<Checkbox />} label='Keep me signed in' />
-                </FormGroup>
-
-                {/* Action Buttons */}
-                <Box sx={{ display: 'flex', justifyContent: 'end', width: '100%', gap: '30px' }}>
-                    <Button variant='text' sx={{ color: "black" }}>Back</Button>
-                    <Button
-                        variant='contained'
-                        sx={{ backgroundColor: "rgb(191, 155, 48)" }}
-                        onClick={handleSubmit}
-                        disabled={loading}
-                    >
-                        {loading ? <CircularProgress size={24} /> : 'Next'}
-                    </Button>
-                </Box>
-            </Box>
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '80vh',
+        backgroundImage: `url(${SignInBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+          left: '23vw',
+          alignItems: 'start',
+          backgroundColor: 'rgba(255,255,255)',
+          padding: '50px',
+          width: '30vw',
+          borderRadius: '10px',
+          boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.2)',
+        }}
+      >
+        <Box display={'flex'} flexDirection={'row'}>
+          <Typography
+            variant="h5"
+            sx={{
+              marginBottom: '20px',
+              fontWeight: 'bold',
+            }}
+          >
+            Sign In :
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              marginBottom: '20px',
+            }}
+          >
+            {' '}
+            Using your Teams account
+          </Typography>
         </Box>
-    );
+
+        {/* Microsoft Login Button */}
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: 'rgb(0, 120, 215)' }}
+          onClick={handleLogin}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Sign in with Microsoft'}
+        </Button>
+
+        {/* Error Display */}
+        {error && (
+          <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+            {error}
+          </Typography>
+        )}
+      </Box>
+    </Box>
+  );
 }

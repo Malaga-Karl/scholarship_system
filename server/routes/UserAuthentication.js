@@ -5,6 +5,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 //key management
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize'); // Import Op for Sequelize operators
 
 //file upload
 const multer = require('multer');
@@ -20,7 +21,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-const { UserAuthentication, UserProfile } = require('../models')
+const { ScholarshipStatus, UserProfile } = require('../models')
 
 
 // Secret key for JWT, ideally store this in an environment variable
@@ -37,10 +38,13 @@ router.post("/login", async (req, res) => {
 
     try {
         // Find user by email
-        const user = await UserAuthentication.findOne({ email });
+        const user = await UserAuthentication.findOne({
+            where: { email: email },
+          });
         if (!user) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
+        //return res.json({user: { email: user.email, user_id: user.user_id } });
 
         // Check if password is correct
         const isMatch = await bcrypt.compare(password, user.password_hash);
@@ -53,7 +57,7 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
         // Send token and user info as response
-        res.json({ token, user: { id: user._id, email: user.email, user_id: user.user_id } });
+        res.json({ token, user: { email: user.email, user_id: user.user_id } });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Server error. Please try again later.' });
@@ -62,40 +66,91 @@ router.post("/login", async (req, res) => {
 
 });
 
-router.post("/add", upload.single('file'), async (req, res) => {
-    const { email, password, first_name, last_name, phone_number, gender } = req.body;
-    try{
-        // Hash the password with bcrypt
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const user = await UserAuthentication.create({
-            email: email,
-            password: hashedPassword
+router.post("/add", async (req, res) => {
+    const { email, last_name, first_name } = req.body;
+
+    // Validate email
+    if (!email || !last_name || !first_name) {
+        return res.status(400).json({ error: "Email || Last_name || First_name are required" });
+    }
+
+    try {
+        // Check if the user already exists
+        const response = await UserProfile.findOne({
+            where: {
+                account_email: email,
+            },
         });
 
-        await UserProfile.create({
-            user_id: user.id,
-            first_name: first_name,
-            last_name: last_name,
-            phone_number: phone_number,
-            gender: gender,
-            profile_picture_url: "/profiles/" + req.file.filename,
+        if (!response) {
+            // Create a new user if not exists
+            await UserProfile.create({
+                account_email: email,
+                first_name: first_name,
+                last_name: last_name,
+                scholarship_status: 1,
+            });
+            res.json({ message: "User status created successfully" });
+        } else {
+            // User already exists
+            res.json({ message: "User already exists" });
+        }
+    } catch (error) {
+        console.error('Error in adding status:', {
+            message: error.message,
+            stack: error.stack,
         });
-
-        res.json({ message: "User created successfully", file: req.file, data: req.data });
-    }catch(error){
-        console.error('Error logging in:', error);
-        res.status(500).json({ error: 'Failed to login' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 router.get("/getUserInfo", async (req, res) => {
-    const { user_id } = req.body;
-    const response = await UserProfile.findOne({ user_id });
-    if (!response) {
-        return res.status(400).json({ message: `user { ${user_id} } does not have User Profile!`  });
+    const { user_id } = req.query; // Use req.query for GET request parameters
+
+    // Fetch the user profileasdasdcvcvcvvcvcvccvcvcvcvcvcvcvccvcvccxvxccvcvbvbvvvccxxzzu
+    try {
+        const response = await UserProfile.findOne({
+            where: { user_id: user_id },
+        });
+
+        // If the user profile doesn't exist
+        if (!response) {
+            return res.status(400).json({ 
+                message: `User { ${user_id} } does not have a User Profile!` 
+            });
+        }
+
+        // Return the found user profile
+        return res.json(response);
+    } catch (error) {
+        console.error(error); // Log the error for debugging
+        return res.status(500).json({ 
+            message: "An error occurred while fetching the user profile." 
+        });
     }
-    return res.json(response);
+});
+
+router.get('/getUsers', async (req, res) => {
+    try {
+        const allUserProfile = await UserProfile.findAll({
+            where: {
+                // No need for Op.between on the scholarship_status directly here
+                scholarship_status: {
+                    [Op.between]: [1, 3]  // Example: filter users with scholarship_status between 1 and 3
+                },
+            },
+            include: [{
+                model: ScholarshipStatus, // Include associated ScholarshipStatus model
+                attributes: ['name'], // Only include the 'name' field from ScholarshipStatus
+                as: 'ScholarshipStatus', // Alias for the association (ensure this matches the defined alias in the model)
+            }],
+        });
+
+        res.json(allUserProfile);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 

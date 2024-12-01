@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import StudentViewTemplate from "./StudentViewTemplate";
+import StudentViewTemplate from "../../template/StudentViewTemplate";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -13,6 +13,7 @@ import plmScholar from "../../assets/announcements/plmscholar.png"
 import dostImage from "../../assets/announcements/DOST(BIG).jpg"
 import faceIcon from "../../assets/icon.png"
 
+<<<<<<< HEAD
 
 export default function StudentViewAnnouncements() {
     // Styled component to make pagination buttons square
@@ -223,4 +224,18 @@ export default function StudentViewAnnouncements() {
       </Box>
     </StudentViewTemplate>
   );
+=======
+export default function StudentViewAnnouncments(){
+    return(
+        <>
+            <Box
+                component="main"
+                sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+            >
+            <Toolbar />
+            <Typography variant='h1'>Announcments</Typography>
+            </Box>
+        </>
+    );
+>>>>>>> 731936d22396f0cb26d1bb8c70652cfbae5d54cd
 }

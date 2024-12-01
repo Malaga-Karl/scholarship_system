@@ -1,4 +1,3 @@
-import AdminTemplate from "./AdminTemplate";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -11,50 +10,40 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Outlet } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Box, InputAdornment, Pagination, TextField, Typography } from "@mui/material";
+import Search from "@mui/icons-material/Search";
+import { useEffect, useState } from 'react';
+import axios from '../../axiosConfig';
 
 
-
-type FoundationListType = {
-    name:string,
-    desc:string,
-    deadline:string,
-    slots:string;
+type ScholarshipType = {
+  scholarship_id: number,
+  title:string,
+  scholarship_description:string,
+  deadline:string,
+  slots:number;
 
 }
 
-const FoundationArray : FoundationListType[] = [
-    {
-        name:"Charity First Foundation Inc.",
-        desc:"In 2001, a group of Chinese-Filipino businessmen and women decided to pool their resources together to extend help to those affected by natural calamities. ",
-        deadline:"August 09,2024",
-        slots:"20/20 Slots"
-    },
-    {
-        name:"DOST Scholarship 2024-2025",
-        desc:"Recognizing the overwhelming problems plaguing the country, the group committed to being part of the solution.",
-        deadline:"May 31,2024",
-        slots:"16/20 Slots"
-    },
-    {
-        name:"SM Foundation College Scholarship 2024-2025",
-        desc:"In 2001, a group of Chinese-Filipino businessmen and women decided to pool their resources together to extend help to those affected by natural calamities. ",
-        deadline:"March 31,2024",
-        slots:"3/20 Slots"
-    },
-]
-
-function FoundationList({name, deadline, desc, slots}:FoundationListType){
+function FoundationList({scholarship_id, title, deadline, scholarship_description, slots}:ScholarshipType){
     return(
         
             <TableRow
-              key={name}
+              key={scholarship_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
             >
               
-              <TableCell align="center">{name} </TableCell>
-              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "415px"}}>{desc}</TableCell>
-              <TableCell align="center">{deadline}</TableCell>
+              <TableCell align="center">{title} </TableCell>
+              <TableCell align="center" sx={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow: "hidden",maxWidth: "415px"}}>{scholarship_description}</TableCell>
+              <TableCell align="center">
+              {new Intl.DateTimeFormat('en-US', { 
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric', 
+              }).format(new Date(deadline))}
+              </TableCell>
+              {/* I need to have calculation for the slots */}
               <TableCell align="center">{slots}</TableCell>
               <TableCell align="center">
               <Stack direction="row" spacing={1}>
@@ -69,12 +58,37 @@ function FoundationList({name, deadline, desc, slots}:FoundationListType){
 
 function FoundList(){
     const cells : string[] = [
-      "Foundation Name",
+      "Scholarship Name",
       "Description",
       "Deadline",
       "Slots",
       "Actions"
     ]
+
+    const [scholarships, setScholarships] = useState<ScholarshipType[]>([]);
+
+    try{
+      useEffect(()=>{
+        const fetchScholarships = async () =>{
+          const response = await axios.get('/foundations/getAllScholarships');
+          const data = response.data.map((scholarship:ScholarshipType)=>({
+              scholarship_id: scholarship.scholarship_id,
+              title: scholarship.title,
+              scholarship_description: scholarship.scholarship_description,
+              deadline: scholarship.deadline,
+              slots: scholarship.slots,
+
+          }));
+          console.log(data);
+          setScholarships(data);
+        }
+        fetchScholarships();
+      }, []);
+    }catch(error:any){
+      console.log("Error in fetching Scholarships:> " + error);
+    }
+
+  
  return (
     <>
         <TableContainer component={Paper}>
@@ -85,7 +99,7 @@ function FoundList(){
           </TableRow>
         </TableHead>
         <TableBody>
-        {FoundationArray.map((dots) => <FoundationList {...dots}/>)}        </TableBody>
+        {scholarships.map((scholarship) => <FoundationList {...scholarship}/>)}        </TableBody>
         </Table>
         </TableContainer>
     </>
@@ -95,10 +109,79 @@ function FoundList(){
 
 
 export default function AdminViewApplicant(){
+    const navigate = useNavigate();
+
     return(
-        <AdminTemplate active="scholarships">
-            {/* <FoundList/> */}
-            <Outlet />
-        </AdminTemplate>
+        <>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            paddingTop: '2%',
+            paddingX: '3%'
+          }}>
+            <Typography sx={{
+                fontSize: '40px',
+                fontWeight: 'bold',
+                marginTop: '5%'
+            }}>LIST OF SCHOLARSHIP OFFERS</Typography>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignContent: 'center',
+                height: '6%',
+                marginBottom: '15px',
+                // marginX: '3%'
+            }}>
+                <TextField sx={{
+                    height: '100%', // Make TextField fill the height of the Box
+                    width: '35%',
+                    '& .MuiOutlinedInput-root': {
+                        height: '100%', // Ensure input area fills the height
+                        padding: '0', // Remove default padding if needed
+                    },
+                    '& .MuiInputBase-input': {
+                        padding: '10px', // Adjust padding for input text
+                        height: 'auto', // Allow height to adjust based on content
+                    }
+                }}
+                placeholder="Search"
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <Search/>
+                        </InputAdornment>
+                    )
+                }}>
+
+                </TextField>
+                <Button variant='contained' sx={{
+                    height: '100%',
+                    width: '226px',
+                    background: '#2054BD',
+                    color: 'white',
+                    borderRadius: '5px'
+                }}
+                  
+                onClick={()=>navigate("addedit")}
+                >Add Scholarship Offer</Button>
+            </Box>
+            <FoundList/>
+          </Box>
+          <Pagination
+                count={3} // Hardcoded for now, please change upon making it dynamic
+                page={1} // Hardcoded for now, please change upon making it dynamic
+                // onChange={handleChange}
+                variant="outlined" // Optional: change style
+                shape="rounded" // Optional: change shape
+                sx={{
+                    // mt: 2,
+                    display: 'flex',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    marginTop: '0.5%'
+                }}
+            />
+            {/* <Outlet /> */}
+        </>
     )
 }

@@ -18,7 +18,7 @@ import { useParams } from 'react-router-dom'
 
 import SpecificFoundation from './SpecificPartner'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import axios, { axiosBase } from '../../axiosConfig';
 
 function FoundationCard({image, name, id}: FoundationProps){
     return(
@@ -61,11 +61,11 @@ export default function MainPartners(){
     useEffect(() => {
         async function fetchAllFoundations() {
             try {
-                const response = await axios.get('http://localhost:3001/foundations/getall');
+                const response = await axios.get('/foundations/getall');
                 const getFoundations = response.data.map((foundation: { foundation_id: number; name: string; logo_path: string; description:string }) => ({
                     id: foundation.foundation_id,
                     name: foundation.name,
-                    image: `http://localhost:3001/uploads${foundation.logo_path}`,
+                    image: `${axiosBase}/uploads${foundation.logo_path}`,
                     description: foundation.description,
                 }));
                 setFoundations(getFoundations);

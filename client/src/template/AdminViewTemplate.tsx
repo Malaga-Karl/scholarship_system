@@ -9,33 +9,17 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
-import AlvinKalbo from '../../assets/albinkalbo.jpg';
+import AlvinKalbo from '../assets/albinkalbo.jpg';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import SchoolIcon from '@mui/icons-material/School';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 
-import CampaignIcon from '@mui/icons-material/Campaign';
-import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 
-import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
-import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
-
-import logoPLM from '../../assets/footerLogos/plm_iconlogo.png';
+import logoPLM from '../assets/footerLogos/plm_iconlogo.png';
+import { useEffect, useState } from 'react';
+import AdminNavbar from '../components/AdminNavbar';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useMsal } from '@azure/msal-react';
 
 const drawerWidth = 300;
-
-        {/*needs to get user credetials, will do later/////////////////////////////////////////////////////////////////////////////////*/}
-
-const navTabs = [
-    {page:"Dashboard", path:"dashboard", active:<SchoolIcon/>, inactive:<SchoolOutlinedIcon/>},
-    {page:"Announcements", path:"announcements", active:<CampaignIcon/>, inactive:<CampaignOutlinedIcon/>},
-    {page:"Contact", path:"contact", active:<PermContactCalendarIcon/>, inactive:<PermContactCalendarOutlinedIcon/>},
-];
-
-
 
 function CustomDrawerNav(){
     return (
@@ -52,12 +36,39 @@ function CustomDrawerNav(){
     )
 }
 
-type StudentViewTemplateProps = {
-  active: 'dashboard' | 'scholarship' | 'announcements' | 'contact';
-  children: React.ReactNode;
-};
+export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'
 
-export default function StudentViewTemplate({active, children}:StudentViewTemplateProps) {
+export default function AdminTemplate() {
+  
+  const [active, setActive] = useState<AdminActiveType>('foundations')
+  const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const { instance } = useMsal();
+  
+  //user info fetching
+  useEffect(() => {
+    const call = () => {
+      const storedUser = localStorage.getItem('userInfo');
+      if (storedUser) {
+        console.log(storedUser);
+        setUserInfo(JSON.parse(storedUser));
+      }
+    };
+    call();
+  }, []);
+
+  
+  //logout logic
+  const handleLogout = async (): Promise<void> => {
+    try {
+      await instance.logoutPopup(); // Logs out and clears session
+      localStorage.removeItem('userInfo'); // Clear user info from localStorage
+      navigate('/signin'); // Navigate back to the login page or home
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
+
   return (
     <Box sx={{ display: 'flex'}}>
     {/* <Box> */}
@@ -66,7 +77,7 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
         sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, backgroundColor:"white" }}
       >
         <Toolbar>
-        <Box sx={{display:"flex", alignItems:"center"}}>
+          <Box sx={{display:"flex", alignItems:"center"}}>
             <img src={logoPLM} alt="plmlogo" width={60} />
             <Typography variant='h4' ml={3} sx={{color:"black", fontWeight:"bold"}}>PLM Scholarship System</Typography>
           </Box>
@@ -93,30 +104,32 @@ export default function StudentViewTemplate({active, children}:StudentViewTempla
             height: 100,
             margin:"0 auto",
             marginBottom: "30px"
-        }} src={AlvinKalbo}/>
+        }} 
+        src={userInfo?.profilePictureUrl} 
+        alt={`${userInfo?.displayName}'s Profile`} />
 
-        <Typography variant='body1' mb={2}>Welcome,</Typography>
-        <Typography variant='h5' sx={{fontWeight:'bold'}}>Juan Dela Cruz</Typography>
-        <Typography variant='body1'>2021-00000</Typography>
-        <Typography variant='body1'>BS Computer Science</Typography>
+        <Typography variant='body1' mb={2}>
+          Welcome,
+          <br/></Typography>
+        <Typography variant='h5' sx={{fontWeight:'bold'}}>
+          {userInfo?.displayName}
+        </Typography>
+        <Typography variant='body1'>
+          {userInfo?.mail}
+        </Typography>
+        <Typography variant='body1'>
+          {userInfo?.mobilePhone}
+        </Typography>
         <Button variant='contained' endIcon={<CreateOutlinedIcon/>} sx={{backgroundColor:"rgb(191, 155, 48)", width:"70%", margin:"30px auto"}}>Update profile</Button>
         <Divider sx={{backgroundColor:"rgba(255,255,255,0.6)", width:"85%", margin:"0 auto"}}/>
    
-        <List>
-          {navTabs.map((nav) => (
-            <ListItem key={nav.page} className={active === nav.path ? "drawer--active" : ""}>
-              <ListItemButton href={"/studentview/"+nav.path}>
-                   {nav.page}
-                  </ListItemButton>
-            </ListItem>))}
-        </List>
+        <AdminNavbar active={active} setActive={setActive}/>
 
         <Divider sx={{backgroundColor: 'white'}}/>
-        {/*Needs to have a logout logic, will do later/////////////////////////////////////////////////////////////////////////////////*/}
-        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}} onClick={() => {window.location.href="../signin"}}>Log Out</Button>
+        <Button variant='contained' sx={{width:"80%", margin:"auto auto 10px auto", backgroundColor:"rgb(183,28,28)"}} onClick={handleLogout}>Log Out</Button>
       </Drawer>
       <Box sx={{width:`calc(100vw - ${drawerWidth}px)`, flexGrow:"2"}}>
-        {children}
+        <Outlet/>
       </Box>
     </Box>
   );
