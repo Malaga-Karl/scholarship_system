@@ -17,20 +17,21 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'ScholarshipStatus', // Matches table name
-                key: 'status_id', // Matches primary key in ScholarshipStatus
+                model: 'ScholarshipStatus', // Table name for FK constraint
+                key: 'status_id',
             },
         },
     });
 
-    // Define associations
+    // In UserProfile model
     UserProfile.associate = (models) => {
         UserProfile.belongsTo(models.ScholarshipStatus, {
-            foreignKey: 'scholarship_status', // Matches column in UserProfile
-            as: 'ScholarshipStatus',
-            onDelete: 'SET NULL',
+            foreignKey: 'scholarship_status',
+            as: 'status', // Ensure this matches the query alias
         });
     };
+
+    
 
     return UserProfile;
 };

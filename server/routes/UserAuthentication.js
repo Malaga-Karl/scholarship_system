@@ -100,7 +100,7 @@ router.post("/add", async (req, res) => {
             message: error.message,
             stack: error.stack,
         });
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: ' error' });
     }
 });
 
@@ -134,17 +134,17 @@ router.get('/getUsers', async (req, res) => {
     try {
         const allUserProfile = await UserProfile.findAll({
             where: {
-                // No need for Op.between on the scholarship_status directly here
                 scholarship_status: {
-                    [Op.between]: [1, 3]  // Example: filter users with scholarship_status between 1 and 3
+                    [Op.between]: [1, 3], // Filter UserProfile by scholarship_status range
                 },
             },
             include: [{
-                model: ScholarshipStatus, // Include associated ScholarshipStatus model
-                attributes: ['name'], // Only include the 'name' field from ScholarshipStatus
-                as: 'ScholarshipStatus', // Alias for the association (ensure this matches the defined alias in the model)
+                model: ScholarshipStatus, // Ensure ScholarshipStatus is the correct imported model
+                attributes: ['name'], // Fetch only the name field
+                as: 'status', // Alias for the association (must match the alias in the model)
             }],
         });
+        
 
         res.json(allUserProfile);
     } catch (error) {
