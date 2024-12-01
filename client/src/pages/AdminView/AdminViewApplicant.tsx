@@ -99,6 +99,12 @@ function FoundList(){
 export default function AdminViewApplicant(){
     return(
         <>
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            paddingTop: '2%',
+            paddingX: '3%'
+        }}>
             <Typography sx={{
                 fontSize: '40px',
                 fontWeight: 'bold',
@@ -110,7 +116,7 @@ export default function AdminViewApplicant(){
                 alignContent: 'center',
                 height: '6%',
                 marginBottom: '15px',
-                marginX: '3%'
+                // marginX: '3%'
             }}>
                 <TextField sx={{
                     height: '100%', // Make TextField fill the height of the Box
@@ -142,12 +148,8 @@ export default function AdminViewApplicant(){
                     borderRadius: '5px'
                 }}>Generate Report</Button>
             </Box>
-            <Box sx={{
-                display: 'flex',
-                marginX: '3%'
-            }}>
-                <FoundList/>
-            </Box>
+
+            <FoundList/>
 
             <Pagination
                 count={3} // Hardcoded for now, please change upon making it dynamic
@@ -163,6 +165,7 @@ export default function AdminViewApplicant(){
                     marginTop: '0.5%'
                 }}
             />
+        </Box>
         </>
     )
 }
