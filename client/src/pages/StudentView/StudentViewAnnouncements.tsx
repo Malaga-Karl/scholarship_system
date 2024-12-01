@@ -13,7 +13,6 @@ import plmScholar from "../../assets/announcements/plmscholar.png"
 import dostImage from "../../assets/announcements/DOST(BIG).jpg"
 import faceIcon from "../../assets/icon.png"
 
-<<<<<<< HEAD
 
 export default function StudentViewAnnouncements() {
     // Styled component to make pagination buttons square
@@ -25,7 +24,8 @@ export default function StudentViewAnnouncements() {
     },
   }));
   return (
-    <StudentViewTemplate active="announcements">
+    // <StudentViewTemplate active="announcements">
+    <Box>
       <Box
         component="main"
         sx={{ flexGrow: 1, bgcolor: "background.default", p: 1, gap: 1, }}
@@ -214,7 +214,7 @@ export default function StudentViewAnnouncements() {
           <SquarePagination
             count={3} // Total number of pages
             page={1} // Current page
-            onChange={(event, value) => {
+            onChange={(_event: any, value: any) => {
               console.log("Page changed to:", value);
             }}
             color="primary"
@@ -222,20 +222,7 @@ export default function StudentViewAnnouncements() {
           />
         </Box>        
       </Box>
-    </StudentViewTemplate>
+    </Box>
+    //</StudentViewTemplate>
   );
-=======
-export default function StudentViewAnnouncments(){
-    return(
-        <>
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
-            >
-            <Toolbar />
-            <Typography variant='h1'>Announcments</Typography>
-            </Box>
-        </>
-    );
->>>>>>> 731936d22396f0cb26d1bb8c70652cfbae5d54cd
 }
