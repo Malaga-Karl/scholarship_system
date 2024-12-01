@@ -37,7 +37,7 @@ export default function MainSignIn(): JSX.Element {
       // Fetch and store user info
       await fetchUserProfile(accessToken);
       // Navigate to the next page
-      setError('')
+      setError('');
       navigate('/studentview');
     } catch (error: any) {
       setError('Login failed: ' + (error.message || 'Unknown error'));
@@ -88,7 +88,6 @@ export default function MainSignIn(): JSX.Element {
         await axios.post('/user/add', { email: current_email, first_name: first_name, last_name: last_name });
       }
       catch(err:any){
-        alert(err);
         setError('Error in adding user to the database: ' + (err.message || 'Unknown error'));
       }
     } catch (err: any) {

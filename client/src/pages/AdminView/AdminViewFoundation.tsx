@@ -30,7 +30,6 @@ function FoundationList({foundation_id, name, logo_path, description}:Foundation
     return(
             <TableRow
               key={foundation_id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
             >
               
               <TableCell align="center"><img src={logo_path} alt="Item"/> </TableCell>

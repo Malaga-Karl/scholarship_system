@@ -29,7 +29,6 @@ function FoundationList({account_email, first_name, last_name, scholarship_statu
         
             <TableRow
               key={account_email}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
             >
               
               <TableCell align="center">{account_email}</TableCell>
@@ -57,12 +56,11 @@ function FoundList(){
       useEffect(()=>{
         const fetchUsers = async () =>{
           const response = await axios.get('/user/getUsers');
-          console.log(response.data);
-          const data = response.data.map(({account_email, first_name, last_name, ScholarshipStatus}:{account_email:string, first_name:string, last_name:string, ScholarshipStatus:{name:string}})=>({
+          const data = response.data.map(({account_email, first_name, last_name, status}:{account_email:string, first_name:string, last_name:string, status:{name:string}})=>({
                 account_email: account_email,
                 first_name: first_name,
                 last_name: last_name,
-                scholarship_status: ScholarshipStatus.name,
+                scholarship_status: status.name,
           }));
           console.log(data);
           setUsers(data);
@@ -81,12 +79,12 @@ function FoundList(){
             }}
             aria-label="simple table">
         <TableHead>
-          <TableRow sx={{ backgroundColor: "#BF9B30", marginX: '3%'}}>
+          <TableRow sx={{ backgroundColor: "#BF9B30"}}>
             {cells.map((cell) => <TableCell align='center' sx={{ fontWeight:900,color:"white" }}>{cell}</TableCell>)}
           </TableRow>
         </TableHead>
         <TableBody>
-        {users.map((user) => <FoundationList {...user}/>)}
+            {users.map((user) => <FoundationList {...user}/>)}
         </TableBody>
         </Table>
         </TableContainer>
