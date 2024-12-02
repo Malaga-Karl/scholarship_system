@@ -53,6 +53,30 @@ router.get("/all", async (req, res) => {
     });
     res.json(allAnnouncements);
 });
+router.get("/allPaginate", async (req, res) => {
+    const { page = 1, pageSize = 10 } = req.query; // Defaults to page 1 and 10 items per page
+    const offset = (page - 1) * pageSize;
+    const limit = parseInt(pageSize);
+
+    try {
+        const allAnnouncements = await AnnouncementHeader.findAndCountAll({
+            order: [['createdAt', 'DESC']],
+            where: {
+                status: "active",
+            },
+            limit,
+            offset,
+        });
+        res.json({
+            announcements: allAnnouncements.rows,
+            total: allAnnouncements.count,
+            page: parseInt(page),
+            pageSize: parseInt(pageSize),
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching announcements', error });
+    }
+});
 
 router.get("/get/:id", async (req, res) => {
     try {

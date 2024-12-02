@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import { useState, useEffect } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Colors from "../../colors";
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import axios from "axios";
@@ -111,16 +111,18 @@ useEffect(() => {
     }
 }, [instance, isAuthenticated]);
 
+const navigate = useNavigate();
+
 return (
     <>
         <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
             <Toolbar />
             <Box sx={{ display: "flex", gap:"30px" }}>
                 
-            <Button variant="contained" sx={{ marginBottom: 3 }} onClick={() => (window.location.href = `/adminView/applicants`)}>
+            <Button variant="contained" sx={{ marginBottom: 3 }} onClick={() => (navigate(`/adminView/applicants`))}>
                 Back
             </Button>
-            <Button variant="contained" sx={{ marginBottom: 3 }} color="success" onClick={() => (window.location.href = `/adminView/applicants/newEmail/${student_email}`)}>
+            <Button variant="contained" sx={{ marginBottom: 3 }} color="success" onClick={() => (navigate(`/adminView/applicants/newEmail/${student_email}`))}>
                 Create Mail
             </Button>
             </Box>
