@@ -19,6 +19,7 @@ import Forms from './pages/StudentView/Forms';
 // import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
 import AddEditScholarship from './pages/AdminView/AdminAddEditScholarship';
 import AddEditAnnouncment from './pages/AdminView/AdminAddEditAnnouncement';
+import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncement';
 import QuillTest from './pages/AdminView/quillTtest';
 import DebugPage from './pages/Debug/DebugPage';
 // import Test from './pages/StudentView/TestEmails';
@@ -56,6 +57,7 @@ function App() {
             <Route path='dashboard/apply/:id/forms' element={<Forms/>}/>
             {/* <Route path='dashboard' element={<StudentViewDashboard/>}/> */}
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>
+            <Route path='announcements/specific' element={<SpecificAnnouncementView/>}/>
             <Route path='contact' element={<StudentViewContact/>}/>
             {/* <Route path='contact' element={<Test/>}/> */}
             <Route path='contact/new' element={<NewMail/>}/>
