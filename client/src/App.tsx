@@ -66,10 +66,13 @@ function App() {
             {/* <Route index element={<Navigate to="foundations" replace/>} /> */}
             <Route path='foundations' element={<AdminViewFoundation/>} />
             <Route path='foundations/addedit' element={<AddEditFoundation/>} />
+            <Route path='foundations/addedit/:foundation_id' element={<AddEditFoundation/>} />
             <Route path='scholarships' element={<AdminViewScholarship/>}/>
             <Route path='scholarships/addedit' element={<AddEditScholarship/>} />
+            <Route path='scholarships/addedit/:scholarship_id' element={<AddEditScholarship/>} />
             <Route path='announcements' element={<AdminViewAnnouncement/>}/>
             <Route path='announcements/addedit' element={<AddEditAnnouncment/>} />
+            <Route path='announcements/addedit/:announcement_id' element={<AddEditAnnouncment/>} />
             <Route path='announcements/quill' element={<QuillTest/>} />
             <Route path='applicants' element={<AdminViewApplicant/>} />
             

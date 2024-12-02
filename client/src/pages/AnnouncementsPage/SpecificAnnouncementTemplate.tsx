@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ReactQuill from "react-quill";
 
 interface AnnouncementBody {
     announcement_id: number;
@@ -44,6 +45,30 @@ export default function AnnouncementTemplate({title, date, image, content, desc,
         return <p>Announcement not found.</p>;
     }
 
+    const QuillOutput = ({ content }:{content:string}) => {
+        const [editorContent, setEditorContent] = useState('');
+
+        useEffect(() => {
+            if (content) {
+                setEditorContent(content);  // Set the content to the editor
+            }
+        }, [content]);
+    
+        return (
+            <ReactQuill
+                value={editorContent}
+                readOnly={true}  // Set read-only mode
+                theme="snow"  // Use the 'snow' theme or 'bubble' theme
+                style={{
+                    width:"80%",
+                    margin:"0 auto"
+                }}
+                modules={{
+                    toolbar: false,  // Hide the toolbar in read-only mode
+                }}
+            />
+        );
+    };
     
     return(
     <Box component="section" sx={{backgroundColor:"goldenrod"}}>
@@ -64,9 +89,9 @@ export default function AnnouncementTemplate({title, date, image, content, desc,
             <br></br>
             <br></br>
             <Typography variant="h4" sx={{textAlign: "left", paddingLeft: 18, paddingRight: 20}}>{content4}</Typography>
-            <Box dangerouslySetInnerHTML={{ __html: announcement.content?.content || ""}}>
-
-            </Box>
+            {/*<Box dangerouslySetInnerHTML={{ __html: announcement.content?.content || ""}}></Box>*/}
+            <QuillOutput content={announcement.content?.content || ""} />
+            
             <Box mt={10} pb={5} sx={{display:"flex", justifyContent:"space-around"}}>
                 <Button variant="contained" color="error" onClick={() => window.location.href = '/announcements'}>Back to Announcements</Button>
                 <Button variant="contained" onClick={() => { window.location.href = '/announcements/' + (Number(id) + 1); }}> Next </Button>

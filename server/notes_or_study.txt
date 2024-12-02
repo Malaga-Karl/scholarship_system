@@ -6,3 +6,7 @@ client_side
 server_side
     -   jwt tokens (in the login)
     -   bycrypt (in the login)
+
+
+
+annoucnement route has specific shits

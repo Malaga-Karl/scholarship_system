@@ -108,10 +108,10 @@ export default function StudentViewScholarship(){
         setApplied(prevState => !prevState);
     }
 
-    const [ScholarSwitch, setScholarSwitch] = useState(true); 
-    const handleSwitchChange = () => {
-        setScholarSwitch(prevState => !prevState); // Toggle the switch state
-    };
+    // const [ScholarSwitch, setScholarSwitch] = useState(true); 
+    // const handleSwitchChange = () => {
+    //     setScholarSwitch(prevState => !prevState); // Toggle the switch state
+    // };
 
     const {id} = useParams();
     const specificScholarship = id ? foundations.find((foundation) => foundation.foundation_id === parseInt(id)) : null
@@ -158,7 +158,14 @@ export default function StudentViewScholarship(){
                 <>
                     <Box>
                         <Box>
-                            <p>scholarships available</p>
+                            <Typography
+                                marginTop={"20px"}
+                                marginBottom={"20px"}
+                                variant="h4"
+                            >
+                                Scholarships Available
+                            </Typography>
+                            {/*
                             <Switch defaultChecked
                                 checked={ScholarSwitch} // Check if the switch is on
                                 onChange={handleSwitchChange}
@@ -167,6 +174,7 @@ export default function StudentViewScholarship(){
                                 checked={hasApplied} // Check if the switch is on
                                 onChange={handleApplication}
                                 />
+                            */}
                         </Box>
                     
                     </Box>
