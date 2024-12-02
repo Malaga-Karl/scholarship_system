@@ -25,6 +25,8 @@ import DebugPage from './pages/Debug/DebugPage';
 import HomeTemplate from './template/HomeTemplate';
 import StudentViewTemplate from './template/StudentViewTemplate';
 import AdminViewTemplate from './template/AdminViewTemplate';
+import AdminNewMail from './pages/AdminView/AdminNewEmail';
+import AdminStudentEmails from './pages/AdminView/AdminStudentEmails';
 
 function App() {
 
@@ -75,6 +77,8 @@ function App() {
             <Route path='announcements/addedit/:announcement_id' element={<AddEditAnnouncment/>} />
             <Route path='announcements/quill' element={<QuillTest/>} />
             <Route path='applicants' element={<AdminViewApplicant/>} />
+            <Route path='applicants/newEmail/:student_email' element={<AdminNewMail />} />
+            <Route path='applicants/emails/:student_email' element={<AdminStudentEmails />} />
             
           </Route>
           <Route path='*' element={<NotFoundPage />} />

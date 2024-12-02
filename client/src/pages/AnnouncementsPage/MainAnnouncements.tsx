@@ -23,10 +23,11 @@ type announcement ={
 
 export default function MainAnnouncements(){
     const { id } = useParams();
-
     const [announcements, getAllAnnouncements] = useState<announcement[]>([]);
-
+    const [loading, setLoading] = useState<Boolean>(false);
+    const [error, setErrors] = useState("");
     useEffect(() => {
+        setLoading(true);
         async function fetchLatestAnnouncements() {
             try {
                 const response = await axios.get('/announcements/all');
@@ -41,15 +42,28 @@ export default function MainAnnouncements(){
                 getAllAnnouncements(getAnnouncements);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                setErrors("Error in fetching announcements");
             }
         }
 
         fetchLatestAnnouncements();
+        setLoading(false);
+        
     }, []);
 
     const specificAnnouncement = id
     ? announcements.find((announcement) => announcement.announcement_id === parseInt(id))
     : null;
+
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+    
+    if (error) {
+        return <p>Error {error}</p>;
+    }
+
 
     return(
         <Box sx={{

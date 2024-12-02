@@ -154,6 +154,74 @@ router.get('/getUsers', async (req, res) => {
 });
 
 
+//get users with pagination
+router.get('/getAllPaginate', async (req, res) => {
+    const { page = 1, limit = 5, search = '' } = req.query;
+    const offset = (page - 1) * limit;
+  
+    try {
+        const where = search
+            ? {
+                  account_email: {
+                      [Op.like]: `%${search}%`, // Adjust `Op.like` based on your database (case-insensitive in Sequelize)
+                  },
+              }
+            : {};
+  
+        const { count, rows } = await UserProfile.findAndCountAll({
+            where,
+            include: [{
+                model: ScholarshipStatus, // Ensure ScholarshipStatus is the correct imported model
+                attributes: ['status_id','name'], // Fetch only the name field
+                as: 'status', // Alias for the association (must match the alias in the model)
+            }],
+            offset: parseInt(offset),
+            limit: parseInt(limit),
+            order: [['createdAt', 'DESC']],
+        });
+  
+        res.status(200).json({
+            totalItems: count,
+            users: rows,
+            totalPages: Math.ceil(count / limit),
+            currentPage: parseInt(page),
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+  });
+//update user
+router.put('/update/:id', upload.none() ,async (req, res)=>{
+    const { id } = req.params;
+    const { status_id } = req.body;
 
+    try{
+        const [updated] = await UserProfile.update(
+            { scholarship_status: status_id },
+            { where: { account_email: id } }
+          );
+
+        if (updated) {
+            const updatedFoundation = await UserProfile.findByPk(id);
+            res.status(200).json(updatedFoundation);
+        } else {
+            res.status(404).json({ message: 'UserProfile not found' });
+        }
+    } catch (error) {
+        console.error('Error updating UserProfile:', error);
+        res.status(500).json({ error: 'Failed to update UserProfile' });
+    }
+});
+
+router.get('/getStatus', async (req, res) =>{
+    try{
+        const response = await ScholarshipStatus.findAll();
+        res.status(200).json(response);
+    }catch(error){
+        console.log("Error in fetching statuses: " + error);
+        res.status(500).json({error: 'Failed to fetch statuses'});
+    }
+
+});
 
 module.exports = router;

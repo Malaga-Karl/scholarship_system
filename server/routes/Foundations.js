@@ -64,6 +64,26 @@ router.get('/getAllPaginate', async (req, res) => {
   }
 });
 
+router.get("/getallFS", async (req, res) => {
+  try {
+    const allFoundations = await Foundations.findAll({
+      where: { status: 'active' }, // Fetch only active foundations
+      include: [
+        {
+          model: Scholarships,
+          as: 'scholarships', // Alias as defined in the association
+        },
+      ],
+    });
+
+    res.json(allFoundations); // Respond with the fetched data
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while fetching foundations and scholarships." });
+  }
+});
+
+
 
 router.post("/add", upload.single('logo'), async (req, res) => {
     

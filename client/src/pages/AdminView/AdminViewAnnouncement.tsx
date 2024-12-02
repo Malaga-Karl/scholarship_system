@@ -186,7 +186,7 @@ function FoundList(){
                   }}
                   onClick={() => navigate("addedit")}
               >
-                  Add Partnered Foundation
+                  Create Announcement
               </Button>
           </Box>
           <TableContainer component={Paper}>
