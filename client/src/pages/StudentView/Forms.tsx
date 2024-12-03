@@ -12,7 +12,8 @@ import FormControlLabel from "@mui/material/FormControlLabel"
 import Radio from "@mui/material/Radio"
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { PausePresentation } from "@mui/icons-material"
+import { useNavigate, useParams } from "react-router-dom"
+import axios from "../../axiosConfig"
 // import { useParams } from "react-router-dom"
 
 function FirstForm({ data, handleChange }: { data: any; handleChange: any }) {
@@ -555,6 +556,12 @@ function ThirdForm({ data, handleChange, handleSiblingChange, addSibling, remove
 
 
 export default function Form(){
+
+    const { edit, sid } = useParams();
+    const storedData = edit ? JSON.parse(localStorage.getItem("scholarshipFormData") || "{}") : null;
+    const navigate = useNavigate();
+
+
     const [formData, setFormData] = useState({
         // FirstForm Data
         surname: "",
@@ -616,6 +623,7 @@ export default function Form(){
                 occupation: "",
             },
         ],
+        ...storedData,
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -666,12 +674,30 @@ export default function Form(){
 
     
     
-    const onSend = () => {
+    const onSend = async (e:any) => {
         // Save formData to localStorage
         localStorage.setItem("scholarshipFormData", JSON.stringify(formData));
         
         console.log("Form Data Submitted:", formData);
-        alert("Form Submitted Successfully!");
+        if(!edit){
+            const formDataSubmit = new FormData();
+            const email = localStorage.getItem('localEmailActive') ?? '';
+            formDataSubmit.append('student_email', email);
+            formDataSubmit.append('scholarship_id', sid ?? '');
+            formDataSubmit.append('status_id', '2');
+            e.preventDefault();
+            try {
+                const response = await axios.post('/user/studentScholarship/create', formDataSubmit);
+                alert('Record created successfully!');
+                console.log(response.data);
+                navigate('/studentView/dashboard');
+            } catch (error) {
+                console.error('Error creating record:', error);
+                alert('Failed to create record. Please try again.');
+            }
+        }else{
+            navigate('/studentView/dashboard');
+        }
     };
 
     const [index, setIndex] = useState(0);
@@ -695,7 +721,7 @@ export default function Form(){
                 {formPages[index]}
                 {/* <SecondForm/> */}
                 <Box sx={{display:"flex", justifyContent:"space-between", paddingBottom:3}}>
-                    <Button variant="outlined" onClick={() => index > 0 ? setIndex(index-1) : null}>Back</Button>
+                    <Button variant="outlined" onClick={() => index > 0 ? setIndex(index-1) : navigate(-1)}>Back</Button>
                     {
                         index == formPages.length-1 ? (
                             <Button variant="contained" sx={{backgroundColor:Colors.gold}} onClick={onSend}>

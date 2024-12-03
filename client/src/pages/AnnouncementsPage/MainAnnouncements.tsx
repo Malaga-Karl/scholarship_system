@@ -77,6 +77,7 @@ export default function MainAnnouncements(){
                             id={specificAnnouncement.announcement_id}
                             title={specificAnnouncement.title}
                             content=''
+                            description={specificAnnouncement.description??''}
                             date={
                                 specificAnnouncement.createdAt ? new Date(specificAnnouncement.createdAt)
                                 .toLocaleDateString('en-US', { 

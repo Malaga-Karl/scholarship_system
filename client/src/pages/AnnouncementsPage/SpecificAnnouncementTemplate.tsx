@@ -18,7 +18,7 @@ interface AnnouncementBody {
   }
 
 
-export default function AnnouncementTemplate({title, date, image, content, desc, content2, content3, content4, id}:NewsProps){
+export default function AnnouncementTemplate({title, date, image, content, description, content2, content3, content4, id}:NewsProps & {description:string}){
     const [announcement, setAnnouncement] = useState<AnnouncementBody | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -76,19 +76,10 @@ export default function AnnouncementTemplate({title, date, image, content, desc,
         <Box sx={{backgroundColor:"white", color:"black", height:"fill-content"}}>
             <Typography variant="h1" sx={{fontWeight: 'medium', textAlign: "left", paddingLeft: 18}}>{title}</Typography>
             <img src={image} alt="announcement" style={{width: 500}}/>
-            <Typography variant="h4" sx={{textAlign: "left", paddingLeft: 18, paddingRight: 20}}>{content}</Typography>
             <br></br>
-            <ol>
-                {desc?.map((item) => <li><Typography variant="h4" sx={{textAlign: "left"}}>{item}</Typography></li>)}
-            </ol>
+           
+            <Typography>{description}</Typography>
             <br></br>
-            <Typography variant="h4" sx={{textAlign: "left", paddingLeft: 18, paddingRight: 20}}>{content2}</Typography>
-            <br></br>
-            <br></br>
-            <Typography variant="h4" sx={{textAlign: "left", paddingLeft: 18, paddingRight: 20}}>{content3}</Typography>
-            <br></br>
-            <br></br>
-            <Typography variant="h4" sx={{textAlign: "left", paddingLeft: 18, paddingRight: 20}}>{content4}</Typography>
             {/*<Box dangerouslySetInnerHTML={{ __html: announcement.content?.content || ""}}></Box>*/}
             <QuillOutput content={announcement.content?.content || ""} />
             

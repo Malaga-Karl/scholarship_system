@@ -10,13 +10,13 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
     }, {
-        tableName: 'ScholarshipStatus', // Explicit table name
+        tableName: 'ScholarshipStatus',
     });
 
     ScholarshipStatus.associate = (models) => {
-        ScholarshipStatus.hasMany(models.UserProfile, {
-            foreignKey: 'scholarship_status',
-            as: 'userProfiles', // Optional alias
+        ScholarshipStatus.hasMany(models.StudentScholarship, {
+            foreignKey: 'status_id',
+            as: 'studentScholarships',
         });
     };
 

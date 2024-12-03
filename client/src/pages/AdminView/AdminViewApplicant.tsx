@@ -17,23 +17,30 @@ import axios from "../../axiosConfig"
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InboxIcon from '@mui/icons-material/Inbox';
-import AdminNewMail from './AdminNewEmail';
 
 
 type UserType = {
-    account_email:string,
-    first_name:string,
-    last_name:string,
-    status:{status_id:number, name:string},
-    fetchUsers: () => void,
-}
+    scholarship: {
+        scholarship_id:number;
+        title:string;
+    };
+    status: { 
+        status_id: number; 
+        name: string 
+    };
+    userProfile: {
+        account_email:string;
+        first_name:string;
+        last_name:string;
+    }
+    fetchUsers: () => void;
+};
 
-function FoundationList({account_email, first_name, last_name, status, fetchUsers}:UserType){
+function FoundationList({scholarship, status, userProfile, fetchUsers}:UserType){
     
     const [openEdit, setOpenEdit] = useState(false);
     const navigate = useNavigate();
 
-    const [openNewEmail, setOpenNewEmail] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState(status.status_id); // Track the selected status
     const [statusOptions, setStatusOptions] = useState<{status_id:number, name:string}[]>([]);
     const handleOpen = (status_id:number) => {
@@ -62,7 +69,7 @@ function FoundationList({account_email, first_name, last_name, status, fetchUser
     const handleSave = async () => {
         try {
             // Make an API call to update the status
-            await axios.put(`/user/update/${account_email}`, {
+            await axios.put(`/user/update/${userProfile.account_email}`, {
                 status_id: selectedStatus,
             });
             fetchUsers();
@@ -79,12 +86,15 @@ function FoundationList({account_email, first_name, last_name, status, fetchUser
 
     return (
         <>
-            <TableRow key={account_email}>
+            <TableRow key={userProfile.account_email}>
                 <TableCell align="center">
-                    {account_email}
+                    {userProfile.account_email}
                 </TableCell>
                 <TableCell align='center'>
-                    {first_name + " " + last_name} 
+                    {userProfile.first_name + " " + userProfile.last_name} 
+                </TableCell>
+                <TableCell align="center">
+                    {scholarship.title}
                 </TableCell>
                 <TableCell align="center">
                     {status.name}
@@ -96,11 +106,11 @@ function FoundationList({account_email, first_name, last_name, status, fetchUser
                         color= "secondary"sx={{boxShadow:2,padding: "5px", marginRight:"5px",minHeight:"10px",minWidth:"10px",color:"black"}}><ModeEditOutlineOutlinedIcon/></Button>
                     {/*send email */}
                     <Button
-                        onClick={() => {navigate(`newEmail/${account_email}`)}} 
+                        onClick={() => {navigate(`newEmail/${userProfile.account_email}`)}} 
                         color= "secondary"sx={{boxShadow:2,padding: "5px", marginLeft:"5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><MailOutlineOutlined/></Button>
                     {/*view emails */}
                     <Button
-                        onClick={() => {navigate(`emails/${account_email}`)}}  
+                        onClick={() => {navigate(`emails/${userProfile.account_email}`)}}  
                         color= "secondary"sx={{boxShadow:2,padding: "5px", marginLeft:"5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><InboxIcon/></Button>
                 </TableCell>
             </TableRow>
@@ -181,7 +191,6 @@ function FoundList(){
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState(''); // State to track search input
     const [debouncedSearch, setDebouncedSearch] = useState(''); // For debounce
-    const navigate = useNavigate();
 
     // Fetch Foundations with Pagination and Search
     const fetchUsers = async (page = 1, search = '') => {
@@ -189,7 +198,7 @@ function FoundList(){
             const response = await axios.get(`/user/getAllPaginate`, {
                 params: { page, limit: 5, search },
             });
-            setUsers(response.data.users);
+            setUsers(response.data.studentInfo);
             setTotalPages(response.data.totalPages);
             setCurrentPage(response.data.currentPage);
         } catch (error) {
@@ -280,6 +289,9 @@ function FoundList(){
             </TableCell>
             <TableCell align="center" sx={{ fontWeight: 900, color: "white" }}>
                 Applicant Name
+            </TableCell>
+            <TableCell align="center" sx={{ fontWeight: 900, color: "white" }}>
+                Scholarship Offer
             </TableCell>
             <TableCell align="center" sx={{ fontWeight: 900, color: "white" }}>
                 Status

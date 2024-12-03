@@ -27,6 +27,8 @@ import StudentViewTemplate from './template/StudentViewTemplate';
 import AdminViewTemplate from './template/AdminViewTemplate';
 import AdminNewMail from './pages/AdminView/AdminNewEmail';
 import AdminStudentEmails from './pages/AdminView/AdminStudentEmails';
+import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncements';
+import ScholarshipFormPage from './pages/StudentView/FormPrint';
 
 function App() {
 
@@ -54,15 +56,18 @@ function App() {
             {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
             {/* <Route path='/studentview' element={<Navigate to={'dashboard'}/>}/> */}
             <Route path='dashboard' element={<StudentViewScholarship/>} />
-            <Route path='dashboard/apply/:id' element={<StudentViewScholarship/>}/>
-            <Route path='dashboard/apply/:id/forms' element={<Forms/>}/>
+            <Route path='dashboard/editForms/:edit' element={<Forms/>} />
+            <Route path='dashboard/apply/:id' element={<StudentViewScholarship/>}/>ScholarshipFormPage
+            <Route path='dashboard/apply/:id/forms/:sid' element={<Forms/>}/>
             {/* <Route path='dashboard' element={<StudentViewDashboard/>}/> */}
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>
+            <Route path='announcements/:announcement_id' element={<SpecificAnnouncementView/>} />
             <Route path='contact' element={<StudentViewContact/>}/>
             {/* <Route path='contact' element={<Test/>}/> */}
             <Route path='contact/new' element={<NewMail/>}/>
             
           </Route>
+          <Route path='/print' element={<ScholarshipFormPage />}/>
 
           <Route path='/adminview' element={<AdminViewTemplate/>}>
             {/* <Route index element={<Navigate to="foundations" replace/>} /> */}

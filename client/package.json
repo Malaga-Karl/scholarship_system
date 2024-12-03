@@ -19,6 +19,8 @@
     "@mui/styled-engine-sc": "^6.1.2",
     "@mui/x-date-pickers": "^7.22.2",
     "axios": "^1.7.7",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
     "quill": "^2.0.2",
     "quill-image-resize-module": "^3.0.0",
     "quill-image-resize-module-react": "^3.0.0",

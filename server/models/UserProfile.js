@@ -13,25 +13,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        scholarship_status: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: 'ScholarshipStatus', // Table name for FK constraint
-                key: 'status_id',
-            },
-        },
+    }, {
+        tableName: 'UserProfile',
     });
 
-    // In UserProfile model
     UserProfile.associate = (models) => {
-        UserProfile.belongsTo(models.ScholarshipStatus, {
-            foreignKey: 'scholarship_status',
-            as: 'status', // Ensure this matches the query alias
+        UserProfile.hasOne(models.StudentScholarship, {
+            foreignKey: 'student_email',
+            as: 'studentScholarship',
         });
     };
-
-    
 
     return UserProfile;
 };

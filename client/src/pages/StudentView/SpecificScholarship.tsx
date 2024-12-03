@@ -6,13 +6,16 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
-import { useHref } from "react-router-dom";
+import { useHref, useNavigate } from "react-router-dom";
 
-export default function SpecificScholarshipTemplate({title, desc, eligibility, reqs, benefits, deadline}:Scholarship){
+export default function SpecificScholarshipTemplate({id, title, desc, eligibility, reqs, benefits, deadline}:Scholarship){
+    const navigate = useNavigate();
     return (
         <Card sx={{width:"100%"}}>
             <CardContent>
-                <Button startIcon={<ArrowBack/>} sx={{backgroundColor: 'transparent', border: 'none', color: 'black', display: 'flex', justifyContent: 'space-between', marginLeft: '50px', textTransform: 'capitalize', fontSize: '20px'}}>Go Back</Button>
+                <Button
+                    onClick={()=>{navigate(-1)}} 
+                startIcon={<ArrowBack/>} sx={{backgroundColor: 'transparent', border: 'none', color: 'black', display: 'flex', justifyContent: 'space-between', marginLeft: '50px', textTransform: 'capitalize', fontSize: '20px'}}>Go Back</Button>
                 <Typography variant="h3" mt={5} mb={5}>{title}</Typography>
                 <Box sx={{display:"flex", justifyContent:"start", marginLeft: '50px', marginRight: '50px', position: 'relative'}}>
                     <Box sx={{ textAlign: 'left', maxWidth: '620px', marginRight: '50px'}}>
@@ -47,7 +50,7 @@ export default function SpecificScholarshipTemplate({title, desc, eligibility, r
                         </Box>
                     </Box>
                     <CardActions sx={{position: 'absolute', bottom: 0, right: 0}}>
-                        <Button variant="contained" endIcon={<ArrowForward/>} sx={{backgroundColor: '#BF9B30', height: '56px', width: '167px', borderRadius: '10px', textTransform: 'capitalize', fontSize: '20px'}} onClick={() => window.location.href += '/forms'}>Apply Now</Button>
+                        <Button variant="contained" endIcon={<ArrowForward/>} sx={{backgroundColor: '#BF9B30', height: '56px', width: '167px', borderRadius: '10px', textTransform: 'capitalize', fontSize: '20px'}} onClick={() => navigate(`forms/${id}`)}>Apply Now</Button>
                     </CardActions>
                 </Box>
             </CardContent>

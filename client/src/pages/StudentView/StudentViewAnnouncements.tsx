@@ -1,20 +1,14 @@
 import Box from "@mui/material/Box";
-import StudentViewTemplate from "../../template/StudentViewTemplate";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
-import { styled } from "@mui/material/styles";
-import plmScholar from "../../assets/announcements/plmscholar.png"
-import dostImage from "../../assets/announcements/DOST(BIG).jpg"
-import faceIcon from "../../assets/icon.png"
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { axiosBase } from "../../axiosConfig";
+import { useNavigate } from "react-router-dom";
 
 interface aCard {
   announcement_id:number,
@@ -25,6 +19,7 @@ interface aCard {
 }
 
 function AnnouncementCard({announcement_id, title, cover_path, description, createdAt }:aCard){
+  const navigate = useNavigate();
   return(
     <>
     <Card
@@ -58,7 +53,7 @@ function AnnouncementCard({announcement_id, title, cover_path, description, crea
               {description}
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{textAlign: "left"}}>
-              date={
+              {
                 new Date(createdAt)
                 .toLocaleDateString('en-US', { 
                     year: 'numeric', 
@@ -76,6 +71,7 @@ function AnnouncementCard({announcement_id, title, cover_path, description, crea
                   color: "white",
                   ":hover": { bgcolor: "#b48f12" },
                 }}
+                onClick={()=>navigate(`${announcement_id}`)}
               >
                 Read More
               </Button>

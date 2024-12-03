@@ -39,6 +39,7 @@ function FoundationList({scholarship_id, title, deadline, scholarship_descriptio
   const navigate = useNavigate();  
   const [openDialog, setOpenDialog] = useState(false);
 
+    const [remainingSlots, setRemainingSlots] = useState(0);
     const handleDelete = async () => {
         try {
             await axios.delete(`/foundations/deleteS/${scholarship_id}`);
@@ -49,6 +50,21 @@ function FoundationList({scholarship_id, title, deadline, scholarship_descriptio
             alert("Failed to delete the foundation. Please try again.");
         }
     };
+    useEffect(() => {
+        // Fetch the remaining slots when the component loads
+        const fetchRemainingSlots = async () => {
+            try {
+                const response = await axios.get(`/user/calculateSlots/${scholarship_id}`);
+                const { remainingSlots } = response.data; // Destructure remaining slots from response
+                setRemainingSlots(remainingSlots); // Update the state
+            } catch (error) {
+                console.error('Error fetching remaining slots:', error);
+            }
+        };
+
+        fetchRemainingSlots();
+    }, []); // Dependency array ensures this runs when scholarshipId changes
+
   
   return(
           <>
@@ -67,7 +83,7 @@ function FoundationList({scholarship_id, title, deadline, scholarship_descriptio
               }).format(new Date(deadline))}
               </TableCell>
               {/* I need to have calculation for the slots */}
-              <TableCell align="center">{slots}</TableCell>
+              <TableCell align="center">{remainingSlots}/{slots}</TableCell>
               <TableCell align="center">
               <Stack direction="row" spacing={1}>
                 <Button color= "secondary"sx={{boxShadow:2,padding: "5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}

@@ -68,7 +68,8 @@ export default function  StudentViewTemplate() {
     const call = () => {
       const storedUser = localStorage.getItem('userInfo');
       if (storedUser) {
-        console.log(storedUser);
+        //console.log(storedUser);
+        localStorage.setItem('localEmailActive', JSON.parse(storedUser).mail);
         setUserInfo(JSON.parse(storedUser));
       }
     };
