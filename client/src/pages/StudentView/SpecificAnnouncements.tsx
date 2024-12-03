@@ -130,6 +130,10 @@ export default function SpecificAnnouncementView(){
                 </Box>
                 <Box> 
                     <br/>
+                    <Typography
+                        variant="h4"
+                    >{announcement.title}</Typography>
+                    <br/>
                     <img src={`${axiosBase}/uploads${announcement.cover_path}`} alt="announcement" style={{width: 500}}/>
                     <br/>
                     <Typography>{announcement.description}</Typography>

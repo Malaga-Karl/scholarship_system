@@ -19,16 +19,15 @@ import Forms from './pages/StudentView/Forms';
 // import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
 import AddEditScholarship from './pages/AdminView/AdminAddEditScholarship';
 import AddEditAnnouncment from './pages/AdminView/AdminAddEditAnnouncement';
-import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncement';
+import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncements';
 import QuillTest from './pages/AdminView/quillTtest';
 import DebugPage from './pages/Debug/DebugPage';
 // import Test from './pages/StudentView/TestEmails';
 import HomeTemplate from './template/HomeTemplate';
 import StudentViewTemplate from './template/StudentViewTemplate';
 import AdminViewTemplate from './template/AdminViewTemplate';
-import AdminNewMail from './pages/AdminView/AdminNewEmail';
+import AdminNewMail from './pages/AdminView/AdminNewEmail'; 
 import AdminStudentEmails from './pages/AdminView/AdminStudentEmails';
-import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncements';
 import ScholarshipFormPage from './pages/StudentView/FormPrint';
 
 function App() {

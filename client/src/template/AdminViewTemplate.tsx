@@ -112,7 +112,7 @@ export default function AdminTemplate() {
           Welcome,
           <br/></Typography>
         <Typography variant='h5' sx={{fontWeight:'bold'}}>
-          {userInfo?.displayName}
+          RGO ADMIN
         </Typography>
         <Typography variant='body1'>
           {userInfo?.mail}
