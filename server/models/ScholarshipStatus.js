@@ -1,25 +1,24 @@
 module.exports = (sequelize, DataTypes) => {
-  const ScholarshipStatus = sequelize.define("ScholarshipStatus", {
-      status_id: {
-          type: DataTypes.INTEGER,
-          primaryKey: true,
-          autoIncrement: true,
-      },
-      name: {
-          type: DataTypes.STRING,
-          allowNull: false,
-      },
-  }, {
-      tableName: 'ScholarshipStatus', // Optional: Ensure it matches the database table
-  });
+    const ScholarshipStatus = sequelize.define("ScholarshipStatus", {
+        status_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+    }, {
+        tableName: 'ScholarshipStatus',
+    });
 
-  ScholarshipStatus.associate = (models) => {
-      ScholarshipStatus.hasMany(models.UserProfile, {
-          foreignKey: 'scholarship_status', // Matches column in UserProfile
-          as: 'userProfiles',
-          onDelete: 'SET NULL',
-      });
-  };
+    ScholarshipStatus.associate = (models) => {
+        ScholarshipStatus.hasMany(models.StudentScholarship, {
+            foreignKey: 'status_id',
+            as: 'studentScholarships',
+        });
+    };
 
-  return ScholarshipStatus;
+    return ScholarshipStatus;
 };

@@ -13,22 +13,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        scholarship_status: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: 'ScholarshipStatus', // Matches table name
-                key: 'status_id', // Matches primary key in ScholarshipStatus
-            },
-        },
+    }, {
+        tableName: 'UserProfile',
     });
 
-    // Define associations
     UserProfile.associate = (models) => {
-        UserProfile.belongsTo(models.ScholarshipStatus, {
-            foreignKey: 'scholarship_status', // Matches column in UserProfile
-            as: 'ScholarshipStatus',
-            onDelete: 'SET NULL',
+        UserProfile.hasOne(models.StudentScholarship, {
+            foreignKey: 'student_email',
+            as: 'studentScholarship',
         });
     };
 

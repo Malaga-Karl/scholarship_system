@@ -1,198 +1,272 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function AddEditFoundation(){
-    // State to store the uploaded image URL and file name
+export default function AddEditFoundation() {
     const [image, setImage] = useState<File | null>(null);
     const [fileName, setFileName] = useState<string | null>(null);
+    const [foundation, setFoundation] = useState<string>(''); 
+    const [description, setDescription] = useState<string>(''); 
+    const { foundation_id } = useParams();
+    const navigate = useNavigate();
 
-    // Handle file input change event
+    useEffect(() => {
+        // Fetch foundation details if it's an update
+        const fetchFoundation = async () => {
+            if (foundation_id) {
+                try {
+                    const response = await axios.get(`/foundations/getF/${foundation_id}`);
+                    const { name, description, logo_path } = response.data;
+                    setFoundation(name);
+                    setDescription(description);
+                    if (logo_path) {
+                        setFileName(logo_path.split('/').pop());
+                    }
+                } catch (error) {
+                    console.error("Error fetching foundation data:", error);
+                }
+            }
+        };
+        fetchFoundation();
+    }, [foundation_id]);
+
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            //saves image file
             setImage(file);
-            // Set the file name (limit it to 20 characters)
             const name = file.name.length > 20 ? file.name.slice(0, 20) + "..." : file.name;
             setFileName(name);
         }
     };
 
-    // Handle removing the uploaded image
     const handleRemoveImage = () => {
-        setImage(null); // Clear the image
-        setFileName(null); // Clear the file name
+        setImage(null);
+        setFileName(null);
     };
 
-    // Separate state for each text field
-    const [foundation, setFoundation] = useState<string>(''); // State for foundation
-    const [description, setDescription] = useState<string>(''); // State for description
-
-    // Handle change for Foundation TextField
-    const foundationHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFoundation(event.target.value); // Update foundation state
-    };
-
-    // Handle change for Description TextField
-    const descriptionHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDescription(event.target.value); // Update description state
-    };
-
-
-    const handleSave = async (event:React.FormEvent<HTMLFormElement>) => {
+    const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData();
-        if(image)
-            formData.append("file", image);
-        formData.append('name', foundation);
-        formData.append('description', description);
-        
-        //api submit
+        if (image) formData.append("logo", image);
+        formData.append("name", foundation);
+        formData.append("description", description);
+
         try {
-            // Send the data to the backend
-            const response = await axios.post("/foundations/add", formData, {
-              headers: {
-                "Content-Type": "multipart/form-data", // Ensure proper encoding for form data
-              },
-            });
-        
-            // Handle success response
-            console.log("Form submitted successfully:", response.data);
-            alert("Announcement created successfully!");
-        
-            // Optionally, reset the form
-            setImage(null);
-            setFoundation("");
-            setDescription("");
-            setFileName("");
-        
-          } catch (error: any) {
-            // Handle error response
-            console.error("Error submitting form:", error);
-            alert("Failed to create the announcement. Please try again.");
-          }
+            if (foundation_id) {
+                // Update logic
+                await axios.put(`/foundations/update/${foundation_id}`, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                alert("Foundation updated successfully!");
+            } else {
+                // Create logic
+                await axios.post("/foundations/add", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                alert("Foundation created successfully!");
+            }
+            navigate("/adminView/foundations");
+        } catch (error) {
+            console.error("Error saving foundation:", error);
+            alert("Failed to save the foundation. Please try again.");
+        }
+    };
 
-
-    }
-    
-    return(
-        <Box sx={{display: 'flex', flexDirection: 'column', marginTop: '55px', margin:'80px auto', width: '90%', border: 'ridge', borderRadius: '15px', padding: '20px'}}>
-            <Button startIcon={<ArrowBack/>} sx={{alignSelf: 'flex-start', backgroundColor: 'transparent', border: 'none', color: 'black', textTransform: 'capitalize', fontSize: '20px', marginBottom: '5px'}}>Go Back</Button>
-            <Box sx={{display: 'flex', justifyContent: 'center', flexGrow: 1}}>
-                <Typography variant="h4" sx={{textAlign: 'center', fontWeight: 'bold'}}>PARTNERED FOUNDATION DETAILS</Typography>
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                marginTop: '55px',
+                margin: '80px auto',
+                width: '90%',
+                border: 'ridge',
+                borderRadius: '15px',
+                padding: '20px',
+            }}
+        >
+            <Button
+                startIcon={<ArrowBack />}
+                sx={{
+                    alignSelf: 'flex-start',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: 'black',
+                    textTransform: 'capitalize',
+                    fontSize: '20px',
+                    marginBottom: '5px',
+                }}
+                onClick={() => navigate(-1)}
+            >
+                Go Back
+            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1 }}>
+                <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+                    {foundation_id ? "Edit Partnered Foundation" : "Add Partnered Foundation"}
+                </Typography>
             </Box>
-            <form style={{
-                display: "flex",
-                flexDirection: "column",
-                }} 
-                onSubmit={handleSave} 
+            <form
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                }}
+                onSubmit={handleSave}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        marginLeft: '50px',
+                        marginRight: '50px',
+                        marginTop: '5px',
+                        justifyContent: 'space-between',
+                        marginBottom: '20px',
+                    }}
                 >
-                <Box sx={{display: 'flex', marginLeft: '50px', marginRight: '50px', marginTop: '5px', justifyContent: 'space-between', marginBottom:'20px'}}>
                     <Box>
-                        <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold', paddingBottom: '5px'}}>Foundation Logo</Typography>
+                        <Typography variant="h5" sx={{ textAlign: 'left', fontWeight: 'bold', paddingBottom: '5px' }}>
+                            Foundation Logo
+                        </Typography>
                         <input
                             type="file"
-                            accept="image/*" // Only accept image files
-                            onChange={handleImageChange} // Event handler for file change
-                            style={{ display: "none" }} // Hide the default input element
-                            id="upload-image" // ID for linking to the button
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ display: "none" }}
+                            id="upload-image"
                         />
                         <label htmlFor="upload-image">
                             <Button
                                 variant="contained"
                                 component="span"
-                                sx={{width: '450px', height: '160px', textTransform: 'none', padding: '16px', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', display: 'flex', background: '#D9D9D9', border: '2px dashed', fontSize: '20px', borderRadius: '8px'}}
-                                startIcon={<InsertPhotoIcon />} // This is how you add the icon inside the button
+                                sx={{
+                                    width: '450px',
+                                    height: '160px',
+                                    textTransform: 'none',
+                                    padding: '16px',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    flexDirection: 'column',
+                                    display: 'flex',
+                                    background: '#D9D9D9',
+                                    border: '2px dashed',
+                                    fontSize: '20px',
+                                    borderRadius: '8px',
+                                }}
+                                startIcon={<InsertPhotoIcon />}
                             >
                                 Attach image here...
                             </Button>
                         </label>
-                        {/* Conditionally show the image preview and file details */}
-                        {image && (
-                        <Box
-                            sx={{
-                                left: 0,
-                                width: "450px",
-                                padding: "10px",
-                                background: "#F0F0F0",
-                                borderRadius: "8px",
-                                border: "1px solid #ccc",
-                                boxSizing: "border-box",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between", // Space between the photo, file name, and remove button
-                            }}
-                        >
-                            {/* Small photo icon */}
-                            <InsertPhotoIcon sx={{ fontSize: "30px", color: "#4CAF50" }} />
-
-                            {/* File name */}
-                            <Typography
-                                variant="body2"
+                        {fileName && (
+                            <Box
                                 sx={{
-                                    flexGrow: 1,
-                                    marginLeft: "10px",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
+                                    left: 0,
+                                    width: "450px",
+                                    padding: "10px",
+                                    background: "#F0F0F0",
+                                    borderRadius: "8px",
+                                    border: "1px solid #ccc",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
                                 }}
                             >
-                                {fileName}
-                            </Typography>
-
-                            {/* Remove Button */}
-                            <Button
-                                onClick={handleRemoveImage}
-                                sx={{
-                                    backgroundColor: "#FF4D4F", // Red background for remove button
-                                    color: "white",
-                                    textTransform: "none",
-                                    fontSize: "14px",
-                                    padding: "4px 10px",
-                                    borderRadius: "4px",
-                                }}
-                            >
-                            Remove
-                            </Button>
-                        </Box>
-                    )}
+                                <InsertPhotoIcon sx={{ fontSize: "30px", color: "#4CAF50" }} />
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        flexGrow: 1,
+                                        marginLeft: "10px",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    {fileName}
+                                </Typography>
+                                <Button
+                                    onClick={handleRemoveImage}
+                                    sx={{
+                                        backgroundColor: "#FF4D4F",
+                                        color: "white",
+                                        textTransform: "none",
+                                        fontSize: "14px",
+                                        padding: "4px 10px",
+                                        borderRadius: "4px",
+                                    }}
+                                >
+                                    Remove
+                                </Button>
+                            </Box>
+                        )}
                     </Box>
                     <Box>
-                        <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold', paddingBottom: '5px', left: 0}}>Foundation Name</Typography>
+                        <Typography
+                            variant="h5"
+                            sx={{ textAlign: 'left', fontWeight: 'bold', paddingBottom: '5px', left: 0 }}
+                        >
+                            Foundation Name
+                        </Typography>
                         <TextField
                             label="Name of Partnered Foundation"
                             variant="outlined"
                             value={foundation}
-                            onChange={foundationHandleChange}
+                            onChange={(e) => setFoundation(e.target.value)}
                             placeholder="Foundation"
                             fullWidth
-                            sx={{width: '400px'}}
+                            sx={{ width: '400px' }}
                         />
                     </Box>
                 </Box>
-                <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', flexGrow: 1, marginLeft: '50px', marginRight: '50px'}}>
-                    <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold', paddingBottom: '15px'}}>Description</Typography>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        justifyContent: 'flex-start',
+                        flexGrow: 1,
+                        marginLeft: '50px',
+                        marginRight: '50px',
+                    }}
+                >
+                    <Typography variant="h5" sx={{ textAlign: 'left', fontWeight: 'bold', paddingBottom: '15px' }}>
+                        Description
+                    </Typography>
                     <TextField
                         variant="outlined"
                         multiline
-                        rows={5} // Defines the number of visible rows in the TextArea
+                        rows={5}
                         value={description}
-                        onChange={descriptionHandleChange}
+                        onChange={(e) => setDescription(e.target.value)}
                         fullWidth
                         sx={{
-                        '& .MuiInputBase-root': {
-                            padding: '10px', // You can adjust the padding as needed
-                        },
+                            '& .MuiInputBase-root': {
+                                padding: '10px',
+                            },
                         }}
                     />
                 </Box>
-                <Box sx={{display: 'flex', justifyContent: 'flex-end', marginTop: '12px', marginRight: '50px'}}>
-                    <Button type="submit" variant="contained" sx={{display: 'flex', justifyContent: 'center', backgroundColor: '#BF9B30', height: '50px', width: '100px', borderRadius: '5px', textTransform: 'capitalize', fontSize: '20px'}}>Save</Button>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px', marginRight: '50px' }}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            backgroundColor: '#BF9B30',
+                            height: '50px',
+                            width: '100px',
+                            borderRadius: '5px',
+                            textTransform: 'capitalize',
+                            fontSize: '20px',
+                        }}
+                    >
+                        Save
+                    </Button>
                 </Box>
             </form>
         </Box>
-    )
+    );
 }

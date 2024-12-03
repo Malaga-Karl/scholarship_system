@@ -26,3 +26,39 @@ body {
 .drawer--active {
   background-color: rgba(22, 58, 132, 1);
 }
+
+.printable {
+  width: max-content; /* Ensures the width expands to the content size */
+  overflow: auto; /* Enables scrolling for the content */
+}
+
+@media print {
+  /* Hide everything that is not part of the printable form */
+  body * {
+    visibility: hidden;
+  }
+
+  .printable * {
+    visibility: visible;
+  }
+
+  .printable {
+    position: absolute;
+    top: 10000px;
+    left: 0;
+  }
+
+  /* Make sure everything fits in one page */
+  .MuiTypography-root {
+    font-size: 12px !important;
+  }
+
+  .MuiBox-root {
+    padding: 5px !important;
+  }
+
+  /* Set the page layout for printing */
+  @page {
+    margin: 0;
+  }
+}

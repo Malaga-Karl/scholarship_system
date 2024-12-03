@@ -73,7 +73,7 @@ const fetchEmails = async (): Promise<void> => {
     try {
     setLoading(true); // Set loading to true when starting to fetch
     const token = await fetchAccessToken();
-    const targetEmail = 'gcomiguel2021@plm.edu.ph';
+    const targetEmail = 'rcconchas2021@plm.edu.ph';
     const emailResponse = await axios.get(`https://graph.microsoft.com/v1.0/me/messages?$filter=from/emailAddress/address eq '${targetEmail}'`, {
         headers: {
         Authorization: `Bearer ${token}`,

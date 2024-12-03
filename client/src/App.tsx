@@ -26,6 +26,10 @@ import DebugPage from './pages/Debug/DebugPage';
 import HomeTemplate from './template/HomeTemplate';
 import StudentViewTemplate from './template/StudentViewTemplate';
 import AdminViewTemplate from './template/AdminViewTemplate';
+import AdminNewMail from './pages/AdminView/AdminNewEmail';
+import AdminStudentEmails from './pages/AdminView/AdminStudentEmails';
+import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncements';
+import ScholarshipFormPage from './pages/StudentView/FormPrint';
 
 function App() {
 
@@ -53,27 +57,34 @@ function App() {
             {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
             {/* <Route path='/studentview' element={<Navigate to={'dashboard'}/>}/> */}
             <Route path='dashboard' element={<StudentViewScholarship/>} />
-            <Route path='dashboard/apply/:id' element={<StudentViewScholarship/>}/>
-            <Route path='dashboard/apply/:id/forms' element={<Forms/>}/>
+            <Route path='dashboard/editForms/:edit' element={<Forms/>} />
+            <Route path='dashboard/apply/:id' element={<StudentViewScholarship/>}/>ScholarshipFormPage
+            <Route path='dashboard/apply/:id/forms/:sid' element={<Forms/>}/>
             {/* <Route path='dashboard' element={<StudentViewDashboard/>}/> */}
             <Route path='announcements' element={<StudentViewAnnouncments/>}/>
-            <Route path='announcements/specific' element={<SpecificAnnouncementView/>}/>
+            <Route path='announcements/:announcement_id' element={<SpecificAnnouncementView/>} />
             <Route path='contact' element={<StudentViewContact/>}/>
             {/* <Route path='contact' element={<Test/>}/> */}
             <Route path='contact/new' element={<NewMail/>}/>
             
           </Route>
+          <Route path='/print' element={<ScholarshipFormPage />}/>
 
           <Route path='/adminview' element={<AdminViewTemplate/>}>
             {/* <Route index element={<Navigate to="foundations" replace/>} /> */}
             <Route path='foundations' element={<AdminViewFoundation/>} />
             <Route path='foundations/addedit' element={<AddEditFoundation/>} />
+            <Route path='foundations/addedit/:foundation_id' element={<AddEditFoundation/>} />
             <Route path='scholarships' element={<AdminViewScholarship/>}/>
             <Route path='scholarships/addedit' element={<AddEditScholarship/>} />
+            <Route path='scholarships/addedit/:scholarship_id' element={<AddEditScholarship/>} />
             <Route path='announcements' element={<AdminViewAnnouncement/>}/>
             <Route path='announcements/addedit' element={<AddEditAnnouncment/>} />
+            <Route path='announcements/addedit/:announcement_id' element={<AddEditAnnouncment/>} />
             <Route path='announcements/quill' element={<QuillTest/>} />
             <Route path='applicants' element={<AdminViewApplicant/>} />
+            <Route path='applicants/newEmail/:student_email' element={<AdminNewMail />} />
+            <Route path='applicants/emails/:student_email' element={<AdminStudentEmails />} />
             
           </Route>
           <Route path='*' element={<NotFoundPage />} />

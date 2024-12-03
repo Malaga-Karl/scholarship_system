@@ -37,8 +37,6 @@ export default function MainSignIn(): JSX.Element {
       // Fetch and store user info
       await fetchUserProfile(accessToken);
       // Navigate to the next page
-      setError('')
-      navigate('/studentview');
     } catch (error: any) {
       setError('Login failed: ' + (error.message || 'Unknown error'));
     } finally {
@@ -49,6 +47,17 @@ export default function MainSignIn(): JSX.Element {
  // Fetch the user profile information from Microsoft Graph API
   const fetchUserProfile = async (accessToken?: string): Promise<void> => {
     try {
+
+      let activeAccount = instance.getActiveAccount();
+      if (!activeAccount) {
+          const accounts = instance.getAllAccounts();
+          if (accounts.length === 0) {
+            throw new Error("No accounts found. Please log in again.");
+          }
+          activeAccount = accounts[0];
+          instance.setActiveAccount(activeAccount);
+      }
+
       if (!accessToken) {
         // Get token if not provided
         const tokenResponse = await instance.acquireTokenSilent(loginRequest);
@@ -85,13 +94,18 @@ export default function MainSignIn(): JSX.Element {
         const current_email = user.mail;
         const first_name = user.givenName;
         const last_name = user.surname;
-        await axios.post('/user/add', { email: current_email, first_name: first_name, last_name: last_name });
+        if(current_email === 'rcconchas2021@plm.edu.ph'){
+          navigate('/adminView');
+        }else{
+          await axios.post('/user/add', { email: current_email, first_name: first_name, last_name: last_name });
+          navigate('/studentview');
+        }
       }
       catch(err:any){
-        alert(err);
         setError('Error in adding user to the database: ' + (err.message || 'Unknown error'));
       }
     } catch (err: any) {
+      alert('Error fetching user profile: ' + (err.message || 'Unknown error'));
       setError('Error fetching user profile: ' + (err.message || 'Unknown error'));
     }
   };

@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-const { ScholarshipStatus, UserProfile } = require('../models')
+const { ScholarshipStatus, UserProfile, StudentScholarship, Scholarships, Foundations } = require('../models')
 
 
 // Secret key for JWT, ideally store this in an environment variable
@@ -88,7 +88,6 @@ router.post("/add", async (req, res) => {
                 account_email: email,
                 first_name: first_name,
                 last_name: last_name,
-                scholarship_status: 1,
             });
             res.json({ message: "User status created successfully" });
         } else {
@@ -100,7 +99,7 @@ router.post("/add", async (req, res) => {
             message: error.message,
             stack: error.stack,
         });
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: ' error' });
     }
 });
 
@@ -134,17 +133,17 @@ router.get('/getUsers', async (req, res) => {
     try {
         const allUserProfile = await UserProfile.findAll({
             where: {
-                // No need for Op.between on the scholarship_status directly here
                 scholarship_status: {
-                    [Op.between]: [1, 3]  // Example: filter users with scholarship_status between 1 and 3
+                    [Op.between]: [1, 3], // Filter UserProfile by scholarship_status range
                 },
             },
             include: [{
-                model: ScholarshipStatus, // Include associated ScholarshipStatus model
-                attributes: ['name'], // Only include the 'name' field from ScholarshipStatus
-                as: 'ScholarshipStatus', // Alias for the association (ensure this matches the defined alias in the model)
+                model: ScholarshipStatus, // Ensure ScholarshipStatus is the correct imported model
+                attributes: ['name'], // Fetch only the name field
+                as: 'status', // Alias for the association (must match the alias in the model)
             }],
         });
+        
 
         res.json(allUserProfile);
     } catch (error) {
@@ -153,6 +152,280 @@ router.get('/getUsers', async (req, res) => {
     }
 });
 
+
+//paginations
+router.get('/getAllPaginate', async (req, res) => {
+    const { page = 1, limit = 5, search = '' } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit); // Ensures proper pagination
+
+    try {
+        const where = search
+            ? {
+                  student_email: {
+                      [Op.like]: `%${search}%`,
+                  },
+              }
+            : {};
+
+        const { count, rows } = await StudentScholarship.findAndCountAll({
+            where,
+            include: [
+                {
+                    model: UserProfile,
+                    attributes: ['account_email', 'first_name', 'last_name'],
+                    as: 'userProfile',
+                },
+                {
+                    model: ScholarshipStatus,
+                    attributes: ['status_id', 'name'],
+                    as: 'status',
+                },
+                {
+                    model: Scholarships,
+                    attributes: ['scholarship_id', 'title'],
+                    as: 'scholarship',
+                },
+            ],
+            offset,
+            limit: parseInt(limit),  // Ensure the limit is an integer
+            order: [['createdAt', 'DESC']],
+        });
+
+        res.status(200).json({
+            totalItems: count,
+            studentInfo: rows,
+            totalPages: Math.ceil(count / limit),
+            currentPage: parseInt(page),
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch scholarships' });
+    }
+});
+
+
+//update user
+router.put('/update/:id', upload.none(), async (req, res) => {
+    const { id } = req.params;  // Get the email (ID) of the user
+    const { status_id } = req.body;  // Get the new status_id from the request body
+
+    try {
+        // Find the user's scholarship record using their email (student_email)
+        const studentScholarship = await StudentScholarship.findOne({
+            where: { student_email: id },  // Find the scholarship record by student email
+        });
+
+        // If the student has no scholarship record
+        if (!studentScholarship) {
+            return res.status(404).json({ message: 'StudentScholarship not found' });
+        }
+
+        // Update the scholarship status for the student
+        studentScholarship.status_id = status_id;  // Set the new status_id
+        await studentScholarship.save();  // Save the updated record
+
+        // Fetch the updated StudentScholarship with the associated models
+        const updatedScholarship = await StudentScholarship.findOne({
+            where: { student_email: id },
+            include: [
+                {
+                    model: ScholarshipStatus,
+                    attributes: ['status_id', 'name'],
+                    as: 'status',
+                },
+                {
+                    model: Scholarships,
+                    attributes: ['scholarship_id', 'title'],
+                    as: 'scholarship',
+                },
+            ],
+        });
+
+        // Return the updated scholarship information
+        res.status(200).json(updatedScholarship);
+    } catch (error) {
+        console.error('Error updating StudentScholarship:', error);
+        res.status(500).json({ error: 'Failed to update StudentScholarship' });
+    }
+});
+
+//student has scholarship checker
+router.get('/exists/:email', async (req, res) => {
+    const { email } = req.params;
+
+    try {
+        // Check if the student_email exists in the StudentScholarship table
+        const exists = await StudentScholarship.findOne({
+            where: { student_email: email },
+        });
+
+        // Return 1 if exists, 0 otherwise
+        res.status(200).json({ exists: exists ? 1 : 0 });
+    } catch (error) {
+        console.error('Error checking student_email existence:', error);
+        res.status(500).json({ error: 'Failed to check student_email existence' });
+    }
+});
+
+//find all info
+router.get('/getInfo/:email', async (req, res) => {
+    const { email } = req.params;
+
+    try {
+        const studentInfo = await StudentScholarship.findOne({
+            where: { student_email: email },
+            include: [
+                {
+                    model: UserProfile,
+                    attributes: ['account_email', 'first_name', 'last_name'],
+                    as: 'userProfile',
+                },
+                {
+                    model: ScholarshipStatus,
+                    attributes: ['status_id', 'name'],
+                    as: 'status',
+                },
+                {
+                    model: Scholarships,
+                    attributes: [
+                        'scholarship_id', 
+                        'title', 
+                        'scholarship_description', 
+                        'eligibility', 
+                        'reqs', 
+                        'benefits', 
+                        'deadline'
+                    ],
+                    as: 'scholarship',
+                    include: [
+                        {
+                            model: Foundations,
+                            attributes: ['foundation_id', 'name', 'description', 'logo_path', 'status'],
+                            as: 'foundation', // Ensure this alias matches the association definition
+                        },
+                    ],
+                },
+            ],
+        });
+
+        if (!studentInfo) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        res.status(200).json(studentInfo);
+    } catch (error) {
+        console.error('Error fetching student info:', error);
+        res.status(500).json({ error: 'Failed to fetch student information' });
+    }
+});
+
+
+
+
+router.get('/getStatus', async (req, res) =>{
+    try{
+        const response = await ScholarshipStatus.findAll();
+        res.status(200).json(response);
+    }catch(error){
+        console.log("Error in fetching statuses: " + error);
+        res.status(500).json({error: 'Failed to fetch statuses'});
+    }
+
+});
+
+/////student to scholarship APIs
+router.post('/studentScholarship/add', async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        // Validation (optional)
+        if (!name) {
+            return res.status(400).json({ error: 'Name is required' });
+        }
+
+        // Create a new record in the ScholarshipStatus table
+        const newScholarshipStatus = await ScholarshipStatus.create({ name });
+
+        return res.status(201).json({ 
+            message: 'ScholarshipStatus created successfully', 
+            data: newScholarshipStatus 
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Create route for StudentScholarship
+router.post('/studentScholarship/create', upload.none(), async (req, res) => {
+    try {
+        // Extract data from the request body
+        const { student_email, scholarship_id, status_id } = req.body;
+
+        // Validate required fields
+        if (!student_email || !scholarship_id || !status_id) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new StudentScholarship record
+        const newStudentScholarship = await StudentScholarship.create({
+            student_email,
+            scholarship_id,
+            status_id,
+        });
+
+        // Send a success response with the created record
+        res.status(201).json({
+            message: 'StudentScholarship record created successfully',
+            data: newStudentScholarship,
+        });
+    } catch (error) {
+        // Handle errors and send an appropriate response
+        console.error(error);
+        res.status(500).json({
+            error: 'An error occurred while creating the record',
+        });
+    }
+});
+
+//calculates remaining slots
+router.get('/calculateSlots/:scholarshipId', async (req, res) => {
+    const { scholarshipId } = req.params;
+
+    try {
+        // Fetch the scholarship by ID
+        const scholarship = await Scholarships.findOne({
+            where: { scholarship_id: scholarshipId },
+        });
+
+        if (!scholarship) {
+            return res.status(404).json({ error: 'Scholarship not found' });
+        }
+
+        // Count students with status_id = 4 (approved) for this scholarship
+        const approvedStudentsCount = await StudentScholarship.count({
+            where: {
+                scholarship_id: scholarshipId,
+                status_id: 4,
+            },
+        });
+
+        // Calculate remaining slots
+        const remainingSlots = scholarship.slots - approvedStudentsCount;
+
+        // Return the result
+        res.status(200).json({
+            scholarshipId,
+            title: scholarship.title,
+            originalSlots: scholarship.slots,
+            approvedStudentsCount,
+            remainingSlots,
+        });
+    } catch (error) {
+        console.error('Error calculating slots:', error);
+        res.status(500).json({ error: 'An error occurred while calculating slots' });
+    }
+});
 
 
 

@@ -5,6 +5,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 export type Scholarship ={
     id: number,
@@ -19,6 +20,7 @@ export type Scholarship ={
 }
 
 export default function SvScholarship({id, image, title, slots, deadline}:Scholarship) {
+    const navigate = useNavigate();
     return (
         <Card variant='outlined' sx={{width:"20vw"}}>
             <CardMedia sx={{height:"100px", width:"100%"}} image={image} />
@@ -30,7 +32,7 @@ export default function SvScholarship({id, image, title, slots, deadline}:Schola
                     <Typography variant="body1">Slots: {slots}</Typography>
                     <Typography variant="body1">Deadline: {deadline}</Typography>
                 </Box>
-                <Button variant="contained" onClick={() => window.location.href = "dashboard/apply/" + id}>Apply</Button>
+                <Button variant="contained" onClick={()=>{navigate(`apply/${id}`)}}>Apply</Button>
             </CardActions>
         </Card>
     );

@@ -3,12 +3,12 @@ import StudentViewTemplate from "../../template/StudentViewTemplate";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Switch from "@mui/material/Switch";
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import SvScholarship from "../../components/SvScholarship";
 
 //Image imports
 import imgCharityFirst from '../../assets/partners/charityfirst.png';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SpecificScholarshipTemplate from "./SpecificScholarship";
 import Button from "@mui/material/Button";
 import axios from "axios";
@@ -61,6 +61,17 @@ export default function StudentViewScholarship(){
     const [loading, setLoading] = useState<boolean>(true); // State to track loading status
     const [error, setError] = useState<string | null>(null); // State to store errors
 
+    //iFrame shits anyways
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+
+    // Function to send a message to the iframe to trigger the PDF download
+    const handleDownloadPDF = () => {
+        if (iframeRef.current) {
+            // Send message to iframe
+            iframeRef.current.contentWindow?.postMessage({ action: "downloadPDF" }, "*");
+        }
+    };
+
     useEffect(() => {
         const fetchFoundationsWithScholarships = async () => {
         try {
@@ -89,7 +100,7 @@ export default function StudentViewScholarship(){
             }));
             
             // Update state with fetched data
-            console.log(data);
+            //console.log(data);
             setFoundations(data);
         } catch (err) {
             // Handle errors
@@ -104,14 +115,34 @@ export default function StudentViewScholarship(){
     }, []); // Empty dependency array means this runs once when the component mounts
 
     const [hasApplied, setApplied] = useState(false);
-    const handleApplication = () => {
-        setApplied(prevState => !prevState);
-    }
+    const [studentInfo, setStudentInfo] = useState(null);
+    const navigate = useNavigate();
 
-    const [ScholarSwitch, setScholarSwitch] = useState(true); 
-    const handleSwitchChange = () => {
-        setScholarSwitch(prevState => !prevState); // Toggle the switch state
-    };
+    useEffect(() => {
+        const checkApplied = async () => {
+            try {
+                const activeEmail = localStorage.getItem('localEmailActive');
+                const response = await axios.get(`/user/exists/${activeEmail}`);
+                setApplied(response.data.exists);
+                
+                if (response.data.exists) {
+                    const data = await axios.get(`/user/getInfo/${activeEmail}`);
+                    setStudentInfo(data.data);
+                    console.log(data.data); // Log fetched data directly
+                }
+            } catch (error) {
+                console.error("Error checking application:", error);
+            }
+        };
+    
+        checkApplied();
+    }, []);
+    
+
+    // const [ScholarSwitch, setScholarSwitch] = useState(true); 
+    // const handleSwitchChange = () => {
+    //     setScholarSwitch(prevState => !prevState); // Toggle the switch state
+    // };
 
     const {id} = useParams();
     const specificScholarship = id ? foundations.find((foundation) => foundation.foundation_id === parseInt(id)) : null
@@ -124,6 +155,7 @@ export default function StudentViewScholarship(){
             {error}
             </div>;
     }
+
     
     return(
         <>
@@ -158,15 +190,13 @@ export default function StudentViewScholarship(){
                 <>
                     <Box>
                         <Box>
-                            <p>scholarships available</p>
-                            <Switch defaultChecked
-                                checked={ScholarSwitch} // Check if the switch is on
-                                onChange={handleSwitchChange}
-                                />
-                            <Switch defaultChecked
-                                checked={hasApplied} // Check if the switch is on
-                                onChange={handleApplication}
-                                />
+                            <Typography
+                                marginTop={"20px"}
+                                marginBottom={"20px"}
+                                variant="h4"
+                            >
+                                Scholarships Available
+                            </Typography>
                         </Box>
                     
                     </Box>
@@ -207,7 +237,6 @@ export default function StudentViewScholarship(){
                 </>
             ) : (
                 <>
-                    <Switch defaultChecked checked={hasApplied} onChange={handleApplication}/>
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -234,7 +263,9 @@ export default function StudentViewScholarship(){
                                     width: '1050px',
                                     justifyContent: 'flex-start'
                                 }}>
-                                    <img src={imgCharityFirst} alt="charfirst" style={{
+                                    <img src={
+                                        `${axiosBase}/uploads${studentInfo?.scholarship.foundation.logo_path}`
+                                    } alt="charfirst" style={{
                                         width: 'auto',
                                         height: '110px',
                                         marginRight: '60px'
@@ -251,7 +282,7 @@ export default function StudentViewScholarship(){
                                             fontSize: '45px',
                                             fontWeight: 'bold'
                                         }}>
-                                            Charity First Foundation Scholarship 2024-2025
+                                            {studentInfo?.scholarship.title}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -293,13 +324,11 @@ export default function StudentViewScholarship(){
                                                     color: 'white',
                                                     textAlign: 'left'
                                                 }}>
-                                                    <li>Application form</li>
-                                                    <li>Complete Grades (SHS or 1st Year College)</li>
-                                                    <li>Incoming 1st Year and 2nd Year College Only</li>
-                                                    <li>Latest Copy of Utility Bills and Printed House Picture (inside and out)</li>
-                                                    <li>Birth Certificate, Valid ID’s, 2×2 ID Picture and Certificate of Indigency</li>
-                                                    <li>DSWD Social Case Study Report, DSWD 4p’s ID</li>
-                                                    <li>Sketch of Home Address from Major Landmark and Medical and X-Ray Result </li>
+                                                    {
+                                                        studentInfo?.scholarship.reqs.split(',').map((item:string)=>{
+                                                            return (<li>{item}</li>)
+                                                        })
+                                                    }
                                                 </ul>
                                                 <Typography sx={{
                                                     fontSize: '30px',
@@ -313,11 +342,11 @@ export default function StudentViewScholarship(){
                                                     color: 'white',
                                                     textAlign: 'left'
                                                 }}>
-                                                    <li>Transportation and Meal Allowance</li>
-                                                    <li>Dormitory Fee and Allowance</li>
-                                                    <li>Books and Uniform Allowance</li>
-                                                    <li>Desktop and Internet Allowance</li>
-                                                    <li>Life Skills and Motivational Seminars</li>
+                                                    {
+                                                        studentInfo?.scholarship.benefits.split(',').map((item:string)=>{
+                                                            return (<li>{item}</li>)
+                                                        })
+                                                    }
                                                 </ul>
                                             </Box>
                                         </Box>
@@ -348,7 +377,14 @@ export default function StudentViewScholarship(){
                                                     textAlign: 'left',
                                                     color: 'white'
                                                 }}>
-                                                    The application deadline for the Charity First Foundation Scholarship is <b>August 9, 2024</b> until only.
+                                                    The application deadline for the <b>{studentInfo?.scholarship.title}</b> is <b>{
+                                                        new Date(studentInfo?.scholarship.deadline)
+                                                        .toLocaleDateString('en-US', { 
+                                                            year: 'numeric', 
+                                                            month: 'long', 
+                                                            day: 'numeric' 
+                                                        })
+                                                    }</b> until only.
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -359,7 +395,8 @@ export default function StudentViewScholarship(){
                                         width: '515px'
                                     }}>
                                         <iframe 
-                                            src=""          // Insert iframe compatible pdf link here
+                                            src={`/print`}      // Insert iframe compatible pdf link here
+                                            ref={iframeRef}
                                             width='515px'
                                             height='618px'
                                         >
@@ -390,24 +427,41 @@ export default function StudentViewScholarship(){
                                             <Typography sx={{
                                                 fontSize: '20px'
                                             }}>
-                                                Pending
+                                                {studentInfo?.status.name}
                                             </Typography>
                                         </Box>
                                     </Box>
                                     <Box sx={{
                                         display: 'flex',
-                                        flexDirection: 'column',
+                                        flexDirection: 'row',
                                         justifyContent: 'center',
-                                        alignItems: 'center'
+                                        alignItems: 'center',
+                                        gap:"40px"
                                     }}>
+                                        <Button variant="contained" 
+                                            color="primary" 
+                                            onClick={handleDownloadPDF}
+                                            sx={{
+                                                backgroundColor: '#00ddc0',
+                                                height: '45px',
+                                                padding:"0 20px",
+                                                borderRadius: '5px',
+                                                textTransform: 'capitalize',
+                                                fontSize: '18px'
+                                            }}
+                                        >
+                                            Download PDF
+                                        </Button>
                                         <Button variant="contained" sx={{
                                             backgroundColor: '#BF9B30',
                                             height: '45px',
-                                            width: '250px',
+                                            padding:"0 20px",
                                             borderRadius: '5px',
                                             textTransform: 'capitalize',
                                             fontSize: '18px'
-                                        }}>
+                                        }}
+                                            onClick={()=>{navigate('editForms/1')}}
+                                        >
                                             Update Application Form
                                         </Button>
                                     </Box>

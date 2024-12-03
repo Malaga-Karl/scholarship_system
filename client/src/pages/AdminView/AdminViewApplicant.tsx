@@ -8,88 +8,319 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { InputAdornment, Typography, Pagination } from "@mui/material";
+import { InputAdornment, Typography, Pagination, Backdrop, FormControl, InputLabel, Select, MenuItem, Fade, Modal } from "@mui/material";
 import { Box } from "@mui/material";
 import { TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { MailOutlineOutlined } from "@mui/icons-material";
 import axios from "../../axiosConfig"
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import InboxIcon from '@mui/icons-material/Inbox';
 
 
 type UserType = {
-    account_email:string,
-    first_name:string,
-    last_name:string,
-    scholarship_status:string,
-}
+    scholarship: {
+        scholarship_id:number;
+        title:string;
+    };
+    status: { 
+        status_id: number; 
+        name: string 
+    };
+    userProfile: {
+        account_email:string;
+        first_name:string;
+        last_name:string;
+    }
+    fetchUsers: () => void;
+};
 
-function FoundationList({account_email, first_name, last_name, scholarship_status}:UserType){
-    return(
-        
-            <TableRow
-              key={account_email}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 }, height:"10px" }}
-            >
-              
-              <TableCell align="center">{account_email}</TableCell>
-              <TableCell align="center">{first_name + ' ' + last_name} </TableCell>
-              <TableCell align="center">{scholarship_status}</TableCell>
-              <TableCell align="center">
-                {/* <Button color= "secondary"sx={{boxShadow:2,padding: "5px",minHeight:"10px",minWidth:"10px",color:"black"}}><VisibilityOutlinedIcon/></Button> */}
-                <Button color= "secondary"sx={{boxShadow:2,padding: "5px", marginRight:"5px",minHeight:"10px",minWidth:"10px",color:"black"}}><ModeEditOutlineOutlinedIcon/></Button>
-                <Button color= "secondary"sx={{boxShadow:2,padding: "5px", marginLeft:"5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><MailOutlineOutlined/></Button>
-              </TableCell>
+function FoundationList({scholarship, status, userProfile, fetchUsers}:UserType){
+    
+    const [openEdit, setOpenEdit] = useState(false);
+    const navigate = useNavigate();
+
+    const [selectedStatus, setSelectedStatus] = useState(status.status_id); // Track the selected status
+    const [statusOptions, setStatusOptions] = useState<{status_id:number, name:string}[]>([]);
+    const handleOpen = (status_id:number) => {
+        setSelectedStatus(status_id);
+        setOpenEdit(true);
+    };
+    const handleClose = () => {
+        setSelectedStatus(0);
+        setOpenEdit(false);
+    };
+
+    useEffect(()=>{
+        const getStatuses = async () =>{
+            try{
+                const response = await axios.get('/user/getStatus');
+                console.log(response);
+                setStatusOptions(response.data);
+            }catch(error){
+                console.log("error in fetching statuses: " + error);
+            }
+
+        }
+        getStatuses();
+    }, []);
+
+    const handleSave = async () => {
+        try {
+            // Make an API call to update the status
+            await axios.put(`/user/update/${userProfile.account_email}`, {
+                status_id: selectedStatus,
+            });
+            fetchUsers();
+
+            // Handle successful update, e.g., refresh the list or show a success message
+            console.log('Status updated successfully');
+            
+            handleClose(); // Close the modal after saving
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    };
+
+
+    return (
+        <>
+            <TableRow key={userProfile.account_email}>
+                <TableCell align="center">
+                    {userProfile.account_email}
+                </TableCell>
+                <TableCell align='center'>
+                    {userProfile.first_name + " " + userProfile.last_name} 
+                </TableCell>
+                <TableCell align="center">
+                    {scholarship.title}
+                </TableCell>
+                <TableCell align="center">
+                    {status.name}
+                </TableCell>
+                <TableCell align="center">
+                    {/*Edit status */}
+                    <Button 
+                        onClick={() => handleOpen(status.status_id)}
+                        color= "secondary"sx={{boxShadow:2,padding: "5px", marginRight:"5px",minHeight:"10px",minWidth:"10px",color:"black"}}><ModeEditOutlineOutlinedIcon/></Button>
+                    {/*send email */}
+                    <Button
+                        onClick={() => {navigate(`newEmail/${userProfile.account_email}`)}} 
+                        color= "secondary"sx={{boxShadow:2,padding: "5px", marginLeft:"5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><MailOutlineOutlined/></Button>
+                    {/*view emails */}
+                    <Button
+                        onClick={() => {navigate(`emails/${userProfile.account_email}`)}}  
+                        color= "secondary"sx={{boxShadow:2,padding: "5px", marginLeft:"5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><InboxIcon/></Button>
+                </TableCell>
             </TableRow>
-    )
+
+            {/* Modal for editing */}
+            <Modal
+                open={openEdit}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+            >
+                <Fade in={openEdit}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 400,
+                            bgcolor: 'background.paper',
+                            boxShadow: 24,
+                            p: 4,
+                            borderRadius: 2,
+                        }}
+                    >
+                        <Typography variant="h6" component="h2">
+                            Edit Status
+                        </Typography>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="status-select-label">Status</InputLabel>
+                            <Select
+                                labelId="status-select-label"
+                                value={selectedStatus}
+                                onChange={(e) => setSelectedStatus(Number(e.target.value))}
+                                label="Status"
+                            >
+                                {/* Add options for status */}
+                                {
+                                    statusOptions.map((status)=>(<MenuItem
+                                    value={status.status_id}>
+                                        {status.name}
+                                    </MenuItem>))
+                                }
+                            </Select>
+                        </FormControl>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                mt: 3,
+                            }}
+                        >
+                            <Button variant="outlined" onClick={handleClose} sx={{ mr: 2 }}>
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={handleSave}
+                                sx={{ backgroundColor: '#2054BD', color: 'white' }}
+                            >
+                                Save
+                            </Button>
+                        </Box>
+                    </Box>
+                </Fade>
+            </Modal>
+        </>
+    );
 }
 
 function FoundList(){
-    const cells : string[] = [
-      "Email",
-      "Name",
-      "Status",
-      "Actions"
-    ]
 
-    const [users, setUsers] = useState<UserType[]>([])
-    try{
-      useEffect(()=>{
-        const fetchUsers = async () =>{
-          const response = await axios.get('/user/getUsers');
-          console.log(response.data);
-          const data = response.data.map(({account_email, first_name, last_name, ScholarshipStatus}:{account_email:string, first_name:string, last_name:string, ScholarshipStatus:{name:string}})=>({
-                account_email: account_email,
-                first_name: first_name,
-                last_name: last_name,
-                scholarship_status: ScholarshipStatus.name,
-          }));
-          console.log(data);
-          setUsers(data);
+    const [users, setUsers] = useState<UserType[]>([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState(''); // State to track search input
+    const [debouncedSearch, setDebouncedSearch] = useState(''); // For debounce
+
+    // Fetch Foundations with Pagination and Search
+    const fetchUsers = async (page = 1, search = '') => {
+        try {
+            const response = await axios.get(`/user/getAllPaginate`, {
+                params: { page, limit: 5, search },
+            });
+            setUsers(response.data.studentInfo);
+            setTotalPages(response.data.totalPages);
+            setCurrentPage(response.data.currentPage);
+        } catch (error) {
+            console.error("Error fetching foundations:", error);
         }
-        fetchUsers();
-      }, []);
-    }catch(error:any){
-      console.log("Error in fetching Announcements:> " + error);
+    };
+    const wrapperCall = async () =>{
+        fetchUsers(currentPage, debouncedSearch);
     }
 
+    // Debounce search input to minimize API calls
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            setDebouncedSearch(searchQuery); // Set debounced value after delay
+        }, 300);
+
+        return () => clearTimeout(delayDebounce); // Clear timeout on input change
+    }, [searchQuery]);
+
+    // Fetch data when debounced search changes or page changes
+    useEffect(() => {
+        fetchUsers(currentPage, debouncedSearch);
+    }, [currentPage, debouncedSearch]);
+
+    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+        setCurrentPage(page); // Update the page number
+    };
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value); // Update search input
+        setCurrentPage(1); // Reset to page 1 on new search
+    };
+    
  return (
     <>
+    <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignContent: "center",
+                    height: "4%",
+                    marginBottom: "15px",
+                    alignItems:"center",
+                }}
+            >
+                <TextField
+                    sx={{
+                        marginBottom: "15px",
+                        maxWidth:'50%',
+                        minWidth: '50%',
+                    }}
+                    placeholder="Search by foundation name..."
+                    value={searchQuery}
+                    onChange={handleSearchChange} // Handle input change
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Search />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+                <Button
+                    variant="contained"
+                    sx={{
+                        height: "100%",
+                        width: "256px",
+                        background: "#2054BD",
+                        color: "white",
+                        borderRadius: "5px",
+                    }}
+                    onClick={() => {
+                        //nothing yet
+                    }}
+                >
+                    Generate Report
+                </Button>
+            </Box>
         <TableContainer component={Paper}>
         <Table sx={{
             minWidth: 650,
             }}
             aria-label="simple table">
         <TableHead>
-          <TableRow sx={{ backgroundColor: "#BF9B30", marginX: '3%'}}>
-            {cells.map((cell) => <TableCell align='center' sx={{ fontWeight:900,color:"white" }}>{cell}</TableCell>)}
-          </TableRow>
+        <TableRow sx={{ backgroundColor: "#BF9B30" }}>
+            <TableCell align="center" sx={{ fontWeight: 900, color: "white" }}>
+                Applicant Email
+            </TableCell>
+            <TableCell align="center" sx={{ fontWeight: 900, color: "white" }}>
+                Applicant Name
+            </TableCell>
+            <TableCell align="center" sx={{ fontWeight: 900, color: "white" }}>
+                Scholarship Offer
+            </TableCell>
+            <TableCell align="center" sx={{ fontWeight: 900, color: "white" }}>
+                Status
+            </TableCell>
+            <TableCell align="center" sx={{ fontWeight: 900, color: "white" }}>
+                Actions
+            </TableCell>
+        </TableRow>
         </TableHead>
         <TableBody>
-        {users.map((user) => <FoundationList {...user}/>)}
+            {users.map((user) => <FoundationList {...user} fetchUsers={wrapperCall}/>)}
         </TableBody>
         </Table>
         </TableContainer>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                }}
+            >
+                <Pagination
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    variant="outlined"
+                    shape="rounded"
+                />
+            </Box>
     </>
  )
 }
@@ -118,53 +349,9 @@ export default function AdminViewApplicant(){
                 marginBottom: '15px',
                 // marginX: '3%'
             }}>
-                <TextField sx={{
-                    height: '100%', // Make TextField fill the height of the Box
-                    width: '35%',
-                    '& .MuiOutlinedInput-root': {
-                        height: '100%', // Ensure input area fills the height
-                        padding: '0', // Remove default padding if needed
-                    },
-                    '& .MuiInputBase-input': {
-                        padding: '10px', // Adjust padding for input text
-                        height: 'auto', // Allow height to adjust based on content
-                    }
-                }}
-                placeholder="Search"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <Search/>
-                        </InputAdornment>
-                    )
-                }}>
-
-                </TextField>
-                <Button variant='contained' sx={{
-                    height: '100%',
-                    width: '176px',
-                    background: '#2054BD',
-                    color: 'white',
-                    borderRadius: '5px'
-                }}>Generate Report</Button>
             </Box>
 
             <FoundList/>
-
-            <Pagination
-                count={3} // Hardcoded for now, please change upon making it dynamic
-                page={1} // Hardcoded for now, please change upon making it dynamic
-                // onChange={handleChange}
-                variant="outlined" // Optional: change style
-                shape="rounded" // Optional: change shape
-                sx={{
-                    // mt: 2,
-                    display: 'flex',
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    marginTop: '0.5%'
-                }}
-            />
         </Box>
         </>
     )

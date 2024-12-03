@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -18,6 +18,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Custom Number Input Component with Increment/Decrement
 const CustomNumberInput: React.FC<{
@@ -96,6 +97,9 @@ export default function AddEditScholarship(){
     const [slotsLeft, setSlotsLeft] = useState(0); // Initial value for slotsLeft
     const [isActive, setIsActive] = useState<boolean>(false); // Checkbox state for "Is Active"
     const [foundation, setFoundation] = useState<number | string>('');
+    const navigate = useNavigate();
+
+    const { scholarship_id } = useParams();
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsActive(event.target.checked);
@@ -220,7 +224,59 @@ export default function AddEditScholarship(){
         }));
     };
 
-    
+    // Function to fetch scholarship details if scholarship_id exists
+    useEffect(() => {
+        if (scholarship_id) {
+            setLoading(true);
+            axios.get(`/foundations/getS/${scholarship_id}`)
+                .then(response => {
+                    const data = response.data;
+                    setTitle(data.title);
+                    setFoundation(data.foundation_id);
+                    setDescription(data.scholarship_description);
+                    setSlotsLeft(data.slots);
+                    setDeadline(dayjs(data.deadline));
+                    setIsActive(data.isActive);
+                    //for le others
+                    seteligibilityInputFields(data.eligibility.split(',').reduce((acc:any, item:string, index:number) => {
+                        acc.push({ id: index, value: item.trim() });
+                        return acc;
+                    }, []));
+                    seteligibilityInputValues(data.eligibility.split(',').reduce((acc:any, item:string, index:number) => {
+                        acc[index] = item.trim(); // Assign the value to the corresponding index
+                        return acc;
+                      }, {}));
+
+                      
+                    setrequirementInputFields(data.reqs.split(',').reduce((acc:any, item:string, index:number) => {
+                        acc.push({ id: index, value: item.trim() });
+                        return acc;
+                    }, []));
+                    setrequirementInputValues(data.reqs.split(',').reduce((acc:any, item:string, index:number) => {
+                        acc[index] = item.trim(); // Assign the value to the corresponding index
+                        return acc;
+                      }, {}));
+
+                      
+                    setbenefitsInputFields(data.benefits.split(',').reduce((acc:any, item:string, index:number) => {
+                        acc.push({ id: index, value: item.trim() });
+                        return acc;
+                    }, []));
+                    setbenefitsInputValues(data.benefits.split(',').reduce((acc:any, item:string, index:number) => {
+                        acc[index] = item.trim(); // Assign the value to the corresponding index
+                        return acc;
+                      }, {}));
+                      
+                })
+                .catch(error => {
+                    setError("Failed to load scholarship details: " + error);
+                    console.log("Error In Fetching Scholarship Info: " + error);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    }, [scholarship_id]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Prevent default form submission (page reload)
@@ -240,34 +296,25 @@ export default function AddEditScholarship(){
         formData.append('eligibility', convertObjectToArrayE.join(','));  // Join array to string
         formData.append('reqs', convertObjectToArrayR.join(','));  // Join array to string
         formData.append('benefits', convertObjectToArrayB.join(','));  // Join array to string
-    
+        
         try {
-            // Send the data to the backend using Axios
-            const response = await axios.post("/foundations/add_scholarship", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data", // Ensure proper encoding for form data
-                },
-            });
-    
-            // Handle success response
-            console.log("Form submitted successfully:", response.data);
-            alert("Scholarship created successfully!");
-    
-            // Reset form values after successful submission
-            setDeadline(null);
-            setDescription('');
-            setTitle('');
-            setSlotsLeft(0);
-            setFoundation('');
-            setbenefitsInputValues([]);
-            setbenefitsInputFields([]);
-            seteligibilityInputValues([]);
-            seteligibilityInputFields([]);
-            setrequirementInputValues([]);
-            setrequirementInputFields([]);
-        } catch (error: any) {
-            console.error("Error submitting form:", error);
-            alert("Failed to create the Scholarship. Please try again.");
+            if (scholarship_id) {
+                // Update existing scholarship
+                await axios.put(`/foundations/updateS/${scholarship_id}`, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                alert("Scholarship updated successfully!");
+            } else {
+                // Create new scholarship
+                await axios.post("/foundations/add_scholarship", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                alert("Scholarship created successfully!");
+            }
+            navigate("/adminView/scholarships"); // Redirect after save
+        } catch (error) {
+            console.error("Error saving scholarship:", error);
+            alert("Failed to save the scholarship. Please try again.");
         }
     };
     
@@ -316,7 +363,7 @@ export default function AddEditScholarship(){
 
     return(
         <Box sx={{display: 'flex', flexDirection: 'column', margin:'80px auto 0 auto', width: '90%', height: 'auto', border: 'ridge', borderRadius: '15px', padding: '20px'}}>
-            <Button startIcon={<ArrowBack/>} sx={{alignSelf: 'flex-start', backgroundColor: 'transparent', border: 'none', color: 'black', textTransform: 'capitalize', fontSize: '20px', marginBottom: '5px'}}>Go Back</Button>
+            <Button startIcon={<ArrowBack/>} sx={{alignSelf: 'flex-start', backgroundColor: 'transparent', border: 'none', color: 'black', textTransform: 'capitalize', fontSize: '20px', marginBottom: '5px'}} onClick={()=>{navigate("/adminView/scholarships")}}>Go Back</Button>
             
             <form onSubmit={handleSubmit}>
                 <Box sx={{display: 'flex', justifyContent: 'center', flexGrow: 1}}>
@@ -342,19 +389,34 @@ export default function AddEditScholarship(){
                         {/* Foundation Selector */}
                         <FormControl variant="standard" sx={{ m: 1, minWidth: '100%' }}>
                             <InputLabel id="foundation_selector" >Foundation</InputLabel>
-                            <Select
-                                labelId="foundation_selector"
-                                id="foundation_selector_select"
-                                label="Foundation"
-                                value={foundation}
-                                onChange={handleFoundationChange}
-                            >
-                                {noFScholarship.map((foundation)=>{
-                                    return (
-                                        <MenuItem value={foundation.foundation_id}>{foundation.name}</MenuItem>
-                                    );
-                                })}
-                            </Select>
+                            {
+                                scholarship_id ? (
+                                    <>
+                                        <Select
+                                            labelId="foundation_selector"
+                                            id="foundation_selector_select"
+                                            label="Foundation"
+                                            value={foundation}
+                                        >
+                                            <MenuItem value={foundation}>{foundation}</MenuItem>  
+                                        </Select>
+                                    </>
+                                ) : (    
+                                    <Select
+                                        labelId="foundation_selector"
+                                        id="foundation_selector_select"
+                                        label="Foundation"
+                                        value={foundation}
+                                        onChange={handleFoundationChange}
+                                    >
+                                        {noFScholarship.map((foundation)=>{
+                                            return (
+                                                <MenuItem value={foundation.foundation_id}>{foundation.name}</MenuItem>
+                                            );
+                                        })}
+                                    </Select>
+                                )
+                            }
                         </FormControl>
                         {/*Description*/}
                         <Typography variant="h5" sx={{textAlign: 'left', fontWeight: 'bold'}}>Description</Typography>
@@ -575,7 +637,6 @@ export default function AddEditScholarship(){
                             <LocalizationProvider dateAdapter={AdapterDayjs} >
                                 <DemoContainer  components={['DatePicker', 'DatePicker']}>
                                     <DatePicker
-                                    
                                     value={deadline}
                                     onChange={(newValue) => setDeadline(newValue)}
                                     sx={{width: '200px',
