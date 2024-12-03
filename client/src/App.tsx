@@ -19,6 +19,7 @@ import Forms from './pages/StudentView/Forms';
 // import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
 import AddEditScholarship from './pages/AdminView/AdminAddEditScholarship';
 import AddEditAnnouncment from './pages/AdminView/AdminAddEditAnnouncement';
+import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncement';
 import QuillTest from './pages/AdminView/quillTtest';
 import DebugPage from './pages/Debug/DebugPage';
 // import Test from './pages/StudentView/TestEmails';
