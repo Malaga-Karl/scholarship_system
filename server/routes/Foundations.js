@@ -14,7 +14,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const { Foundations, Scholarships } = require('../models')
+const { Foundations, Scholarships, StudentScholarship } = require('../models')
+const Sequelize = require('sequelize');
 
 //conditionals
 const { Op } = require("sequelize");
@@ -72,11 +73,47 @@ router.get("/getallFS", async (req, res) => {
         {
           model: Scholarships,
           as: 'scholarships', // Alias as defined in the association
+          include: [
+            {
+              model: StudentScholarship,
+              as: 'studentScholarships', // Alias as defined in the association
+              where: { status_id: 4 }, // Filter for accepted scholarships
+              required: false, // Include even if no accepted students
+              attributes: [], // Exclude individual rows, just count them
+            },
+          ],
+          attributes: {
+            include: [
+              // Aggregate: count accepted applications
+              [
+                Sequelize.fn('COUNT', Sequelize.col('scholarships.studentScholarships.status_id')),
+                'accepted_count',
+              ],
+            ],
+          },
         },
       ],
+      group: [
+        'Foundations.foundation_id',
+        'scholarships.scholarship_id',
+        'scholarships.studentScholarships.scholarship_id', // Explicitly include group columns
+      ],
+      order: [[{ model: Scholarships, as: 'scholarships' }, 'deadline', 'ASC']], // Sort by Scholarships.deadline in ascending order
     });
 
-    res.json(allFoundations); // Respond with the fetched data
+    // Calculate remaining slots dynamically
+    const foundationsWithSlots = allFoundations.map((foundation) => {
+      foundation.scholarships = foundation.scholarships.map((scholarship) => {
+        const acceptedCount = scholarship.dataValues.accepted_count || 0; // Use the calculated field
+        return {
+          ...scholarship.toJSON(),
+          remaining_slots: scholarship.slots - acceptedCount,
+        };
+      });
+      return foundation;
+    });
+
+    res.json(foundationsWithSlots); // Respond with the fetched and processed data
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "An error occurred while fetching foundations and scholarships." });

@@ -20,6 +20,7 @@ type Scholarship = {
     image: string;
     title: string;
     slots: number;
+    accepted_count:number;
     deadline: string;
     scholarship_description: string;
     eligibility: string[];
@@ -44,6 +45,7 @@ type Scholarship = {
     scholarship_description: string;
     eligibility: string;
     reqs: string;
+    accepted_count:number;
     benefits: string;
   };
   
@@ -78,7 +80,7 @@ export default function StudentViewScholarship(){
             // Fetch data from the API
             const response = await axios.get('/foundations/getallFS');
             
-            //console.log(response);
+            console.log(response);
             // Map and store the data in state
             const data = response.data.map((foundation: Foundationdb) => ({
                 foundation_id: foundation.foundation_id,
@@ -91,6 +93,7 @@ export default function StudentViewScholarship(){
                     image: foundation.logo_path, // Assuming logo_path is used as image for scholarship
                     title: scholarship.title,
                     slots: scholarship.slots,
+                    accepted_count: scholarship.accepted_count,
                     deadline: scholarship.deadline,
                     desc: scholarship.scholarship_description,
                     eligibility: scholarship.eligibility.split(','), // Safely split string
@@ -167,6 +170,7 @@ export default function StudentViewScholarship(){
                     {specificScholarship ? (
                         <SpecificScholarshipTemplate
                             key={id}
+                            accepted_count={specificScholarship?.scholarships[0].accepted_count}
                             image={specificScholarship?.logo_path}
                             title={specificScholarship?.scholarships[0].title}
                             id={specificScholarship?.foundation_id}
@@ -206,23 +210,26 @@ export default function StudentViewScholarship(){
                         {foundations.length > 0 ? (
                             foundations.map((scholarship, index) => (
                                 scholarship.scholarships.length > 0 ? (
-                                    <SvScholarship key={index} 
-                                    image={scholarship?.logo_path}
-                                    title={scholarship?.scholarships[0].title}
-                                    id={scholarship?.foundation_id}
-                                    sID={scholarship?.scholarships[0].scholarship_id}
-                                    slots={scholarship?.scholarships[0].slots}
-                                    deadline={
-                                        new Date(scholarship?.scholarships[0].deadline).toLocaleDateString('en-US', {
-                                        month: '2-digit',
-                                        day: '2-digit',
-                                        year: 'numeric',
-                                      })}
-                                    desc={scholarship?.scholarships[0].scholarship_description}
-                                    reqs={scholarship?.scholarships[0].reqs}
-                                    benefits={scholarship?.scholarships[0].benefits}
-                                    eligibility={scholarship?.scholarships[0].eligibility}
-                                />
+                                    new Date(scholarship.scholarships[0].deadline) >= new Date()?(
+                                        <SvScholarship key={index} 
+                                        accepted_count={scholarship?.scholarships[0].accepted_count}
+                                        image={scholarship?.logo_path}
+                                        title={scholarship?.scholarships[0].title}
+                                        id={scholarship?.foundation_id}
+                                        sID={scholarship?.scholarships[0].scholarship_id}
+                                        slots={scholarship?.scholarships[0].slots}
+                                        deadline={
+                                            new Date(scholarship?.scholarships[0].deadline).toLocaleDateString('en-US', {
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            year: 'numeric',
+                                        })}
+                                        desc={scholarship?.scholarships[0].scholarship_description}
+                                        reqs={scholarship?.scholarships[0].reqs}
+                                        benefits={scholarship?.scholarships[0].benefits}
+                                        eligibility={scholarship?.scholarships[0].eligibility}
+                                    />
+                                    ):( '' )
                                 ):('')
                                 
                             ))

@@ -116,7 +116,7 @@ return (
         <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
             <Toolbar />
             <Box sx={{ display: "flex" }}>
-            <Button variant="contained" sx={{ marginBottom: 3 }} onClick={() => (navigate("contact/new"))}>
+            <Button variant="contained" sx={{ marginBottom: 3 }} onClick={() => (navigate("new"))}>
                 Create Mail
             </Button>
             </Box>
