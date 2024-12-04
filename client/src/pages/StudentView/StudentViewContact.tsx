@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Colors from "../../colors";
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import axios from "axios";
@@ -35,6 +35,7 @@ const [loading, setLoading] = useState<boolean>(false); // State for loading ind
 const [accessToken, setAccessToken] = useState<string | null>(null);
 const { instance } = useMsal(); // Get MSAL instance
 const isAuthenticated = useIsAuthenticated(); // Check if the user is authenticated
+const navigate = useNavigate();
 
 //this can be placed in 1 file tho T_T, but I don't want to fuck this shit up
 const fetchAccessToken = async (): Promise<string> => {
@@ -115,7 +116,7 @@ return (
         <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
             <Toolbar />
             <Box sx={{ display: "flex" }}>
-            <Button variant="contained" sx={{ marginBottom: 3 }} onClick={() => (window.location.href = "contact/new")}>
+            <Button variant="contained" sx={{ marginBottom: 3 }} onClick={() => (navigate("contact/new"))}>
                 Create Mail
             </Button>
             </Box>

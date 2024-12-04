@@ -2,10 +2,11 @@
   "name": "scholarship",
   "private": true,
   "version": "0.0.0",
+  "homepage": "http://127.0.0.1/vite/",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

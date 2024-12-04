@@ -6,7 +6,7 @@ import Box from '@mui/material/Box'
 import {BigNews, NewsProps, boldStyle} from "../HomePage/Announcements"
 
 //Image Imports
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import SpecificAnnouncementTemplate from './SpecificAnnouncementTemplate'
 import { useEffect, useState } from 'react'
 import axios, { axiosBase } from '../../axiosConfig';
@@ -26,6 +26,7 @@ export default function MainAnnouncements(){
     const [announcements, getAllAnnouncements] = useState<announcement[]>([]);
     const [loading, setLoading] = useState<Boolean>(false);
     const [error, setErrors] = useState("");
+    const navigate = useNavigate();
     useEffect(() => {
         setLoading(true);
         async function fetchLatestAnnouncements() {
@@ -92,7 +93,7 @@ export default function MainAnnouncements(){
                         <Box display={"flex"} flexDirection={"column"} gap={10} justifyContent={"center"}>
                             <Typography variant='h3'>There is no news like that. u trippin homie</Typography> 
                             <Button variant="contained" sx={{margin:"10px auto", maxWidth:"250px"}
-                        } color="error" onClick={() => window.location.href = '/announcements'}>Back to Announcements</Button>
+                        } color="error" onClick={() => navigate(`/announcements`)}>Back to Announcements</Button>
                         </Box>
                     )}
                 </>

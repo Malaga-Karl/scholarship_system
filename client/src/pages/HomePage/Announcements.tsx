@@ -11,6 +11,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { useEffect, useState } from 'react';
 import axios, { axiosBase } from '../../axiosConfig';
+import { useNavigate } from 'react-router-dom';
 
 export type NewsProps = {
     id: number,
@@ -29,7 +30,9 @@ export const boldStyle = {
     lineHeight:"normal",
 }
 
+
 export function BigNews({id, date, image, title, content}: NewsProps){
+    const navigate = useNavigate();
     return(
         <Card sx={{
             maxWidth:450,
@@ -50,13 +53,14 @@ export function BigNews({id, date, image, title, content}: NewsProps){
                 justifyContent:"space-between",
             }}>
                 <Typography variant='body2'>{date}</Typography>
-                <Button variant='contained'  sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={()=>window.location.href = '/announcements/' + id}>Read More</Button>
+                <Button variant='contained'  sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={() => navigate(`/announcements/${id}`)}>Read More</Button>
             </CardActions>
         </Card>
     )
 }
 
 function SmallNews({id, date, image, title}: NewsProps){
+    const navigate = useNavigate();
     return(
         <Card sx={{
             maxWidth:500,
@@ -97,7 +101,7 @@ function SmallNews({id, date, image, title}: NewsProps){
                     justifyContent:"space-between",
                 }}>
                     <Typography variant='body2'>{date}</Typography>
-                    <Button variant='contained' sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={()=>window.location.href = '/announcements/' + id}>Read More</Button>
+                    <Button variant='contained' sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={() => navigate(`/announcements/${id}`)}>Read More</Button>
                 </CardActions>
             </div>
         </Card>
@@ -115,6 +119,7 @@ type announcement = {
 
 export default function Announcements(){
 
+    const navigate = useNavigate();
     const [firstAnnouncement, setFirstAnnouncement] = useState<announcement | null>(null);
     const [announcements, setOtherAnnouncements] = useState<announcement[]>([]);
 
@@ -194,7 +199,7 @@ export default function Announcements(){
                         title={news?.title ?? ''}
                         content={news?.description}
                     />)}
-                    <Button variant='text' sx={{color:"rgb(255, 255, 255)"}} onClick={()=>window.location.href = '/announcements'}>See more<ArrowForwardIcon></ArrowForwardIcon></Button>
+                    <Button variant='text' sx={{color:"rgb(255, 255, 255)"}} onClick={()=>navigate(`/announcements`)}>See more<ArrowForwardIcon></ArrowForwardIcon></Button>
                 </Box>
             </Box>
         </div>

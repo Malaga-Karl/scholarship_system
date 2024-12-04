@@ -3,8 +3,10 @@ import { FoundationProps } from "../HomePage/Foundations";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { ArrowBack, ArrowForward} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 export default function SpecificFoundation({name, image, id, description}:FoundationProps){
+    const navigate = useNavigate();
     return(
         <Box sx={{color:"white", height:"fill-content"}}>
             <Box sx={{height: '60px', backgroundColor: '#bf9b30'}}/>
@@ -20,8 +22,8 @@ export default function SpecificFoundation({name, image, id, description}:Founda
                 />
             </Box>
             <Box mt={10} pb={5} sx={{display:"flex", justifyContent:"space-around"}}>
-                <Button variant="contained" color="error" onClick={() => { window.location.href = '/partners'}} startIcon={<ArrowBack/>}>Back to Foundations</Button>
-                <Button variant="contained" onClick={() => { window.location.href = '/partners/' + (Number(id) + 1); }} endIcon={<ArrowForward/>}> Next </Button>
+                <Button variant="contained" color="error" onClick={() => { navigate('/partners')}} startIcon={<ArrowBack/>}>Back to Foundations</Button>
+                <Button variant="contained" onClick={() => { navigate('/partners/' + (Number(id) + 1)) }} endIcon={<ArrowForward/>}> Next </Button>
             </Box>
             {/* <Divider sx={{marginTop: 1, BorderColor: 'gray', BorderWidth: 1}}/> */}
             <hr/>
