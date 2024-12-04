@@ -34,8 +34,8 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
-        <Routes>            
+      <BrowserRouter basename="/">
+        <Routes >            
           <Route path='/' element={<HomeTemplate/>}>
 
             <Route path='/' element={<Navigate to={'home'}/>}/>

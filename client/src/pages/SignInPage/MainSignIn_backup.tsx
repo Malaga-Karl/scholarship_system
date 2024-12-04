@@ -12,6 +12,7 @@ import { FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel, 
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
 import axios from '../../axiosConfig';
+import { useNavigate } from 'react-router-dom';
 
 export default function MainSignIn() {
     const [showPassword, setShowPassword] = useState(false);
@@ -42,6 +43,7 @@ export default function MainSignIn() {
         setErrors({ ...errors, email: emailError, password: passwordError });
         return !emailError && !passwordError;
     };
+    const navigate = useNavigate();
 
     // Handle form submission with Axios and error handling
     const handleSubmit = async () => {
@@ -62,7 +64,7 @@ export default function MainSignIn() {
                     setEmail('');
                     setPassword('');
                     //console.log(JSON.parse(JSON.stringify(response.data.user)))
-                    window.location.href = "studentview";
+                    navigate("studentview");
                 }
             } catch (error) {
                 // Check if error is an AxiosError and handle accordingly

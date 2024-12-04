@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ReactQuill from "react-quill";
+import { useNavigate } from "react-router-dom";
 
 interface AnnouncementBody {
     announcement_id: number;
@@ -21,7 +22,7 @@ interface AnnouncementBody {
 export default function AnnouncementTemplate({title, date, image, content, description, content2, content3, content4, id}:NewsProps & {description:string}){
     const [announcement, setAnnouncement] = useState<AnnouncementBody | null>(null);
     const [loading, setLoading] = useState(true);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchAnnouncement = async () => {
         try {
@@ -84,8 +85,8 @@ export default function AnnouncementTemplate({title, date, image, content, descr
             <QuillOutput content={announcement.content?.content || ""} />
             
             <Box mt={10} pb={5} sx={{display:"flex", justifyContent:"space-around"}}>
-                <Button variant="contained" color="error" onClick={() => window.location.href = '/announcements'}>Back to Announcements</Button>
-                <Button variant="contained" onClick={() => { window.location.href = '/announcements/' + (Number(id) + 1); }}> Next </Button>
+                <Button variant="contained" color="error" onClick={() => navigate('/announcements')}>Back to Announcements</Button>
+                <Button variant="contained" onClick={() => { navigate( '/announcements/' + (Number(id) + 1)) }}> Next </Button>
             </Box>
         </Box>
     </Box>
