@@ -80,7 +80,7 @@ export default function StudentViewScholarship(){
             // Fetch data from the API
             const response = await axios.get('/foundations/getallFS');
             
-            console.log(response);
+            //console.log(response);
             // Map and store the data in state
             const data = response.data.map((foundation: Foundationdb) => ({
                 foundation_id: foundation.foundation_id,
@@ -447,6 +447,7 @@ export default function StudentViewScholarship(){
                                         alignItems: 'center',
                                         gap:"40px"
                                     }}>
+                                        {/* removed, 'cause it's not needed to have the download when there is one inside
                                         <Button variant="contained" 
                                             color="primary" 
                                             onClick={handleDownloadPDF}
@@ -461,6 +462,7 @@ export default function StudentViewScholarship(){
                                         >
                                             Download PDF
                                         </Button>
+                                         */}
                                         <Button variant="contained" sx={{
                                             backgroundColor: '#BF9B30',
                                             height: '45px',

@@ -29,6 +29,7 @@ import AdminViewTemplate from './template/AdminViewTemplate';
 import AdminNewMail from './pages/AdminView/AdminNewEmail'; 
 import AdminStudentEmails from './pages/AdminView/AdminStudentEmails';
 import ScholarshipFormPage from './pages/StudentView/FormPrint';
+import PdfGenerator from './pages/StudentView/FormPrint';
 
 function App() {
 
@@ -67,7 +68,7 @@ function App() {
             <Route path='contact/new' element={<NewMail/>}/>
             
           </Route>
-          <Route path='/print' element={<ScholarshipFormPage />}/>
+          <Route path='/print' element={<PdfGenerator />}/>
 
           <Route path='/adminview' element={<AdminViewTemplate/>}>
             {/* <Route index element={<Navigate to="foundations" replace/>} /> */}

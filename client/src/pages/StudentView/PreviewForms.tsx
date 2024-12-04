@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import { Button } from '@mui/material';
 import plm_logo from '../../assets/footerLogos/plm_iconlogo.png'; // Replace with your logo path
@@ -6,7 +6,7 @@ import plm_logo from '../../assets/footerLogos/plm_iconlogo.png'; // Replace wit
 const PdfGenerator = () => {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null); // State to hold Blob URL
 
-    const createPDF = () => {
+    const generatePDF = () => {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
@@ -242,61 +242,12 @@ const PdfGenerator = () => {
 
         //------------------------------------- INPUTS -------------------------------------//
         // Student
-        
-        const formData = JSON.parse(localStorage.getItem("scholarshipFormData") || "{}");
-        console.log(formData);
         doc.addImage(plm_logo, 'PNG', line1_x2 + (pageWidth * 0.03), (guideline_Y * 0.96), 35, 45) // Insert student profile here, must be in base64 format
-        const stud_surname = formData.surname;
-        const stud_given_name = formData.givenName || '';
-        const stud_middle_name = formData.middleName || '';
-        const stud_house_block_lotno = formData.houseNo || '';
-        const stud_street = formData.streen || '';
-        const stud_subd_village = formData.stud_subd_village || '';
-        const stud_barangay = formData.stud_barangay || '';
-        const stud_city = formData.stud_city || '';
-        const stud_province = formData.stud_province || '';
-        const stud_age = formData.stud_age || '';
-        const stud_birthdate = formData.stud_birthdate || '';
-        const stud_religion = formData.stud_religion || '';
-        const stud_mobile = formData.stud_mobile || '';
-        const stud_landline = formData.stud_landline || '';
-        const stud_email = formData.stud_email || '';
-
-        // Scholastic
-        const school_course = formData.school_course || '';
-        const school_major = formData.school_major || '';
-        const school_level = formData.school_level || '';
-        const school_current_gwa = formData.school_current_gwa || '';
-        const school_status = formData.school_status || '';
-
-        // Family
-        const father_surname = formData.father_surname || '';
-        const father_given_name = formData.father_given_name || '';
-        const father_middle_name = formData.father_middle_name || 'N/A';
-        const father_occupation = formData.father_occupation || '';
-        const father_age = formData.father_age || '';
-        const father_company = formData.father_company || 'N/A';
-        const father_monthly_income = formData.father_monthly_income || 0;
-
-        const mother_surname = formData.mother_surname || '';
-        const mother_given_name = formData.mother_given_name || '';
-        const mother_middle_name = formData.mother_middle_name || 'N/A';
-        const mother_occupation = formData.mother_occupation || '';
-        const mother_age = formData.mother_age || '';
-        const mother_company = formData.mother_company || 'N/A';
-        const mother_monthly_income = formData.mother_monthly_income || 0;
-
-        const parents_house_block_lotno = formData.parents_house_block_lotno || '';
-        const parents_street = formData.parents_street || '';
-        const parents_subd_village = formData.parents_subd_village || '';
-        const parents_barangay = formData.parents_barangay || '';
-        const parents_city = formData.parents_city || '';
-        const parents_province = formData.parents_province || '';
-        const parents_mobile = formData.parents_mobile || '';
-        const parents_landline = formData.parents_landline || '';
-
-        // Siblings - assuming formData.siblings contains an array of sibling data
-        const siblings = formData.siblings || [];
+        const stud_surname = 'Hitler';
+        const stud_given_name = 'Adolf';
+        const stud_middle_name = 'Polzi';
+        const stud_house_block_lotno = '69-B';
+        const stud_street = 'Chernobyl';
         const stud_subd_village = 'Stalingrad';
         const stud_barangay = '1945';
         const stud_city = 'Berlin';
@@ -418,40 +369,24 @@ const PdfGenerator = () => {
         // const url = URL.createObjectURL(pdfBlob);
         // setPdfUrl(url); // Set Blob URL to state
 
-        return doc.output('blob'); // Generate and return the Blob
-        //doc.save('generated.pdf')
+        doc.save('generated.pdf')
     };
-    const generateAndPreviewPDF = async () => {
-        const pdfBlob = createPDF(); // Create PDF Blob
-        const url = URL.createObjectURL(pdfBlob); // Create Blob URL for iframe preview
-        setPdfUrl(url); // Set URL for iframe
-    };
-
-    // Generate PDF automatically when the component is mounted
-    useEffect(() => {
-        generateAndPreviewPDF(); // Generate PDF on component mount
-
-        // Clean up the URL when the component is unmounted
-        return () => {
-            if (pdfUrl) {
-                URL.revokeObjectURL(pdfUrl);
-            }
-        };
-    }, []); // Empty dependency array to run once on mount
 
     return (
-        <div>
-            {/* Display the PDF in an iframe */}
-            {pdfUrl ? (
+        <div style={{ padding: '70px' }}>
+            <Button variant="contained" color="primary" onClick={generatePDF}>
+                Generate PDF
+            </Button>
+
+            {/* Display the PDF in an iframe if pdfUrl is set */}
+            {pdfUrl && (
                 <iframe
                     title="PDF Preview"
                     src={pdfUrl}
                     width="515px"
                     height="618px"
-                    style={{ border: 'none'}}
+                    style={{ border: 'none', marginTop: '20px' }}
                 />
-            ) : (
-                <p>Loading PDF...</p>
             )}
         </div>
     );
