@@ -87,7 +87,7 @@ export default function StudentViewScholarship(){
                 logo_path: `${axiosBase}/uploads/${foundation.logo_path}`,
                 status: foundation.status,
                 scholarships: foundation.scholarships.map((scholarship: Scholarshipdb) => ({
-                    id: scholarship.scholarship_id,
+                    scholarship_id: scholarship.scholarship_id,
                     image: foundation.logo_path, // Assuming logo_path is used as image for scholarship
                     title: scholarship.title,
                     slots: scholarship.slots,
@@ -170,6 +170,7 @@ export default function StudentViewScholarship(){
                             image={specificScholarship?.logo_path}
                             title={specificScholarship?.scholarships[0].title}
                             id={specificScholarship?.foundation_id}
+                            sID={specificScholarship?.scholarships[0].scholarship_id}
                             slots={specificScholarship?.scholarships[0].slots}
                             deadline={
                                 new Date(specificScholarship?.scholarships[0].deadline).toLocaleDateString('en-US', {
@@ -209,6 +210,7 @@ export default function StudentViewScholarship(){
                                     image={scholarship?.logo_path}
                                     title={scholarship?.scholarships[0].title}
                                     id={scholarship?.foundation_id}
+                                    sID={scholarship?.scholarships[0].scholarship_id}
                                     slots={scholarship?.scholarships[0].slots}
                                     deadline={
                                         new Date(scholarship?.scholarships[0].deadline).toLocaleDateString('en-US', {

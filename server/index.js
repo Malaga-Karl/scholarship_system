@@ -13,7 +13,7 @@ app.use(express.json());
 const db = require('./models');
 
 //cors? idk tho
-app.use(cors());
+app.use(cors({}));
 
 // Serve static files from the uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -25,10 +25,10 @@ app.use("/announcements", announcementsRouter);
 const loginRouter = require('./routes/UserAuthentication');
 app.use("/user", loginRouter);
 
-db.sequelize.sync({ force: false }).then(()=>{
-        app.listen(port, ()=>{
-            console.log(`Server Running on port { ${port} }`);
-        });
-    }).catch((err) => {
-        console.error('Error syncing database:', err);
+db.sequelize.sync({ force: false }).then(() => {
+    app.listen(port, () => {
+        console.log(`Server Running on port { ${port} }`);
     });
+}).catch((err) => {
+    console.error('Error syncing database:', err);
+});

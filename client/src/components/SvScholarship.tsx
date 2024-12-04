@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 export type Scholarship ={
     id: number,
+    sID:number,
     image: string,
     title: string,
     slots: number,
@@ -19,7 +20,7 @@ export type Scholarship ={
     benefits: string[],
 }
 
-export default function SvScholarship({id, image, title, slots, deadline}:Scholarship) {
+export default function SvScholarship({id, sID, image, title, slots, deadline}:Scholarship) {
     const navigate = useNavigate();
     return (
         <Card variant='outlined' sx={{width:"20vw"}}>

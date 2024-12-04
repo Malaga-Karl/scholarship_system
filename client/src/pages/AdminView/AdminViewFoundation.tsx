@@ -59,7 +59,13 @@ function FoundationList({
         <>
             <TableRow key={foundation_id}>
                 <TableCell align="center">
-                    <img src={`${axiosBase}/uploads${logo_path}`} alt="Item" />
+                    <img src={`${axiosBase}/uploads${logo_path}`} 
+                        style={{
+                            maxHeight:"100px",
+                            minHeight:"100px",
+                            maxWidth: "300px",
+                        }}
+                        alt="Item" />
                 </TableCell>
                 <TableCell align="center">{name}</TableCell>
                 <TableCell

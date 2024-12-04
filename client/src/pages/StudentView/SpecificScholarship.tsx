@@ -8,7 +8,7 @@ import CardActions from "@mui/material/CardActions";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { useHref, useNavigate } from "react-router-dom";
 
-export default function SpecificScholarshipTemplate({id, title, desc, eligibility, reqs, benefits, deadline}:Scholarship){
+export default function SpecificScholarshipTemplate({id, sID, title, desc, eligibility, reqs, benefits, deadline}:Scholarship){
     const navigate = useNavigate();
     return (
         <Card sx={{width:"100%"}}>
@@ -50,7 +50,7 @@ export default function SpecificScholarshipTemplate({id, title, desc, eligibilit
                         </Box>
                     </Box>
                     <CardActions sx={{position: 'absolute', bottom: 0, right: 0}}>
-                        <Button variant="contained" endIcon={<ArrowForward/>} sx={{backgroundColor: '#BF9B30', height: '56px', width: '167px', borderRadius: '10px', textTransform: 'capitalize', fontSize: '20px'}} onClick={() => navigate(`forms/${id}`)}>Apply Now</Button>
+                        <Button variant="contained" endIcon={<ArrowForward/>} sx={{backgroundColor: '#BF9B30', height: '56px', width: '167px', borderRadius: '10px', textTransform: 'capitalize', fontSize: '20px'}} onClick={() => navigate(`forms/${sID}`)}>Apply Now</Button>
                     </CardActions>
                 </Box>
             </CardContent>
