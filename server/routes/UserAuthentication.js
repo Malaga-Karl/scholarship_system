@@ -155,17 +155,18 @@ router.get('/getUsers', async (req, res) => {
 
 //paginations
 router.get('/getAllPaginate', async (req, res) => {
-    const { page = 1, limit = 5, search = '' } = req.query;
+    const { page = 1, limit = 5, search = '', studentStatus=''} = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit); // Ensures proper pagination
 
     try {
-        const where = search
-            ? {
-                  student_email: {
-                      [Op.like]: `%${search}%`,
-                  },
-              }
-            : {};
+        const where = {
+                        student_email: {
+                            [Op.like]: `%${search}%`,
+                        },
+                        status_id: {
+                            [Op.like]: `%${studentStatus}%`,
+                        },
+                    };
 
         const { count, rows } = await StudentScholarship.findAndCountAll({
             where,
@@ -333,8 +334,8 @@ router.get('/getStatus', async (req, res) =>{
 
 });
 
-/////student to scholarship APIs
-router.post('/studentScholarship/add', async (req, res) => {
+/////makes a student scholarship status
+router.post('/scholarshipStatus/add', upload.none(), async (req, res) => {
     try {
         const { name } = req.body;
 

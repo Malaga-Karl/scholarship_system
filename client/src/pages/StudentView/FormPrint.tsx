@@ -250,100 +250,105 @@ const PdfGenerator = () => {
         const stud_given_name = formData.givenName || '';
         const stud_middle_name = formData.middleName || '';
         const stud_house_block_lotno = formData.houseNo || '';
-        const stud_street = formData.streen || '';
-        const stud_subd_village = formData.stud_subd_village || '';
-        const stud_barangay = formData.stud_barangay || '';
-        const stud_city = formData.stud_city || '';
-        const stud_province = formData.stud_province || '';
-        const stud_age = formData.stud_age || '';
-        const stud_birthdate = formData.stud_birthdate || '';
-        const stud_religion = formData.stud_religion || '';
-        const stud_mobile = formData.stud_mobile || '';
-        const stud_landline = formData.stud_landline || '';
-        const stud_email = formData.stud_email || '';
+        const stud_street = formData.street || '';
+        const stud_subd_village = formData.subdivision || '';
+        const stud_barangay = formData.barangay || '';
+        const stud_city = formData.city || '';
+        const stud_province = formData.province || '';
+        const stud_age = formData.age || '';
+        const stud_birthdate = formData.birthdate || '';
+        const stud_religion = formData.religion || '';
+        const stud_mobile = formData.mobileNumber || '';
+        const stud_landline = formData.landline || '';
+        const stud_email = formData.email || '';
 
         // Scholastic
-        const school_course = formData.school_course || '';
-        const school_major = formData.school_major || '';
-        const school_level = formData.school_level || '';
-        const school_current_gwa = formData.school_current_gwa || '';
-        const school_status = formData.school_status || '';
+        const school_course = formData.course || '';
+        const school_major = formData.major || '';
+        const school_level = formData.level || '';
+        const school_current_gwa = formData.gwa || '';
+        const school_status = formData.status || '';
 
         // Family
-        const father_surname = formData.father_surname || '';
-        const father_given_name = formData.father_given_name || '';
-        const father_middle_name = formData.father_middle_name || 'N/A';
-        const father_occupation = formData.father_occupation || '';
-        const father_age = formData.father_age || '';
-        const father_company = formData.father_company || 'N/A';
-        const father_monthly_income = formData.father_monthly_income || 0;
+        const father_surname = formData.fatherSurname || '';
+        const father_given_name = formData.fatherGivenName || '';
+        const father_middle_name = formData.fatherMiddleName || 'N/A';
+        const father_occupation = formData.fatherOccupation || '';
+        const father_age = formData.fatherAge || '';
+        const father_company = formData.fatherCompany || 'N/A';
+        const father_monthly_income = formData.fatherIncome || 0;
 
-        const mother_surname = formData.mother_surname || '';
-        const mother_given_name = formData.mother_given_name || '';
-        const mother_middle_name = formData.mother_middle_name || 'N/A';
-        const mother_occupation = formData.mother_occupation || '';
-        const mother_age = formData.mother_age || '';
-        const mother_company = formData.mother_company || 'N/A';
-        const mother_monthly_income = formData.mother_monthly_income || 0;
+        const mother_surname = formData.motherSurname || '';
+        const mother_given_name = formData.motherGivenName || '';
+        const mother_middle_name = formData.motherMiddleName || 'N/A';
+        const mother_occupation = formData.motherOccupation || '';
+        const mother_age = formData.motherAge || '';
+        const mother_company = formData.motherCompany || 'N/A';
+        const mother_monthly_income = formData.motherIncome || 0;
 
-        const parents_house_block_lotno = formData.parents_house_block_lotno || '';
-        const parents_street = formData.parents_street || '';
-        const parents_subd_village = formData.parents_subd_village || '';
-        const parents_barangay = formData.parents_barangay || '';
-        const parents_city = formData.parents_city || '';
-        const parents_province = formData.parents_province || '';
-        const parents_mobile = formData.parents_mobile || '';
-        const parents_landline = formData.parents_landline || '';
+        const parents_house_block_lotno = formData.parentAddress.houseNop || '';
+        const parents_street = formData.parentAddress.streetp || '';
+        const parents_subd_village = formData.parentAddress.subdivisionp || '';
+        const parents_barangay = formData.parentAddress.barangayp || '';
+        const parents_city = formData.parentAddress.cityp || '';
+        const parents_province = formData.parentAddress.provincep || '';
+        const parents_mobile = formData.parentAddress.mobilep || '';
+        const parents_landline = formData.parentAddress.landlinep || '';
 
         // Siblings - assuming formData.siblings contains an array of sibling data
-        const siblings = formData.siblings || [];
-        const stud_subd_village = 'Stalingrad';
-        const stud_barangay = '1945';
-        const stud_city = 'Berlin';
-        const stud_province = 'Hesse';
-        const stud_age = 56;
-        const stud_birthdate = 'April 20, 1889';
-        const stud_religion = 'Atheist';
-        const stud_mobile = '(+49) 163 555 1584';
-        const stud_landline = '(+49) 163 555 1584';
-        const stud_email = 'adolfhitler1945@gmail.com'
+        const siblings = formData.siblings.map((sibling:any) =>{
+            return([sibling.name, sibling.age, sibling.studying, sibling.highestDegree, sibling.school, sibling.occupation]);
+        }) || [];
 
-        // Scholastic
-        const school_course = 'Bachelor of Science in Computer Studies';
-        const school_major = 'Computer Science';
-        let school_level = '4th';
-        const school_current_gwa = '1.4000';
-        const school_status = 'Non-Paying';
         
-        // Family
-        const father_surname = 'Hitler';
-        const father_given_name = 'Alois';
-        const father_middle_name = 'N/A';
-        const father_occupation = 'Landlord';
-        const father_age = 65;
-        const father_company = 'N/A';
-        const father_monthly_income = 40000;
-        const mother_surname = 'Polzi';
-        const mother_given_name = 'Klara';
-        const mother_middle_name = 'N/A';
-        const mother_occupation = 'Housewife';
-        const mother_age = 45;
-        const mother_company = 'N/A';
-        const mother_monthly_income = 0;
-        const parents_house_block_lotno = '69-B';
-        const parents_street = 'Chernobyl';
-        const parents_subd_village = 'Stalingrad';
-        const parents_barangay = '1945';
-        const parents_city = 'Berlin';
-        const parents_province = 'Hesse';
-        const parents_mobile = '(+49) 163 555 1584';
-        const parents_landline = '(+49) 163 555 1584';
-        const siblings = [
-            ['Paula Hitler', '40', 'N', 'College Undergraduate', 'Humboldt University of Berlin', 20000],
-            ['Angela Hitler', '30', 'N', 'Highschool Graduate', 'Humboldt University of Berlin', 30000],
-            ['William Patrick Hitler', '32', 'N', 'College Undergraduate', 'Humboldt University of Berlin', 25000],
-            ['Heinz Hitler', '35', 'N', 'Graduate School', 'Humboldt University of Berlin', 40000],
-        ];
+
+        // const stud_subd_village = 'Stalingrad';
+        // const stud_barangay = '1945';
+        // const stud_city = 'Berlin';
+        // const stud_province = 'Hesse';
+        // const stud_age = 56;
+        // const stud_birthdate = 'April 20, 1889';
+        // const stud_religion = 'Atheist';
+        // const stud_mobile = '(+49) 163 555 1584';
+        // const stud_landline = '(+49) 163 555 1584';
+        // const stud_email = 'adolfhitler1945@gmail.com'
+
+        // // Scholastic
+        // const school_course = 'Bachelor of Science in Computer Studies';
+        // const school_major = 'Computer Science';
+        // let school_level = '4th';
+        // const school_current_gwa = '1.4000';
+        // const school_status = 'Non-Paying';
+        
+        // // Family
+        // const father_surname = 'Hitler';
+        // const father_given_name = 'Alois';
+        // const father_middle_name = 'N/A';
+        // const father_occupation = 'Landlord';
+        // const father_age = 65;
+        // const father_company = 'N/A';
+        // const father_monthly_income = 40000;
+        // const mother_surname = 'Polzi';
+        // const mother_given_name = 'Klara';
+        // const mother_middle_name = 'N/A';
+        // const mother_occupation = 'Housewife';
+        // const mother_age = 45;
+        // const mother_company = 'N/A';
+        // const mother_monthly_income = 0;
+        // const parents_house_block_lotno = '69-B';
+        // const parents_street = 'Chernobyl';
+        // const parents_subd_village = 'Stalingrad';
+        // const parents_barangay = '1945';
+        // const parents_city = 'Berlin';
+        // const parents_province = 'Hesse';
+        // const parents_mobile = '(+49) 163 555 1584';
+        // const parents_landline = '(+49) 163 555 1584';
+        // const siblings = [
+        //     ['Paula Hitler', '40', 'N', 'College Undergraduate', 'Humboldt University of Berlin', 20000],
+        //     ['Angela Hitler', '30', 'N', 'Highschool Graduate', 'Humboldt University of Berlin', 30000],
+        //     ['William Patrick Hitler', '32', 'N', 'College Undergraduate', 'Humboldt University of Berlin', 25000],
+        //     ['Heinz Hitler', '35', 'N', 'Graduate School', 'Humboldt University of Berlin', 40000],
+        // ];
         
         doc.setFont('times', '');
         doc.setFontSize(10);

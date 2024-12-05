@@ -164,7 +164,7 @@ function FoundList(){
                       maxWidth:'50%',
                       minWidth: '50%',
                   }}
-                  placeholder="Search by foundation name..."
+                  placeholder="Search by announcement title..."
                   value={searchQuery}
                   onChange={handleSearchChange} // Handle input change
                   InputProps={{

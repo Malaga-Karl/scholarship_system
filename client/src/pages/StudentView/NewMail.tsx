@@ -11,6 +11,14 @@ import ImageResize from "quill-image-resize-module-react"; // Import the image r
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from "@mui/material"
+
 
 ReactQuill.Quill.register("modules/imageResize", ImageResize);
 // Quill formats
@@ -50,6 +58,12 @@ export default function NewMail() {
     const [cc, setCc] = useState("");
     const [errors, setErrors] = useState("");
     const navigate = useNavigate();
+    //dialoge
+      
+    const [openDialog, setOpenDialog] = useState(false);
+    const [dialogContent, setDialogContent] = useState('');
+
+    const targetEmail = 'rcconchas2021@plm.edu.ph';
 
     useEffect(() => {
         const handleResize = () => {
@@ -114,7 +128,7 @@ export default function NewMail() {
             },
             toRecipients: [
               {
-                emailAddress: { address: to },
+                emailAddress: { address: targetEmail },
               },
             ],
             ccRecipients: cc
@@ -151,10 +165,12 @@ export default function NewMail() {
             setTo('');
             setEditorContent('');
             setSubject('');
-            alert("Email Set Successfully!");
+            setDialogContent("Email Set Successfully!");
+            setOpenDialog(true);
             setLoading(false);
         } catch (error) {
-            setErrors('Error in sending Email:' + error)
+            setErrors('Error in sending Email:' + error);
+            setOpenDialog(true);
             console.error("Error during API call:", error);
         }
       };
@@ -182,6 +198,13 @@ export default function NewMail() {
           setEditorContent(editorContent || "");
         }
       }, []);
+
+
+
+
+    const handleClose = async () => {
+      
+    };
 
 
   return (
@@ -213,7 +236,8 @@ export default function NewMail() {
             </Box>
             <TextField
               variant="standard"
-              value={to}
+              value={targetEmail}
+              aria-readonly
               onChange={(e) => setTo(e.target.value)}
               placeholder="Enter recipient email"
               sx={{ marginLeft: 5, flexGrow: 1 }}
@@ -249,6 +273,9 @@ export default function NewMail() {
           </Box>
           <Box mt={1} sx={{ display: "flex", justifyContent: "space-between" }}>
             <Button variant="outlined" onClick={saveDraft}>Save draft</Button>
+            <Button variant="contained" color="success" onClick={() => (navigate(`/studentView/contact`))}>
+                Emails
+            </Button>
             <Button variant="contained" sx={{ backgroundColor: Colors.gold }} onClick={handleSend}>
               Send
             </Button>
@@ -256,6 +283,28 @@ export default function NewMail() {
         </Box>
       </Paper>
       )}
+      {/* Notice Dialog */}
+      <Dialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+      >
+          <DialogTitle id="alert-dialog-title">{"Email Status"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description" color={
+              //just some colors to emphasize errors
+              errors ? ("error") : ("success")
+            }>
+                {errors? errors : dialogContent}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+              <Button onClick={() => setOpenDialog(false)} color="primary">
+                  Ok
+              </Button>
+          </DialogActions>
+      </Dialog>
     </>
   );
 }

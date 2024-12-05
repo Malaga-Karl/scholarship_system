@@ -56,7 +56,7 @@ function FoundationList({scholarship, status, userProfile, fetchUsers}:UserType)
         const getStatuses = async () =>{
             try{
                 const response = await axios.get('/user/getStatus');
-                console.log(response);
+                //console.log(response);
                 setStatusOptions(response.data);
             }catch(error){
                 console.log("error in fetching statuses: " + error);
@@ -191,12 +191,17 @@ function FoundList(){
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState(''); // State to track search input
     const [debouncedSearch, setDebouncedSearch] = useState(''); // For debounce
+    const [selectedStatus, setSelectedStatus] = useState('-1'); // Track the selected status
+    const [statusOptions, setStatusOptions] = useState<{status_id:number, name:string}[]>([]);
 
     // Fetch Foundations with Pagination and Search
-    const fetchUsers = async (page = 1, search = '') => {
+    const fetchUsers = async (page = 1, search = '', studentStatus = '') => {
+        console.log(studentStatus);
+        if(studentStatus === '-1')
+            studentStatus = '';
         try {
             const response = await axios.get(`/user/getAllPaginate`, {
-                params: { page, limit: 5, search },
+                params: { page, limit: 5, search, studentStatus},
             });
             setUsers(response.data.studentInfo);
             setTotalPages(response.data.totalPages);
@@ -206,7 +211,7 @@ function FoundList(){
         }
     };
     const wrapperCall = async () =>{
-        fetchUsers(currentPage, debouncedSearch);
+        fetchUsers(currentPage, debouncedSearch, selectedStatus);
     }
 
     // Debounce search input to minimize API calls
@@ -218,10 +223,10 @@ function FoundList(){
         return () => clearTimeout(delayDebounce); // Clear timeout on input change
     }, [searchQuery]);
 
-    // Fetch data when debounced search changes or page changes
+    // Fetch data when debounced search changes or page changes or status is selected
     useEffect(() => {
-        fetchUsers(currentPage, debouncedSearch);
-    }, [currentPage, debouncedSearch]);
+        fetchUsers(currentPage, debouncedSearch, selectedStatus);
+    }, [currentPage, debouncedSearch, selectedStatus]);
 
     const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page); // Update the page number
@@ -231,6 +236,21 @@ function FoundList(){
         setSearchQuery(event.target.value); // Update search input
         setCurrentPage(1); // Reset to page 1 on new search
     };
+
+    //getting the statuses
+    useEffect(()=>{
+        const getStatuses = async () =>{
+            try{
+                const response = await axios.get('/user/getStatus');
+                //console.log(response);
+                setStatusOptions(response.data);
+            }catch(error){
+                console.log("error in fetching statuses: " + error);
+            }
+
+        }
+        getStatuses();
+    }, []);
     
  return (
     <>
@@ -247,10 +267,10 @@ function FoundList(){
                 <TextField
                     sx={{
                         marginBottom: "15px",
-                        maxWidth:'50%',
-                        minWidth: '50%',
+                        maxWidth:'30%',
+                        minWidth: '30%',
                     }}
-                    placeholder="Search by foundation name..."
+                    placeholder="Search by student email..."
                     value={searchQuery}
                     onChange={handleSearchChange} // Handle input change
                     InputProps={{
@@ -261,6 +281,38 @@ function FoundList(){
                         ),
                     }}
                 />
+                <Box
+                    display={"flex"}
+                    flexDirection={"row"}
+                    alignItems={"center"}
+                    gap={"30px"}
+                    width={"40%"}
+                >
+                    <InputLabel id="status-select-label">Filter Using Status:</InputLabel>
+                    <Select
+                        labelId="status-select-label"
+                        value={selectedStatus}
+                        onChange={(e) => {setSelectedStatus(e.target.value);}}
+                        label="Status"
+                        sx={{
+                            flexGrow:1,
+                        }}
+                        variant='standard'
+                    >
+                        {/* Add options for status */}
+                        <MenuItem
+                            value={'-1'}>
+                            No Filter
+                        </MenuItem>
+                        {
+                            statusOptions.map((status)=>(<MenuItem
+                            value={status.status_id}>
+                                {status.name}
+                            </MenuItem>))
+                        }
+                    </Select>
+                </Box>
+                
                 <Button
                     variant="contained"
                     sx={{
