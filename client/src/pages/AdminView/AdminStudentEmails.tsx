@@ -75,7 +75,7 @@ const fetchEmails = async (): Promise<void> => {
     setLoading(true); // Set loading to true when starting to fetch
     const token = await fetchAccessToken();
     const targetEmail = student_email;
-    const emailResponse = await axios.get(`https://graph.microsoft.com/v1.0/me/messages?$filter=from/emailAddress/address eq '${targetEmail}'`, {
+    const emailResponse = await axios.get(`https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$filter=from/emailAddress/address eq '${targetEmail}'&$top=50`, {
         headers: {
         Authorization: `Bearer ${token}`,
         },
@@ -94,7 +94,7 @@ const fetchEmails = async (): Promise<void> => {
         sentTime: email.receivedDateTime,
         subject: email.subject,
         body: email.bodyPreview,
-    }));
+    })).sort((a:any, b:any) => new Date(b.sentTime).getTime() - new Date(a.sentTime).getTime()); // Sort by sentTime (latest first);
 
     setEmails(mappedEmails);
     } catch (err: any) {

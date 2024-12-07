@@ -686,8 +686,11 @@ export default function Form(){
 
     const handleDialogClose = () => {
         setOpenPrompt(false);
-        if(!error)
+        setDialogContent('');
+        if(!error){
+            setError('');
             navigate('/studentView/dashboard');
+        }
     }
     
     const onSend = async (e:any) => {
@@ -707,16 +710,14 @@ export default function Form(){
                 await axios.post('/user/studentScholarship/create', formDataSubmit);
                 //console.log(response.data);
                 setDialogContent('Record created successfully!');
-                setOpenPrompt(true);
             } catch (error) {
                 console.error('Error creating record:', error);
                 setError('Failed to create record. Please try again.');
-                setOpenPrompt(true);
             }
         }else{
             setDialogContent('Forms Edited Successfully!');
-            setOpenPrompt(true);
         }
+        setOpenPrompt(true);
     };
 
     const [index, setIndex] = useState(0);

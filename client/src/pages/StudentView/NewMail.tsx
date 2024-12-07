@@ -183,8 +183,7 @@ export default function NewMail() {
             editorContent,
         };
         localStorage.setItem("emailDraft", JSON.stringify(draft));
-        alert("Draft saved locally!");
-        navigate('/studentview/contact');
+        setDialogContent("Draft saved locally!");
     };
 
     useEffect(() => {
@@ -199,12 +198,14 @@ export default function NewMail() {
         }
       }, []);
 
-
-
-
-    const handleClose = async () => {
-      
-    };
+    const handleDialogClose = () => {
+      setDialogContent('');
+      setOpenDialog(false);
+      if(!errors){
+        navigate('/studentview/contact');
+      }
+      setErrors('');
+    }
 
 
   return (
@@ -300,7 +301,7 @@ export default function NewMail() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-              <Button onClick={() => setOpenDialog(false)} color="primary">
+              <Button onClick={handleDialogClose} color="primary">
                   Ok
               </Button>
           </DialogActions>

@@ -27,6 +27,12 @@ module.exports = {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
+            {
+                status_id: 5, 
+                name: 'Submitted Scholarship',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
         ], {});
     },
 

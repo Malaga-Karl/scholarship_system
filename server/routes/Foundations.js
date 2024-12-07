@@ -123,14 +123,23 @@ router.get("/getallFS", async (req, res) => {
 
 
 router.post("/add", upload.single('logo'), async (req, res) => {
-    
-    await Foundations.create({
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Logo file is required.' });
+    }
+  
+    try {
+      const foundation = await Foundations.create({
         name: req.body.name,
         description: req.body.description,
         logo_path: "/foundations/" + req.file.filename,
         status: req.body.status
-    });
-    res.json(req.file);
+      });
+      res.status(200).json({ message: "Foundation created successfully.", foundation });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while creating the foundation.' });
+    }
 
 });
 
