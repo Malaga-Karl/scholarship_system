@@ -11,6 +11,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { useEffect, useState } from 'react';
 import axios, { axiosBase } from '../../axiosConfig';
+import newIcon from "../../assets/announcements/new_icon.png";
 import { useNavigate } from 'react-router-dom';
 
 export type NewsProps = {
@@ -33,12 +34,22 @@ export const boldStyle = {
 
 export function BigNews({id, date, image, title, content}: NewsProps){
     const navigate = useNavigate();
+
+    const currentDate = new Date();
+    const createdAtDate = new Date(date);
+    const dateDifference = Math.ceil((currentDate.getTime() - createdAtDate.getTime()) / (1000 * 60 * 60 * 24));
+
+
+        if(dateDifference <= 1){
+
+        }
     return(
         <Card sx={{
             maxWidth:450,
             display:"flex",
             flexDirection:"column",
             justifyContent:"space-between",
+            position:"relative"
         }}>
             <CardMedia 
                 sx={{height:250, scale:0.9}}
@@ -55,6 +66,21 @@ export function BigNews({id, date, image, title, content}: NewsProps){
                 <Typography variant='body2'>{date}</Typography>
                 <Button variant='contained'  sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={() => navigate(`/announcements/${id}`)}>Read More</Button>
             </CardActions>
+            {dateDifference <= 1 ? (
+            <Box
+                position={"absolute"}
+                top={"20px"}
+                right={"20px"}
+            >
+                <img 
+                src={newIcon} 
+                alt="New Icon"
+                style={{
+                    maxHeight:"50px",
+                    maxWidth:"50px",
+                }}
+                />
+            </Box>):''}
         </Card>
     )
 }

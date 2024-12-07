@@ -397,6 +397,40 @@ export default function StudentViewScholarship(){
                                                 </Typography>
                                             </Box>
                                         </Box>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            width: '515px',
+                                            borderRadius: '16px',
+                                            backgroundColor: 'rgb(100,100,100)',
+                                            marginTop:"20px",
+                                            paddingBottom:"10px"
+                                        }}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                py: '5px', // padding for top and bottom
+                                                px: '15px', // padding for left and right
+                                                flexDirection: 'column',
+                                                alignItems: 'flex-start'
+                                            }}>
+                                                <Typography sx={{
+                                                    fontSize: '30px',
+                                                    fontWeight: 'bold',
+                                                    color: 'white'
+                                                }}>
+                                                    NOTE:
+                                                </Typography>
+                                                <Typography sx={{
+                                                    fontSize: '15px',
+                                                    // fontWeight: 'bold',
+                                                    textAlign: 'left',
+                                                    color: 'white'
+                                                }}>
+                                                    Please print the document and submit it to ICTO for processing.
+                                                    <br/>
+                                                    If its loading for a long time please update the application form.
+                                                </Typography>
+                                            </Box>
+                                        </Box>
                                     </Box>
                                     <Box sx={{
                                         display: 'flex',

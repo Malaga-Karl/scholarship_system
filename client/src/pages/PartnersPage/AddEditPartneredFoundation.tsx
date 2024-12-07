@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    } from "@mui/material";
 
 export default function AddEditFoundation() {
     const [image, setImage] = useState<File | null>(null);
@@ -11,6 +18,10 @@ export default function AddEditFoundation() {
     const [foundation, setFoundation] = useState<string>(''); 
     const [description, setDescription] = useState<string>(''); 
     const { foundation_id } = useParams();
+    const [imagePreview, setImagePreview] = useState('');
+    const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [dialogContent, setDialogContent] = useState('');
+    const [errors, setErrors] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,6 +50,7 @@ export default function AddEditFoundation() {
             setImage(file);
             const name = file.name.length > 20 ? file.name.slice(0, 20) + "..." : file.name;
             setFileName(name);
+            setImagePreview(URL.createObjectURL(file));
         }
     };
 
@@ -60,22 +72,32 @@ export default function AddEditFoundation() {
                 await axios.put(`/foundations/update/${foundation_id}`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                alert("Foundation updated successfully!");
+                setDialogContent("Foundation updated successfully!");
             } else {
                 // Create logic
                 await axios.post("/foundations/add", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                alert("Foundation created successfully!");
+                setDialogContent("Foundation created successfully!");
             }
-            navigate("/adminView/foundations");
         } catch (error) {
             console.error("Error saving foundation:", error);
-            alert("Failed to save the foundation. Please try again.");
+            setErrors("Failed to save the foundation. Please try again.: [" + error + "] ");
         }
+        setOpenDialog(true);
     };
 
+    const handleDialogClose = () => {
+        setOpenDialog(false);
+        setDialogContent('');
+        if(!errors){
+            navigate("/adminView/foundations");
+        }
+        setErrors(''); // this is so stupid
+    }
+
     return (
+        <>
         <Box
             sx={{
                 display: 'flex',
@@ -154,9 +176,17 @@ export default function AddEditFoundation() {
                                     fontSize: '20px',
                                     borderRadius: '8px',
                                 }}
-                                startIcon={<InsertPhotoIcon />}
+                                startIcon={image ? '' : <InsertPhotoIcon /> }
                             >
-                                Attach image here...
+                                {image ? 
+                                    <img 
+                                        src={imagePreview} 
+                                        alt="Uploaded Image Preview" 
+                                        style={{
+                                            maxHeight:"100%",
+                                        }}
+                                    />
+                                : 'Attach Image here'}
                             </Button>
                         </label>
                         {fileName && (
@@ -268,5 +298,27 @@ export default function AddEditFoundation() {
                 </Box>
             </form>
         </Box>
+            {/* Notice Dialog */}
+        <Dialog
+            open={openDialog}
+            onClose={() => setOpenDialog(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{"Notice"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description"
+                    color={errors?'error' : 'success'}
+                >
+                    {errors ? errors : dialogContent}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleDialogClose} color="success">
+                    OK
+                </Button>
+            </DialogActions>
+        </Dialog>
+        </>
     );
 }
