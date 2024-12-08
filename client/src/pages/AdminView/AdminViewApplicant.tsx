@@ -476,10 +476,12 @@ function FoundList(){
     const [debouncedSearch, setDebouncedSearch] = useState(''); // For debounce
     const [selectedStatus, setSelectedStatus] = useState('-1'); // Track the selected status
     const [statusOptions, setStatusOptions] = useState<{status_id:number, name:string}[]>([]);
+    const [loading, setLoading] = useState(false);
 
     // Fetch Foundations with Pagination and Search
     const fetchUsers = async (page = 1, search = '', studentStatus = '') => {
-        console.log(studentStatus);
+        //console.log(studentStatus);
+        setLoading(true);
         if(studentStatus === '-1')
             studentStatus = '';
         try {
@@ -492,6 +494,7 @@ function FoundList(){
         } catch (error) {
             console.error("Error fetching foundations:", error);
         }
+        setLoading(false);
     };
     const wrapperCall = async () =>{
         fetchUsers(currentPage, debouncedSearch, selectedStatus);
@@ -534,6 +537,83 @@ function FoundList(){
         }
         getStatuses();
     }, []);
+    
+
+    //report generation
+
+    interface ReportEntry {
+        student_email: string;
+        scholarship_title: string;
+        scholarship_type: string;
+        status: string;
+    }
+    
+    interface QuantitativeSummary {
+        totalStudents: number;
+        scholarshipsByType: Record<string, number>;
+        statuses: Record<string, number>;
+    }
+
+    const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    const [dialogContent, setDialogContent] = useState<string>('');
+    const [reportData, setReportData] = useState<ReportEntry[] | null>(null);
+    const [reportLoading, setReportLoading] = useState<boolean>(false);
+    const [quantitativeSummary, setQuantitativeSummary] = useState<QuantitativeSummary>({
+        totalStudents: 0,
+        scholarshipsByType: {},
+        statuses: {},
+    });
+
+    const closeDialog = () => {
+        setDialogContent('');
+        setError('');
+        setOpenDialog(false);
+    };
+
+    const fetchReport = async () => {
+        setReportLoading(true);
+        try {
+            const response = await axios.get('/foundations/generate_student_scholarship_report');
+            if (response.data.success) {
+                const data: ReportEntry[] = response.data.data;
+                setReportData(data);
+                generateQuantitativeSummary(data);
+                setDialogContent('Success in generating Report');
+            } else {
+                setError('Failed to fetch the scholarship report.');
+            }
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'An error occurred.');
+        } finally {
+            setReportLoading(false);
+        }
+    };
+
+    const generateQuantitativeSummary = (data: ReportEntry[]) => {
+        const totalStudents = data.length;
+
+        const scholarshipsByType = data.reduce<Record<string, number>>((acc, entry) => {
+            acc[entry.scholarship_type] = (acc[entry.scholarship_type] || 0) + 1;
+            return acc;
+        }, {});
+
+        const statuses = data.reduce<Record<string, number>>((acc, entry) => {
+            acc[entry.status] = (acc[entry.status] || 0) + 1;
+            return acc;
+        }, {});
+
+        setQuantitativeSummary({
+            totalStudents,
+            scholarshipsByType,
+            statuses,
+        });
+    };
+
+    const generateReport = () =>{
+        fetchReport();
+        setOpenDialog(true);
+    }
     
  return (
     <>
@@ -605,9 +685,7 @@ function FoundList(){
                         color: "white",
                         borderRadius: "5px",
                     }}
-                    onClick={() => {
-                        //nothing yet
-                    }}
+                    onClick={generateReport}
                 >
                     Generate Report
                 </Button>
@@ -637,7 +715,7 @@ function FoundList(){
         </TableRow>
         </TableHead>
         <TableBody>
-            {users.map((user) => <FoundationList {...user} fetchUsers={wrapperCall}/>)}
+            {loading ? <CircularProgress sx={{margin:"auto"}} size={24} /> : users.map((user) => <FoundationList {...user} fetchUsers={wrapperCall}/>)}
         </TableBody>
         </Table>
         </TableContainer>
@@ -656,6 +734,117 @@ function FoundList(){
                     shape="rounded"
                 />
             </Box>
+            {/* Report Generation */}
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                
+                sx={{
+                    minWidth:"50vw",
+                }}
+            >
+                <DialogTitle id="alert-dialog-title">{"Scholarship Report"}</DialogTitle>
+                <DialogContent 
+                    sx={{
+                        minWidth:"35vw",
+                        boxSizing:"border-box",
+                    }}
+                >
+                    <DialogContentText id="alert-dialog-description">
+                        <div style={{ padding: '20px' }}>
+                            {reportLoading ? (
+                                <CircularProgress sx={{ margin: "auto" }} size={24} />
+                            ) : error ? (
+                                <Typography color="error">{error}</Typography>
+                            ) : (
+                                <>
+                                    {/* Quantitative Summary */}
+                                    <Box mb={3}>
+                                        <Typography color="black" variant="h6" gutterBottom>
+                                            Quantitative Summary
+                                        </Typography>
+                                        <Typography color="black">Total Students: {quantitativeSummary.totalStudents}</Typography>
+                                        <Typography color="black">Scholarships by Type:</Typography>
+                                        <ul>
+                                            {Object.entries(quantitativeSummary.scholarshipsByType).map(([type, count]) => (
+                                                <li key={type} style={{ color: 'black' }}>
+                                                    {type}: {count}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <Typography color="black">Statuses:</Typography>
+                                        <ul>
+                                            {Object.entries(quantitativeSummary.statuses).map(([status, count]) => (
+                                                <li key={status} style={{ color: 'black' }}>
+                                                    {status}: {count}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </Box>
+
+                                    {/* Detailed Report Section */}
+                                    <Typography color="black" variant="h6" gutterBottom>
+                                        Qualitative Summary
+                                    </Typography>
+                                    <Box>
+                                        {reportData && reportData.length > 0 ? (
+                                            Object.entries(
+                                                reportData.reduce((acc: Record<string, Record<string, string[]>>, entry) => {
+                                                    if (!acc[entry.scholarship_title]) {
+                                                        acc[entry.scholarship_title] = {}; 
+                                                    }
+                                                    if (!acc[entry.scholarship_title][entry.status]) {
+                                                        acc[entry.scholarship_title][entry.status] = [];
+                                                    }
+                                                    acc[entry.scholarship_title][entry.status].push(entry.student_email);
+                                                    return acc; // this will return something of this structure
+                                                    /*
+                                                        {
+                                                            "scholaship_a":{
+                                                                "accepted":[],
+                                                                "rejected":[],
+                                                            }
+                                                        }
+                                                    */
+                                                }, {})
+                                            ).map(([scholarshipTitle, statuses]) => (
+                                                <Box key={scholarshipTitle} mb={3}>
+                                                    <Typography color="black" variant="subtitle1" gutterBottom>
+                                                        <strong>Scholarship:</strong> {scholarshipTitle}
+                                                    </Typography>
+                                                    {Object.entries(statuses).map(([status, emails]) => (
+                                                        <Box key={status} mb={2}>
+                                                            <Typography color="black" variant="body1">
+                                                                <strong>{status}:</strong>
+                                                            </Typography>
+                                                            <ul>
+                                                                {emails.map((email, index) => (
+                                                                    <li key={index} style={{ color: 'black' }}>
+                                                                        {email}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </Box>
+                                                    ))}
+                                                </Box>
+                                            ))
+                                        ) : (
+                                            <Typography color="black">No report data available.</Typography>
+                                        )}
+                                    </Box>
+                                </>
+                            )}
+                        </div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeDialog} color="success">
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
     </>
  )
 }

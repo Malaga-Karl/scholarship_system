@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const { Foundations, Scholarships, StudentScholarship, IndivScholarships  } = require('../models')
+const { Foundations, Scholarships, StudentScholarship, StudentIndivScholarship, IndivScholarships, ScholarshipStatus  } = require('../models')
 const Sequelize = require('sequelize');
 
 //conditionals
@@ -558,5 +558,65 @@ router.get('/getIndividualScholarship/:id', async (req, res) => {
 //individual scholarship <end
 
 
+//report generation
+router.get('/generate_student_scholarship_report', async (req, res) => {
+  try {
+      // Fetch data from StudentIndivScholarship
+      const indivScholarshipData = await StudentIndivScholarship.findAll({
+          attributes: ['student_email'],
+          include: [
+              {
+                  model: ScholarshipStatus,
+                  as: 'status',
+                  attributes: ['name'],
+              },
+              {
+                  model: IndivScholarships,
+                  as: 'indivScholarship',
+                  attributes: ['title'],
+              },
+          ],
+      });
+
+      // Fetch data from StudentScholarship
+      const scholarshipData = await StudentScholarship.findAll({
+          attributes: ['student_email'],
+          include: [
+              {
+                  model: ScholarshipStatus,
+                  as: 'status',
+                  attributes: ['name'],
+              },
+              {
+                  model: Scholarships,
+                  as: 'scholarship',
+                  attributes: ['title'],
+              },
+          ],
+      });
+
+      // Transform data into a unified format
+      const report = [
+          ...indivScholarshipData.map((entry) => ({
+              student_email: entry.student_email,
+              status: entry.status?.name,
+              scholarship_type: 'Individual Scholarship',
+              scholarship_title: entry.indivScholarship?.title,
+          })),
+          ...scholarshipData.map((entry) => ({
+              student_email: entry.student_email,
+              status: entry.status?.name,
+              scholarship_type: 'General Scholarship',
+              scholarship_title: entry.scholarship?.title,
+          })),
+      ];
+
+      // Send the combined report
+      res.status(200).json({ success: true, data: report });
+  } catch (error) {
+      console.error('Error generating report:', error);
+      res.status(500).json({ success: false, message: 'An error occurred while generating the report.' });
+  }
+});
 
 module.exports = router;

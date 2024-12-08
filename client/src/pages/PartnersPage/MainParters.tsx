@@ -25,8 +25,13 @@ function FoundationCard({image, name, id}: FoundationProps){
     return(
         <Card sx={{maxWidth:300, minWidth:300 , display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
             <Box>
-                <CardMedia sx={{paddingTop:"20px"}}>
-                    <img src={image} style={{maxWidth:"250px", padding:"10px"}} alt={name + 'logo'} />
+                <CardMedia sx={{paddingTop:"20px", minHeight:"270px", maxHeight:"270px"}}>
+                    <img src={image} 
+                    style={{
+                        maxWidth:"250px",
+                        padding:"10px",
+                        maxHeight:"250px",
+                        }} alt={name + 'logo'} />
                 </CardMedia>
                 <CardContent>
                     <Typography variant='h5' sx={boldStyle}>{name}</Typography>

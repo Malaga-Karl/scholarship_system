@@ -24,6 +24,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  CircularProgress,
 } from "@mui/material";
 
 type ScholarshipType = {
@@ -115,10 +116,12 @@ function FoundList(){
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(''); // State to track search input
   const [debouncedSearch, setDebouncedSearch] = useState(''); // For debounce
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Fetch Foundations with Pagination and Search
   const fetchIndivScholarships = async (page = 1, search = '') => {
+    setLoading(true);
       try {
           const response = await axios.get(`/foundations/getIndividualScholarships`, { //this is also paginated, just not the name T_T
               params: { page, limit: 5, search },
@@ -129,6 +132,7 @@ function FoundList(){
       } catch (error) {
           console.error("Error fetching foundations:", error);
       }
+      setLoading(false);
   };
 
   // Debounce search input to minimize API calls
@@ -215,7 +219,7 @@ function FoundList(){
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {scholarships.map((scholarship) => (
+                    {loading ? <CircularProgress sx={{margin:"auto"}} size={24} /> :scholarships.map((scholarship) => (
                         <FoundationList
                             key={scholarship.indiv_scholarship_id}
                             {...scholarship}
