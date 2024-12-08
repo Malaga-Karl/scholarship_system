@@ -72,6 +72,8 @@ function AnnouncementCard({announcement_id, title, cover_path, description, crea
             component="img"
             sx={{
               width: 200,
+              maxHeight:250,
+              minHeight:250,
               height: "auto",
               borderRadius: 1,
             }}

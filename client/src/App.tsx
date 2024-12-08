@@ -30,6 +30,8 @@ import AdminNewMail from './pages/AdminView/AdminNewEmail';
 import AdminStudentEmails from './pages/AdminView/AdminStudentEmails';
 import ScholarshipFormPage from './pages/StudentView/FormPrint';
 import PdfGenerator from './pages/StudentView/FormPrint';
+import AdminViewIndivApplicant from './pages/AdminView/AdminViewIndivScholarship';
+import AddEditIndivScholarship from './pages/AdminView/AdminAddEditIndivScholarship';
 
 function App() {
 
@@ -85,6 +87,9 @@ function App() {
             <Route path='applicants' element={<AdminViewApplicant/>} />
             <Route path='applicants/newEmail/:student_email' element={<AdminNewMail />} />
             <Route path='applicants/emails/:student_email' element={<AdminStudentEmails />} />
+            <Route path='indivscholarships' element={<AdminViewIndivApplicant/>}/>
+            <Route path='indivscholarships/addedit' element={<AddEditIndivScholarship/>}/>
+            <Route path='indivscholarships/addedit/:indiv_scholarship_id' element={<AddEditIndivScholarship/>}/>
             
           </Route>
           <Route path='*' element={<NotFoundPage />} />

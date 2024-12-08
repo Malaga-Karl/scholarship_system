@@ -319,6 +319,7 @@ export default function AddEditScholarship(){
                 setDialogContent("Scholarship updated successfully!");
             } else {
                 // Create new scholarship
+                
                 await axios.post("/foundations/add_scholarship", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
@@ -387,7 +388,8 @@ export default function AddEditScholarship(){
     }
 
     if(errors){
-        setOpenDialog(true);
+        if(!openDialog)
+            setOpenDialog(true);
     }
 
     return(

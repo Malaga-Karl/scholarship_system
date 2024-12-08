@@ -119,6 +119,7 @@ export default function StudentViewScholarship(){
 
     const [hasApplied, setApplied] = useState(false);
     const [studentInfo, setStudentInfo] = useState(null);
+    const [from, setFrom] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -127,9 +128,12 @@ export default function StudentViewScholarship(){
                 const activeEmail = localStorage.getItem('localEmailActive');
                 const response = await axios.get(`/user/exists/${activeEmail}`);
                 setApplied(response.data.exists);
+                setFrom(response.data.from); // Log fetched data directly
                 
                 if (response.data.exists) {
-                    const data = await axios.get(`/user/getInfo/${activeEmail}`);
+                    const data = await axios.get(`/user/getInfo/${activeEmail}`, {
+                        params: { from: response.data.from },
+                    });
                     setStudentInfo(data.data);
                     console.log(data.data); // Log fetched data directly
                 }
@@ -244,8 +248,278 @@ export default function StudentViewScholarship(){
                 </>
             )}
                 </>
-            ) : (
-                <>
+            ) : ( from === "studentScholarship" ? 
+                    <>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                            height: '100vh'
+                        }}>
+                            <Box sx={{
+                                display:"flex",
+                                border: 'ridge',
+                                borderRadius: '16px',
+                                justifyContent: 'center',
+                                alignItems: 'flex-start',
+                                width: '1150px',
+                                height: '880px'
+                            }}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        marginTop: '10px',
+                                        width: '1050px',
+                                        justifyContent: 'flex-start'
+                                    }}>
+                                        <img src={
+                                            `${axiosBase}/uploads${studentInfo?.scholarship.foundation.logo_path}`
+                                        } alt="charfirst" style={{
+                                            width: 'auto',
+                                            height: '110px',
+                                            marginRight: '60px'
+                                        }} />
+                                        <Box sx={{
+                                            display:'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            maxWidth: '700px',
+                                            maxHeight: '110px',
+                                            marginLeft: '20px',
+                                        }}>
+                                            <Typography sx={{
+                                                fontSize: '45px',
+                                                fontWeight: 'bold'
+                                            }}>
+                                                {studentInfo?.scholarship.title}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'flex-start',
+                                        marginTop: '20px',
+                                        height: '620px',
+                                        marginBottom: '15px'
+                                    }}>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column'
+                                        }}>
+                                            <Box sx={{
+                                                // height: '100px',
+                                                width: '515px',
+                                                borderRadius: '16px',
+                                                backgroundColor: 'rgb(32,84,189)',
+                                                marginBottom: '20px'
+                                            }}>
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    py: '5px', // Padding for top and bottom
+                                                    px: '15px', // Padding for left and right
+                                                    flexDirection: 'column',
+                                                    alignItems: 'flex-start',
+                                                }}>
+                                                    <Typography sx={{
+                                                        fontSize: '30px',
+                                                        fontWeight: 'bold',
+                                                        color: 'white'
+                                                    }}>
+                                                        Requirements:
+                                                    </Typography>
+                                                    <ul style={{
+                                                        marginTop: '-2px',
+                                                        color: 'white',
+                                                        textAlign: 'left'
+                                                    }}>
+                                                        {
+                                                            studentInfo?.scholarship.reqs.split(',').map((item:string)=>{
+                                                                return (<li>{item}</li>)
+                                                            })
+                                                        }
+                                                    </ul>
+                                                    <Typography sx={{
+                                                        fontSize: '30px',
+                                                        fontWeight: 'bold',
+                                                        color: 'white'
+                                                    }}>
+                                                        Benefits
+                                                    </Typography>
+                                                    <ul style={{
+                                                        marginTop: '-2px',
+                                                        color: 'white',
+                                                        textAlign: 'left'
+                                                    }}>
+                                                        {
+                                                            studentInfo?.scholarship.benefits.split(',').map((item:string)=>{
+                                                                return (<li>{item}</li>)
+                                                            })
+                                                        }
+                                                    </ul>
+                                                </Box>
+                                            </Box>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                height: '103px',
+                                                width: '515px',
+                                                borderRadius: '16px',
+                                                backgroundColor: 'rgb(183,28,28)'
+                                            }}>
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    py: '5px', // padding for top and bottom
+                                                    px: '15px', // padding for left and right
+                                                    flexDirection: 'column',
+                                                    alignItems: 'flex-start'
+                                                }}>
+                                                    <Typography sx={{
+                                                        fontSize: '30px',
+                                                        fontWeight: 'bold',
+                                                        color: 'white'
+                                                    }}>
+                                                        Application Deadline:
+                                                    </Typography>
+                                                    <Typography sx={{
+                                                        fontSize: '15px',
+                                                        // fontWeight: 'bold',
+                                                        textAlign: 'left',
+                                                        color: 'white'
+                                                    }}>
+                                                        The application deadline for the <b>{studentInfo?.scholarship.title}</b> is <b>{
+                                                            new Date(studentInfo?.scholarship.deadline)
+                                                            .toLocaleDateString('en-US', { 
+                                                                year: 'numeric', 
+                                                                month: 'long', 
+                                                                day: 'numeric' 
+                                                            })
+                                                        }</b> until only.
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                width: '515px',
+                                                borderRadius: '16px',
+                                                backgroundColor: 'rgb(100,100,100)',
+                                                marginTop:"20px",
+                                                paddingBottom:"10px"
+                                            }}>
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    py: '5px', // padding for top and bottom
+                                                    px: '15px', // padding for left and right
+                                                    flexDirection: 'column',
+                                                    alignItems: 'flex-start'
+                                                }}>
+                                                    <Typography sx={{
+                                                        fontSize: '30px',
+                                                        fontWeight: 'bold',
+                                                        color: 'white'
+                                                    }}>
+                                                        NOTE:
+                                                    </Typography>
+                                                    <Typography sx={{
+                                                        fontSize: '15px',
+                                                        // fontWeight: 'bold',
+                                                        textAlign: 'left',
+                                                        color: 'white'
+                                                    }}>
+                                                        Please print the document and submit it to ICTO for processing.
+                                                        <br/>
+                                                        If its loading for a long time please update the application form.
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            height: '620px',
+                                            width: '515px'
+                                        }}>
+                                            <iframe 
+                                                src={`/print`}      // Insert iframe compatible pdf link here
+                                                ref={iframeRef}
+                                                width='515px'
+                                                height='618px'
+                                            >
+                                            </iframe>
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        height: '60px',
+                                        justifyContent: 'space-between'
+                                    }}>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between'
+                                        }}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                justifyContent: 'center',
+                                                alignItems: 'flex-start',
+                                            }}>
+                                                <Typography sx={{
+                                                    fontSize: '20px',
+                                                    fontWeight: 'bold'
+                                                }}>
+                                                    Scholarship Application Status
+                                                </Typography>
+                                                <Typography sx={{
+                                                    fontSize: '20px'
+                                                }}>
+                                                    {studentInfo?.status.name}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            gap:"40px"
+                                        }}>
+                                            {/* removed, 'cause it's not needed to have the download when there is one inside
+                                            <Button variant="contained" 
+                                                color="primary" 
+                                                onClick={handleDownloadPDF}
+                                                sx={{
+                                                    backgroundColor: '#00ddc0',
+                                                    height: '45px',
+                                                    padding:"0 20px",
+                                                    borderRadius: '5px',
+                                                    textTransform: 'capitalize',
+                                                    fontSize: '18px'
+                                                }}
+                                            >
+                                                Download PDF
+                                            </Button>
+                                             */}
+                                            <Button variant="contained" sx={{
+                                                backgroundColor: '#BF9B30',
+                                                height: '45px',
+                                                padding:"0 20px",
+                                                borderRadius: '5px',
+                                                textTransform: 'capitalize',
+                                                fontSize: '18px'
+                                            }}
+                                                onClick={()=>{navigate('editForms/1')}}
+                                            >
+                                                Update Application Form
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </> 
+                    : 
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -273,7 +547,7 @@ export default function StudentViewScholarship(){
                                     justifyContent: 'flex-start'
                                 }}>
                                     <img src={
-                                        `${axiosBase}/uploads${studentInfo?.scholarship.foundation.logo_path}`
+                                        `${axiosBase}/uploads${studentInfo?.indivScholarship.logo_path}`
                                     } alt="charfirst" style={{
                                         width: 'auto',
                                         height: '110px',
@@ -291,7 +565,7 @@ export default function StudentViewScholarship(){
                                             fontSize: '45px',
                                             fontWeight: 'bold'
                                         }}>
-                                            {studentInfo?.scholarship.title}
+                                            {studentInfo?.indivScholarship.title}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -326,24 +600,6 @@ export default function StudentViewScholarship(){
                                                     fontWeight: 'bold',
                                                     color: 'white'
                                                 }}>
-                                                    Requirements:
-                                                </Typography>
-                                                <ul style={{
-                                                    marginTop: '-2px',
-                                                    color: 'white',
-                                                    textAlign: 'left'
-                                                }}>
-                                                    {
-                                                        studentInfo?.scholarship.reqs.split(',').map((item:string)=>{
-                                                            return (<li>{item}</li>)
-                                                        })
-                                                    }
-                                                </ul>
-                                                <Typography sx={{
-                                                    fontSize: '30px',
-                                                    fontWeight: 'bold',
-                                                    color: 'white'
-                                                }}>
                                                     Benefits
                                                 </Typography>
                                                 <ul style={{
@@ -352,7 +608,7 @@ export default function StudentViewScholarship(){
                                                     textAlign: 'left'
                                                 }}>
                                                     {
-                                                        studentInfo?.scholarship.benefits.split(',').map((item:string)=>{
+                                                        studentInfo?.indivScholarship.benefits.split(',').map((item:string)=>{
                                                             return (<li>{item}</li>)
                                                         })
                                                     }
@@ -361,10 +617,9 @@ export default function StudentViewScholarship(){
                                         </Box>
                                         <Box sx={{
                                             display: 'flex',
-                                            height: '103px',
                                             width: '515px',
                                             borderRadius: '16px',
-                                            backgroundColor: 'rgb(183,28,28)'
+                                            backgroundColor: 'rgb(28,158,28)'
                                         }}>
                                             <Box sx={{
                                                 display: 'flex',
@@ -373,27 +628,21 @@ export default function StudentViewScholarship(){
                                                 flexDirection: 'column',
                                                 alignItems: 'flex-start'
                                             }}>
-                                                <Typography sx={{
-                                                    fontSize: '30px',
-                                                    fontWeight: 'bold',
-                                                    color: 'white'
-                                                }}>
-                                                    Application Deadline:
+                                                <Typography
+                                                    variant="h5"
+                                                    padding={"5px"}
+                                                    color="white"
+
+                                                >
+                                                   Description
                                                 </Typography>
-                                                <Typography sx={{
-                                                    fontSize: '15px',
-                                                    // fontWeight: 'bold',
-                                                    textAlign: 'left',
-                                                    color: 'white'
-                                                }}>
-                                                    The application deadline for the <b>{studentInfo?.scholarship.title}</b> is <b>{
-                                                        new Date(studentInfo?.scholarship.deadline)
-                                                        .toLocaleDateString('en-US', { 
-                                                            year: 'numeric', 
-                                                            month: 'long', 
-                                                            day: 'numeric' 
-                                                        })
-                                                    }</b> until only.
+                                                <Typography
+                                                    color="white"
+                                                    variant="body1"
+                                                    padding={"5px"}
+
+                                                >
+                                                    {studentInfo?.indivScholarship.description}
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -513,9 +762,10 @@ export default function StudentViewScholarship(){
                                 </Box>
                             </Box>
                         </Box>
-                    </Box>
-                </>
-            )}
+                    </Box> 
+                    
+            )
+            }
             
         </>
     );

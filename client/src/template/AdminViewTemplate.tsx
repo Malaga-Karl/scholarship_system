@@ -36,7 +36,7 @@ function CustomDrawerNav(){
     )
 }
 
-export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'
+export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'|'indivscholarships'
 
 export default function AdminTemplate() {
   

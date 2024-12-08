@@ -1,5 +1,4 @@
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { InputAdornment, Typography, Pagination, Backdrop, FormControl, InputLabel, Select, MenuItem, Fade, Modal } from "@mui/material";
+import { InputAdornment, Typography, Pagination, Backdrop, FormControl, InputLabel, Select, MenuItem, Fade, Modal, CircularProgress } from "@mui/material";
 import { Box } from "@mui/material";
 import { TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
@@ -17,176 +16,460 @@ import axios from "../../axiosConfig"
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InboxIcon from '@mui/icons-material/Inbox';
+import FoundationIcon from '@mui/icons-material/Foundation';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    } from "@mui/material";
 
-
-type UserType = {
-    scholarship: {
-        scholarship_id:number;
-        title:string;
-    };
-    status: { 
-        status_id: number; 
-        name: string 
-    };
-    userProfile: {
-        account_email:string;
-        first_name:string;
-        last_name:string;
+    interface UserProfile {
+        account_email: string;
+        first_name: string;
+        last_name: string;
     }
-    fetchUsers: () => void;
-};
-
-function FoundationList({scholarship, status, userProfile, fetchUsers}:UserType){
     
-    const [openEdit, setOpenEdit] = useState(false);
-    const navigate = useNavigate();
+    interface ScholarshipStatus {
+        status_id: number;
+        name: string;
+    }
+    
+    interface Scholarship {
+        scholarship_id?: string; // Optional for individual scholarships
+        title: string;
+    }
+    
+    interface IndivScholarship {
+        indiv_scholarship_id?: string; // Optional for regular scholarships
+        title: string;
+    }
+    
+    interface StudentInfo {
+        source: 'StudentScholarship' | 'StudentIndivScholarship';
+        userProfile: UserProfile;
+        status: ScholarshipStatus;
+        scholarship?: Scholarship; // Present if source is 'StudentScholarship'
+        indivScholarship?: IndivScholarship; // Present if source is 'StudentIndivScholarship'
+        [key: string]: any; // Catch-all for other fields
+    }
+    
 
-    const [selectedStatus, setSelectedStatus] = useState(status.status_id); // Track the selected status
-    const [statusOptions, setStatusOptions] = useState<{status_id:number, name:string}[]>([]);
-    const handleOpen = (status_id:number) => {
-        setSelectedStatus(status_id);
-        setOpenEdit(true);
-    };
-    const handleClose = () => {
-        setSelectedStatus(0);
-        setOpenEdit(false);
-    };
 
-    useEffect(()=>{
-        const getStatuses = async () =>{
-            try{
-                const response = await axios.get('/user/getStatus');
-                //console.log(response);
-                setStatusOptions(response.data);
-            }catch(error){
-                console.log("error in fetching statuses: " + error);
+
+
+    const FoundationList: React.FC<StudentInfo> = ({
+        scholarship,
+        indivScholarship,
+        status,
+        userProfile,
+        source,
+        fetchUsers,
+    }) => {
+        const [openEdit, setOpenEdit] = useState(false);
+        const [openScholarshipEdit, setOpenScholarshipEdit] = useState(false);
+        const navigate = useNavigate();
+    
+        const [selectedStatus, setSelectedStatus] = useState(status.status_id);
+        const [selectedScholarship, setSelectedScholarship] = useState(
+            source === 'StudentScholarship' ? scholarship?.scholarship_id : ''
+        );
+        const [selectedIndivScholarship, setSelectedIndivScholarship] = useState(
+            source === 'StudentIndivScholarship' ? indivScholarship?.indiv_scholarship_id : ''
+        );
+    
+        const [statusOptions, setStatusOptions] = useState<ScholarshipStatus[]>([]);
+        const [allScholarships, setAllScholarships] = useState<Scholarship[]>([]);
+        const [allIndivScholarships, setAllIndivScholarships] = useState<IndivScholarship[]>([]);
+        const [openDialog, setOpenDialog] = useState(false);
+        const [dialogContent, setDialogContent] = useState('');
+        const [error, setError] = useState('');
+        const [loading, setLoading] = useState(false);
+        const [newScholarshipId, setNewScholarshipId] = useState('');
+        const [to, setTo] = useState('');
+    
+        useEffect(() => {
+            const fetchOptions = async () => {
+                setLoading(true);
+                try {
+                    const [statusesResponse, scholarshipsResponse, indivScholarshipsResponse] = await Promise.all([
+                        axios.get('/user/getStatus'),
+                        axios.get('/foundations/getallFS'),
+                        axios.get('/foundations/getAllIndivScholarships'),
+                    ]);
+                    setStatusOptions(statusesResponse.data);
+                    setAllScholarships(scholarshipsResponse.data);
+                    setAllIndivScholarships(indivScholarshipsResponse.data.indivScholarships);
+                } catch (err) {
+                    console.error('Error fetching options:', err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+    
+            fetchOptions();
+        }, []);
+    
+        const handleSave = async () => {
+            try {
+                await axios.put(`/user/update/${userProfile.account_email}`, { status_id: selectedStatus });
+                fetchUsers();
+                setDialogContent("Status updated successfully!");
+                handleClose();
+                setOpenDialog(true);
+            } catch (err) {
+                console.error('Error updating status:', err);
+                setError("Error in updating Status!")
             }
-
-        }
-        getStatuses();
-    }, []);
-
-    const handleSave = async () => {
-        try {
-            // Make an API call to update the status
-            await axios.put(`/user/update/${userProfile.account_email}`, {
-                status_id: selectedStatus,
-            });
+        };
+    
+        const handleSaveScholarship = async () => {
+            if(newScholarshipId == '-1' ){
+                setError("Can't put null/no scholarship!");
+                setOpenScholarshipEdit(false);
+                setOpenDialog(true);
+                return;
+            }
+            try {
+                const response = await axios.put(`/user/updateScholarship/${userProfile.account_email}`, {
+                    new_scholarship_id: newScholarshipId,
+                    source : to,
+                });
+        
+                console.log('Scholarship updated successfully:', response.data);
+                setDialogContent('Scholarship Updated Successfully!');
+                // Handle success (e.g., show a success message or refresh data)
+            } catch (error) {
+                console.error('Error updating scholarship:', error.response?.data || error.message);
+                setError('Error in updating scholarship!');
+                // Handle error (e.g., show an error message)
+            }
             fetchUsers();
-
-            // Handle successful update, e.g., refresh the list or show a success message
-            console.log('Status updated successfully');
-            
-            handleClose(); // Close the modal after saving
-        } catch (error) {
-            console.error('Error updating status:', error);
+            setOpenDialog(true);
+            setOpenScholarshipEdit(false);
+        };
+    
+        const handleClose = () => {
+            setOpenEdit(false);
+        };
+        const handleCloseScholarship = () => setOpenScholarshipEdit(false);
+        const closeDialog = () => {
+            setOpenDialog(false);
+            setDialogContent('');
+            setError('');
+        };
+        
+        const handleOpen = (status_id:number) => {
+            //setSelectedStatus(status_id);
+            setOpenEdit(true);
+        };
+    
+        if (loading) {
+            return (
+                <Box
+                    position="absolute"
+                    left="50%"
+                    top="50%"
+                    sx={{
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                >
+                    <CircularProgress />
+                </Box>
+            );
         }
-    };
-
-
-    return (
-        <>
-            <TableRow key={userProfile.account_email}>
-                <TableCell align="center">
-                    {userProfile.account_email}
-                </TableCell>
-                <TableCell align='center'>
-                    {userProfile.first_name + " " + userProfile.last_name} 
-                </TableCell>
-                <TableCell align="center">
-                    {scholarship.title}
-                </TableCell>
-                <TableCell align="center">
-                    {status.name}
-                </TableCell>
-                <TableCell align="center">
-                    {/*Edit status */}
-                    <Button 
-                        onClick={() => handleOpen(status.status_id)}
-                        color= "secondary"sx={{boxShadow:2,padding: "5px", marginRight:"5px",minHeight:"10px",minWidth:"10px",color:"black"}}><ModeEditOutlineOutlinedIcon/></Button>
-                    {/*send email */}
-                    <Button
-                        onClick={() => {navigate(`newEmail/${userProfile.account_email}`)}} 
-                        color= "secondary"sx={{boxShadow:2,padding: "5px", marginLeft:"5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><MailOutlineOutlined/></Button>
-                    {/*view emails */}
-                    <Button
-                        onClick={() => {navigate(`emails/${userProfile.account_email}`)}}  
-                        color= "secondary"sx={{boxShadow:2,padding: "5px", marginLeft:"5px",minHeight:"10px",minWidth:"10px", backgroundColor: "#2054BD",color:"white"}}><InboxIcon/></Button>
-                </TableCell>
-            </TableRow>
-
-            {/* Modal for editing */}
-            <Modal
-                open={openEdit}
-                onClose={handleClose}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                    timeout: 500,
-                }}
-            >
-                <Fade in={openEdit}>
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 400,
-                            bgcolor: 'background.paper',
-                            boxShadow: 24,
-                            p: 4,
-                            borderRadius: 2,
-                        }}
-                    >
-                        <Typography variant="h6" component="h2">
-                            Edit Status
-                        </Typography>
-                        <FormControl fullWidth sx={{ mt: 2 }}>
-                            <InputLabel id="status-select-label">Status</InputLabel>
-                            <Select
-                                labelId="status-select-label"
-                                value={selectedStatus}
-                                onChange={(e) => setSelectedStatus(Number(e.target.value))}
-                                label="Status"
-                            >
-                                {/* Add options for status */}
-                                {
-                                    statusOptions.map((status)=>(<MenuItem
-                                    value={status.status_id}>
-                                        {status.name}
-                                    </MenuItem>))
-                                }
-                            </Select>
-                        </FormControl>
-                        <Box
+    
+        return (
+            <>
+                {/* TableRow code with buttons */}
+                <TableRow key={userProfile.account_email}>
+                    <TableCell align="center">{userProfile.account_email}</TableCell>
+                    <TableCell align="center">
+                        {`${userProfile.first_name} ${userProfile.last_name}`}
+                    </TableCell>
+                    <TableCell align="center">
+                        {source === 'StudentScholarship' && scholarship?.title}
+                        {source === 'StudentIndivScholarship' && indivScholarship?.title}
+                    </TableCell>
+                    <TableCell align="center">{status.name}</TableCell>
+                    <TableCell align="center">
+                        {/* Edit Scholarship */}
+                        <Button
+                            onClick={() => setOpenScholarshipEdit(true)}
+                            color="secondary"
                             sx={{
-                                display: 'flex',
-                                justifyContent: 'flex-end',
-                                mt: 3,
+                                boxShadow: 2,
+                                padding: '5px',
+                                marginRight: '5px',
+                                minHeight: '10px',
+                                minWidth: '10px',
+                                color: 'black',
                             }}
                         >
-                            <Button variant="outlined" onClick={handleClose} sx={{ mr: 2 }}>
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="contained"
-                                onClick={handleSave}
-                                sx={{ backgroundColor: '#2054BD', color: 'white' }}
+                            <FoundationIcon />
+                        </Button>
+                        {/* Edit Status */}
+                        <Button
+                            onClick={() => handleOpen(status.status_id)}
+                            color="secondary"
+                            sx={{
+                                boxShadow: 2,
+                                padding: '5px',
+                                marginRight: '5px',
+                                minHeight: '10px',
+                                minWidth: '10px',
+                                color: 'black',
+                            }}
+                        >
+                            <ModeEditOutlineOutlinedIcon />
+                        </Button>
+                        {/* Send Email */}
+                        <Button
+                            onClick={() => navigate(`newEmail/${userProfile.account_email}`)}
+                            color="secondary"
+                            sx={{
+                                boxShadow: 2,
+                                padding: '5px',
+                                marginLeft: '5px',
+                                minHeight: '10px',
+                                minWidth: '10px',
+                                backgroundColor: '#2054BD',
+                                color: 'white',
+                            }}
+                        >
+                            <MailOutlineOutlined />
+                        </Button>
+                        {/* View Emails */}
+                        <Button
+                            onClick={() => navigate(`emails/${userProfile.account_email}`)}
+                            color="secondary"
+                            sx={{
+                                boxShadow: 2,
+                                padding: '5px',
+                                marginLeft: '5px',
+                                minHeight: '10px',
+                                minWidth: '10px',
+                                backgroundColor: '#2054BD',
+                                color: 'white',
+                            }}
+                        >
+                            <InboxIcon />
+                        </Button>
+                    </TableCell>
+                </TableRow>
+
+                {/* Modals for editing status and scholarships */}
+                {/* Modal for editing */}
+                <Modal
+                    open={openEdit}
+                    onClose={handleClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={openEdit}>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: 400,
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                p: 4,
+                                borderRadius: 2,
+                            }}
+                        >
+                            <Typography variant="h6" component="h2">
+                                Edit Status
+                            </Typography>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
+                                <InputLabel id="status-select-label">Status</InputLabel>
+                                <Select
+                                    labelId="status-select-label"
+                                    value={selectedStatus}
+                                    onChange={(e) => setSelectedStatus(Number(e.target.value))}
+                                    label="Status"
+                                >
+                                    {/* Add options for status */}
+                                    {
+                                        statusOptions.map((status)=>(<MenuItem
+                                        value={status.status_id}>
+                                            {status.name}
+                                        </MenuItem>))
+                                    }
+                                </Select>
+                            </FormControl>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    mt: 3,
+                                }}
                             >
-                                Save
-                            </Button>
+                                <Button variant="outlined" onClick={handleClose} sx={{ mr: 2 }}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleSave}
+                                    sx={{ backgroundColor: '#2054BD', color: 'white' }}
+                                >
+                                    Save
+                                </Button>
+                            </Box>
                         </Box>
-                    </Box>
-                </Fade>
-            </Modal>
-        </>
-    );
-}
+                    </Fade>
+                </Modal>
+                {/* Modal for editing */}
+                <Modal
+                    open={openScholarshipEdit}
+                    onClose={handleCloseScholarship}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={openScholarshipEdit}>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: "50%",
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                p: 4,
+                                borderRadius: 2,
+                            }}
+                        >
+                            <Typography variant="h6" component="h2">
+                                Edit Scholarship
+                            </Typography>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    gap: "40px"
+                                }}
+                            >
+                                {/* Foundation Scholarship Select */}
+                                <FormControl fullWidth sx={{ mt: 2 }}>
+                                    <InputLabel id="foundation-scholarship-label">Foundation Scholarship</InputLabel>
+                                    <Select
+                                        variant="standard"
+                                        labelId="foundation-scholarship-label"
+                                        value={selectedScholarship}
+                                        onChange={(event) => {
+                                            //pickedAScholarship(event); // Handle selection logic
+                                            setSelectedScholarship(event.target.value); // Reset the individual scholarship
+                                            setNewScholarshipId(event.target.value);
+                                            setSelectedIndivScholarship('');
+                                            setTo('StudentScholarship')
+                                        }}
+                                        label="scholarship"
+                                    >
+                                        {
+                                            allScholarships?.map((scholarship) => (
+                                                <MenuItem
+                                                    key={scholarship.scholarships[0].scholarship_id}
+                                                    value={scholarship.scholarships[0].scholarship_id}
+                                                >
+                                                    {scholarship.scholarships[0].title}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                        <MenuItem value={-1}>Nothing Selected</MenuItem>
+                                    </Select>
+                                </FormControl>
+
+                                {/* Individual Scholarship Select */}
+                                <FormControl fullWidth sx={{ mt: 2 }}>
+                                    <InputLabel id="indiv-scholarship-label">Individual Scholarship</InputLabel>
+                                    <Select
+                                        variant="standard"
+                                        labelId="indiv-scholarship-label"
+                                        value={selectedIndivScholarship}
+                                        onChange={(event) => {
+                                            //pickedAnIndivScholarship(event); // Handle selection logic
+                                            setSelectedIndivScholarship(event.target.value); // Reset the foundation scholarship
+                                            setNewScholarshipId(event.target.value);
+                                            setSelectedScholarship('');
+                                            setTo('StudentIndivScholarship');
+                                        }}
+                                        label="indiv"
+                                    >
+                                        {
+                                            allIndivScholarships?.map((indivScholarship) => (
+                                                <MenuItem
+                                                    key={indivScholarship.indiv_scholarship_id}
+                                                    value={indivScholarship.indiv_scholarship_id}
+                                                >
+                                                    {indivScholarship.title}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                        <MenuItem value={-1}>Nothing Selected</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    mt: 3,
+                                }}
+                            >
+                                <Button variant="outlined" onClick={handleCloseScholarship} sx={{ mr: 2 }}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleSaveScholarship}
+                                    sx={{ backgroundColor: '#2054BD', color: 'white' }}
+                                >
+                                    Save
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Fade>
+                </Modal>
+
+
+                {/* Dialog for notifications */}
+                <Dialog
+                    open={openDialog}
+                    onClose={() => setOpenDialog(false)}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Notice"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description"
+                            color={error?'error' : 'success'}
+                        >
+                            {error ? error : dialogContent}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={closeDialog} color="success">
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
+        );
+    };
 
 function FoundList(){
 
-    const [users, setUsers] = useState<UserType[]>([]);
+    const [users, setUsers] = useState<StudentInfo[]>([]);
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState(''); // State to track search input

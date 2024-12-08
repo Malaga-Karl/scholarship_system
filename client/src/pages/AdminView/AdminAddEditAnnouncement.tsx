@@ -1,7 +1,7 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
-import axios from '../../axiosConfig';
+import axios, { axiosBase } from '../../axiosConfig';
 import ImageResize from "quill-image-resize-module-react";
 import SendIcon from "@mui/icons-material/Send";
 import { useParams, useNavigate } from "react-router-dom";
@@ -46,6 +46,7 @@ export default function AddEditAnnouncement() {
         if(content)
           setEditorHtml(content.content);
         setFileName(cover_path ? cover_path.split('/').pop() : "");
+        setPreviewUrl(`${axiosBase}/uploads${cover_path}`);
       } catch (err) {
         console.error("Error fetching announcement:", err);
         setError("Failed to load announcement data.");
@@ -74,6 +75,7 @@ export default function AddEditAnnouncement() {
       const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validFileTypes.includes(file.type)) {
         setError("Invalid file type. Please upload a JPEG, PNG, or GIF image.");
+        setOpenDialog(true);
         return;
       }
       setAnnImageFile(file);
@@ -97,9 +99,11 @@ export default function AddEditAnnouncement() {
     if (annImageFile) {
       formData.append("file", annImageFile);
     }else{
-      setError("Please add a cover image.");
-      setOpenDialog(true);
-      return;
+      if(!announcement_id){
+        setError("Please add a cover image.");
+        setOpenDialog(true);
+        return;
+      }
     }
     formData.append("content", editorHtml);
 
@@ -216,7 +220,7 @@ export default function AddEditAnnouncement() {
               <input
                 type="file"
                 hidden
-                accept="image/*,image/gif"
+                
                 onChange={handleFileChange}
               />
             </Button>

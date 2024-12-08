@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const { Foundations, Scholarships, StudentScholarship } = require('../models')
+const { Foundations, Scholarships, StudentScholarship, IndivScholarships  } = require('../models')
 const Sequelize = require('sequelize');
 
 //conditionals
@@ -184,6 +184,9 @@ router.get('/getF/:id', async (req, res) => {
       res.status(500).json({ error: 'Failed to retrieve foundation' });
   }
 });
+
+
+
 
 // Delete a specific foundation by ID
 router.delete('/deleteF/:id', async (req, res) => {
@@ -382,6 +385,177 @@ router.delete('/deleteS/:id', async (req, res) => {
 });
 
 // scholarship calls < end
+
+
+
+//individual scholarship < start
+// Route to Add Individual Scholarship
+router.post('/addIndivScholarship', upload.single('logo'), async (req, res) => {
+  try {
+    const { title, description, benefits } = req.body;
+
+    // Validate required fields
+    if (!req.file) {
+      return res.status(400).json({ error: 'File upload is required.' });
+    }
+    if (!title || !description || !benefits) {
+      return res.status(400).json({ error: 'Title, description, and benefits are required.' });
+    }
+
+    // Create a new scholarship record
+    const newScholarship = await IndivScholarships.create({
+      logo_path: "/foundations/" + req.file.filename, // File path of the uploaded logo
+      title,
+      description,
+      benefits: Array.isArray(benefits) ? benefits.join(',') : benefits, // Ensure a comma-separated string
+    });
+
+    // Respond with success message
+    res.status(201).json({
+      message: 'Scholarship added successfully.',
+      data: newScholarship,
+    });
+  } catch (error) {
+    console.error('Error adding scholarship:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Route to Get Individual Scholarships
+router.get('/getIndividualScholarships', async (req, res) => {
+  const { page = 1, limit = 5, search = '' } = req.query;
+  const offset = (page - 1) * limit;
+
+  try {
+      const where = search
+          ? {
+                title: {
+                    [Op.like]: `%${search}%`, // Adjust `Op.like` based on your database (case-insensitive in Sequelize)
+                },
+            }
+          : {};
+
+      const { count, rows } = await IndivScholarships.findAndCountAll({
+          where,
+          offset: parseInt(offset),
+          limit: parseInt(limit),
+          order: [['createdAt', 'DESC']],
+      });
+
+      res.status(200).json({
+          totalItems: count,
+          indivScholarships: rows,
+          totalPages: Math.ceil(count / limit),
+          currentPage: parseInt(page),
+      });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch foundations' });
+  }
+});
+
+// Route to Delete an Individual Scholarship by ID
+router.delete('/deleteIndividualScholarship/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the scholarship by ID
+    const scholarship = await IndivScholarships.findByPk(id);
+
+    // If the scholarship does not exist
+    if (!scholarship) {
+      return res.status(404).json({ error: 'Scholarship not found' });
+    }
+
+    // Delete the scholarship
+    await scholarship.destroy();
+
+    res.status(200).json({ message: 'Scholarship deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting scholarship:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Route to Update an Individual Scholarship by ID
+router.put('/updateIndividualScholarship/:id', upload.single('logo'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, benefits } = req.body;
+
+    // Find the scholarship by ID
+    const scholarship = await IndivScholarships.findByPk(id);
+
+    // If the scholarship does not exist
+    if (!scholarship) {
+      return res.status(404).json({ error: 'Scholarship not found' });
+    }
+
+    // Update the scholarship fields
+    scholarship.title = title || scholarship.title;
+    scholarship.description = description || scholarship.description;
+    scholarship.benefits = benefits || scholarship.benefits;
+
+    // Update the logo file if provided
+    if (req.file) {
+      scholarship.logo_path = "/foundations/" + req.file.filename;
+    }
+
+    // Save the updated scholarship
+    await scholarship.save();
+
+    res.status(200).json({
+      message: 'Scholarship updated successfully',
+      data: scholarship,
+    });
+  } catch (error) {
+    console.error('Error updating scholarship:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// GET route to fetch all rows
+router.get('/getAllIndivScholarships', async (req, res) => {
+  try {
+      const indivScholarships = await IndivScholarships.findAll();
+
+      return res.status(200).json({
+          message: "IndivScholarships fetched successfully.",
+          indivScholarships: indivScholarships,
+      });
+  } catch (error) {
+      console.error("Error fetching IndivScholarships:", error);
+      return res.status(500).json({
+          message: "An error occurred while fetching the scholarships.",
+          error: error.message,
+      });
+  }
+});
+
+// Route to Get an Individual Scholarship by ID
+router.get('/getIndividualScholarship/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the scholarship by ID
+    const scholarship = await IndivScholarships.findByPk(id);
+
+    // If the scholarship does not exist
+    if (!scholarship) {
+      return res.status(404).json({ error: 'Scholarship not found' });
+    }
+
+    // Respond with the scholarship data
+    res.status(200).json({
+      message: 'Scholarship fetched successfully',
+      indivScholarship: scholarship,
+    });
+  } catch (error) {
+    console.error('Error fetching scholarship:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//individual scholarship <end
 
 
 

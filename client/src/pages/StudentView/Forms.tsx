@@ -688,9 +688,9 @@ export default function Form(){
         setOpenPrompt(false);
         setDialogContent('');
         if(!error){
-            setError('');
             navigate('/studentView/dashboard');
         }
+        setError('');
     }
     
     const onSend = async (e:any) => {

@@ -208,7 +208,8 @@ export default function AdminNewMail() {
     }
 
     if(errors){
-      setOpenDialog(true);
+      if(!openDialog)
+        setOpenDialog(true);
     }
 
   return (

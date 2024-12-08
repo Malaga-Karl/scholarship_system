@@ -12,12 +12,13 @@ import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
+import Person2Icon from '@mui/icons-material/Person2';
+import Person3OutlinedIcon from '@mui/icons-material/Person3Outlined';
 
 import { Dispatch, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 
-export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'
-
+export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'|'indivscholarships'
 type AdminNavbarProps = {
     active: AdminActiveType,
     setActive: Dispatch<React.SetStateAction<AdminActiveType>>;
@@ -53,6 +54,12 @@ export default function AdminNavbar({active, setActive}: AdminNavbarProps){
         path:"scholarships", 
         active:<CampaignIcon/>, 
         inactive:<CampaignOutlinedIcon/>
+    },
+    {
+        page:"IndivScholarships", 
+        path:"indivscholarships", 
+        active:<Person2Icon/>, 
+        inactive:<Person3OutlinedIcon/>
     },
     {
         page:"Announcements", 
