@@ -66,6 +66,12 @@ export default function  StudentViewTemplate() {
 
   useEffect(() => {
     const call = () => {
+      const activeAccount = instance.getActiveAccount();
+      if (!activeAccount) {
+          //no active account
+          navigate("/signin?error=No Logged Account!");
+      }
+
       const storedUser = localStorage.getItem('userInfo');
       if (storedUser) {
         //console.log(storedUser);

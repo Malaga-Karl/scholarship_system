@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import for navigation
+import { useNavigate, useSearchParams } from 'react-router-dom'; // Import for navigation
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useMsal } from '@azure/msal-react';
@@ -110,6 +110,10 @@ export default function MainSignIn(): JSX.Element {
     }
   };
 
+  //for search params
+  const [searchParams] = useSearchParams();
+  const searchError = searchParams.get("error");
+
 
   return (
     <Box
@@ -169,9 +173,9 @@ export default function MainSignIn(): JSX.Element {
         </Button>
 
         {/* Error Display */}
-        {error && (
+        {error || searchError && (
           <Typography variant="body2" color="error" sx={{ mt: 2 }}>
-            {error}
+            {error || searchError}
           </Typography>
         )}
       </Box>
