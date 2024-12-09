@@ -11,6 +11,13 @@ import ImageResize from "quill-image-resize-module-react"; // Import the image r
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from "@mui/material"
 
 ReactQuill.Quill.register("modules/imageResize", ImageResize);
 // Quill formats
@@ -52,6 +59,9 @@ export default function AdminNewMail() {
   const [to, setTo] = useState("");
   const [cc, setCc] = useState("");
   const [errors, setErrors] = useState("");
+      
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogContent, setDialogContent] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -102,6 +112,7 @@ export default function AdminNewMail() {
       return newAccessToken;
       } catch (err: any) {
           console.error("Error acquiring access token:", err);
+          setErrors(err)
           throw new Error("Error acquiring access token: " + (err.message || "Unknown error"));
       }
   };
@@ -145,22 +156,21 @@ export default function AdminNewMail() {
       
           if (response.ok) {
               console.log("Email sent successfully!");
+              setCc('');
+              setEditorContent('');
+              setSubject('');
+              setDialogContent("Email Set Successfully!");
           } else {
               const errorData = await response.json();
               setErrors('Error in sending Email:' + errorData)
               console.error("Error sending email:", errorData);
           }
-          setCc('');
-          setTo('');
-          setEditorContent('');
-          setSubject('');
-          alert("Email Set Successfully!");
           setLoading(false);
-          navigate('/adminView/applicants');
       } catch (error) {
           setErrors('Error in sending Email:' + error)
           console.error("Error during API call:", error);
       }
+      setOpenDialog(true);
     };
   
   const saveDraft = () => {
@@ -171,8 +181,8 @@ export default function AdminNewMail() {
           editorContent,
       };
       localStorage.setItem("emailDraft", JSON.stringify(draft));
-      alert("Draft saved locally!");
-      navigate('/adminView/applicants');
+      setDialogContent("Draft saved locally!");
+      setOpenDialog(true);
   };
 
   useEffect(() => {
@@ -187,6 +197,20 @@ export default function AdminNewMail() {
       }
     }, []);
 
+
+    const handleDialogClose = () => {
+      setDialogContent('');
+      setOpenDialog(false);
+      if(!errors){
+        navigate('/adminView/applicants');
+      }
+      setErrors('');
+    }
+
+    if(errors){
+      if(!openDialog)
+        setOpenDialog(true);
+    }
 
   return (
     <>
@@ -267,6 +291,28 @@ export default function AdminNewMail() {
         </Box>
       </Paper>
       )}
+      {/* Notice Dialog */}
+      <Dialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+      >
+          <DialogTitle id="alert-dialog-title">{"Email Status"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description" color={
+              //just some colors to emphasize errors
+              errors ? ("error") : ("success")
+            }>
+                {errors? errors : dialogContent}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+              <Button onClick={handleDialogClose} color="primary">
+                  Ok
+              </Button>
+          </DialogActions>
+      </Dialog>
     </>
   );
 }

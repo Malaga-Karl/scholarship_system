@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { axiosBase } from "../../axiosConfig";
 import { useNavigate } from "react-router-dom";
+import newIcon from "../../assets/announcements/new_icon.png";
 
 interface aCard {
   announcement_id:number,
@@ -20,24 +21,59 @@ interface aCard {
 
 function AnnouncementCard({announcement_id, title, cover_path, description, createdAt }:aCard){
   const navigate = useNavigate();
+
+  const currentDate = new Date();
+  const createdAtDate = new Date(createdAt);
+  const dateDifference = Math.ceil((currentDate.getTime() - createdAtDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  let boxShadowColor = "rgba(0, 0, 0, 1)";
+
+  if(dateDifference <= 1){
+    // the announcement is new
+    boxShadowColor = "rgba(0, 0, 255, 1)";
+  }
+
   return(
     <>
     <Card
       key={announcement_id}
+        
           sx={{
             display: "flex",
+            position:"relative",
             alignItems: "flex-start",
+            
             borderRadius: 2,
-            boxShadow: 2,
+            boxShadow: `0px 0px 10px ${boxShadowColor}`,
             p: 2,
             mb: 1,
           }}
         >
+          {
+            dateDifference <= 1 ? (
+          <Box
+            position={"absolute"}
+            top={"20px"}
+            right={"20px"}
+          >
+            <img 
+              src={newIcon} 
+              alt="New Icon"
+              style={{
+                maxHeight:"50px",
+                maxWidth:"50px",
+              }}
+            />
+          </Box>
+            ) : ( '' )
+          }
           {/* Image Section */}
           <CardMedia
             component="img"
             sx={{
               width: 200,
+              maxHeight:250,
+              minHeight:250,
               height: "auto",
               borderRadius: 1,
             }}
@@ -58,7 +94,9 @@ function AnnouncementCard({announcement_id, title, cover_path, description, crea
                 .toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long', 
-                    day: 'numeric' 
+                    day: 'numeric' ,
+                    hour: '2-digit',
+                    minute: '2-digit'
                 })
               }
             </Typography>

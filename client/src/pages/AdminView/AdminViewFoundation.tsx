@@ -23,6 +23,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    CircularProgress,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import axios, { axiosBase } from "../../axiosConfig";
@@ -55,11 +56,19 @@ function FoundationList({
         }
     };
 
+
+
     return (
         <>
             <TableRow key={foundation_id}>
                 <TableCell align="center">
-                    <img src={`${axiosBase}/uploads${logo_path}`} alt="Item" />
+                    <img src={`${axiosBase}/uploads${logo_path}`} 
+                        style={{
+                            maxHeight:"100px",
+                            minHeight:"100px",
+                            maxWidth: "300px",
+                        }}
+                        alt="Item" />
                 </TableCell>
                 <TableCell align="center">{name}</TableCell>
                 <TableCell
@@ -145,10 +154,12 @@ function FoundList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState(''); // State to track search input
     const [debouncedSearch, setDebouncedSearch] = useState(''); // For debounce
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(false);
+     const navigate = useNavigate();
 
     // Fetch Foundations with Pagination and Search
     const fetchFoundations = async (page = 1, search = '') => {
+        setLoading(true);
         try {
             const response = await axios.get(`/foundations/getAllPaginate`, {
                 params: { page, limit: 5, search },
@@ -159,7 +170,10 @@ function FoundList() {
         } catch (error) {
             console.error("Error fetching foundations:", error);
         }
+        setLoading(false);
     };
+
+
 
     // Debounce search input to minimize API calls
     useEffect(() => {
@@ -247,7 +261,7 @@ function FoundList() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {foundations.map((foundation) => (
+                    {loading ? <CircularProgress sx={{margin:"auto"}} size={24} /> :foundations.map((foundation) => (
                             <FoundationList
                                 key={foundation.foundation_id}
                                 {...foundation}

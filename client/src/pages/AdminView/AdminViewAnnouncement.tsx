@@ -25,6 +25,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  CircularProgress,
 } from "@mui/material";
 
 type AnnouncementType = {
@@ -106,10 +107,12 @@ function FoundList(){
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(''); // State to track search input
   const [debouncedSearch, setDebouncedSearch] = useState(''); // For debounce
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();  
 
     // Fetch Foundations with Pagination and Search
     const fetchAnnouncements = async (page = 1, search = '') => {
+        setLoading(true);
       try {
           const response = await axios.get(`/announcements/getAllPaginate`, {
               params: { page, limit: 5, search },
@@ -120,6 +123,7 @@ function FoundList(){
       } catch (error) {
           console.error("Error fetching announcements:", error);
       }
+      setLoading(false);
   };
 
   // Debounce search input to minimize API calls
@@ -164,7 +168,7 @@ function FoundList(){
                       maxWidth:'50%',
                       minWidth: '50%',
                   }}
-                  placeholder="Search by foundation name..."
+                  placeholder="Search by announcement title..."
                   value={searchQuery}
                   onChange={handleSearchChange} // Handle input change
                   InputProps={{
@@ -208,7 +212,7 @@ function FoundList(){
                       </TableRow>
                   </TableHead>
                   <TableBody>
-                      {announcements.map((annoucement) => (
+                      {loading ? <CircularProgress sx={{margin:"auto"}} size={24} /> : announcements.map((annoucement) => (
                           <FoundationList
                               key={annoucement.announcement_id}
                               {...annoucement}

@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    } from "@mui/material";
+import { axiosBase } from "../../axiosConfig";
 
 export default function AddEditFoundation() {
     const [image, setImage] = useState<File | null>(null);
@@ -11,6 +19,10 @@ export default function AddEditFoundation() {
     const [foundation, setFoundation] = useState<string>(''); 
     const [description, setDescription] = useState<string>(''); 
     const { foundation_id } = useParams();
+    const [imagePreview, setImagePreview] = useState('');
+    const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [dialogContent, setDialogContent] = useState('');
+    const [errors, setErrors] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,6 +37,7 @@ export default function AddEditFoundation() {
                     if (logo_path) {
                         setFileName(logo_path.split('/').pop());
                     }
+                    setImagePreview(`${axiosBase}/uploads${logo_path}`);
                 } catch (error) {
                     console.error("Error fetching foundation data:", error);
                 }
@@ -36,15 +49,17 @@ export default function AddEditFoundation() {
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
+            const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
+            if (!validFileTypes.includes(file.type)) {
+                setErrors("Invalid file type. Please upload a JPEG, PNG, or GIF image.");
+                setOpenDialog(true);
+                return;
+            }
             setImage(file);
             const name = file.name.length > 20 ? file.name.slice(0, 20) + "..." : file.name;
             setFileName(name);
+            setImagePreview(URL.createObjectURL(file));
         }
-    };
-
-    const handleRemoveImage = () => {
-        setImage(null);
-        setFileName(null);
     };
 
     const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -60,22 +75,32 @@ export default function AddEditFoundation() {
                 await axios.put(`/foundations/update/${foundation_id}`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                alert("Foundation updated successfully!");
+                setDialogContent("Foundation updated successfully!");
             } else {
                 // Create logic
                 await axios.post("/foundations/add", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                alert("Foundation created successfully!");
+                setDialogContent("Foundation created successfully!");
             }
-            navigate("/adminView/foundations");
         } catch (error) {
             console.error("Error saving foundation:", error);
-            alert("Failed to save the foundation. Please try again.");
+            setErrors("Failed to save the foundation. Please try again.: [" + error + "] ");
         }
+        setOpenDialog(true);
     };
 
+    const handleDialogClose = () => {
+        setOpenDialog(false);
+        setDialogContent('');
+        if(!errors){
+            navigate("/adminView/foundations");
+        }
+        setErrors(''); // this is so stupid
+    }
+
     return (
+        <>
         <Box
             sx={{
                 display: 'flex',
@@ -154,53 +179,19 @@ export default function AddEditFoundation() {
                                     fontSize: '20px',
                                     borderRadius: '8px',
                                 }}
-                                startIcon={<InsertPhotoIcon />}
+                                startIcon={image || foundation_id ? '' : <InsertPhotoIcon /> }
                             >
-                                Attach image here...
+                                {image || foundation_id ? 
+                                    <img 
+                                        src={imagePreview} 
+                                        alt="Uploaded Image Preview" 
+                                        style={{
+                                            maxHeight:"100%",
+                                        }}
+                                    />
+                                : 'Attach Image here'}
                             </Button>
                         </label>
-                        {fileName && (
-                            <Box
-                                sx={{
-                                    left: 0,
-                                    width: "450px",
-                                    padding: "10px",
-                                    background: "#F0F0F0",
-                                    borderRadius: "8px",
-                                    border: "1px solid #ccc",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                }}
-                            >
-                                <InsertPhotoIcon sx={{ fontSize: "30px", color: "#4CAF50" }} />
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        flexGrow: 1,
-                                        marginLeft: "10px",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    {fileName}
-                                </Typography>
-                                <Button
-                                    onClick={handleRemoveImage}
-                                    sx={{
-                                        backgroundColor: "#FF4D4F",
-                                        color: "white",
-                                        textTransform: "none",
-                                        fontSize: "14px",
-                                        padding: "4px 10px",
-                                        borderRadius: "4px",
-                                    }}
-                                >
-                                    Remove
-                                </Button>
-                            </Box>
-                        )}
                     </Box>
                     <Box>
                         <Typography
@@ -268,5 +259,27 @@ export default function AddEditFoundation() {
                 </Box>
             </form>
         </Box>
+            {/* Notice Dialog */}
+        <Dialog
+            open={openDialog}
+            onClose={() => setOpenDialog(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{"Notice"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description"
+                    color={errors?'error' : 'success'}
+                >
+                    {errors ? errors : dialogContent}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleDialogClose} color="success">
+                    OK
+                </Button>
+            </DialogActions>
+        </Dialog>
+        </>
     );
 }

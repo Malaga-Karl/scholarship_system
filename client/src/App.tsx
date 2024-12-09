@@ -19,24 +19,26 @@ import Forms from './pages/StudentView/Forms';
 // import StudentViewScholarshipTemplate from './pages/StudentView/StudentViewScholarshipTemplate';
 import AddEditScholarship from './pages/AdminView/AdminAddEditScholarship';
 import AddEditAnnouncment from './pages/AdminView/AdminAddEditAnnouncement';
-import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncement';
+import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncements';
 import QuillTest from './pages/AdminView/quillTtest';
 import DebugPage from './pages/Debug/DebugPage';
 // import Test from './pages/StudentView/TestEmails';
 import HomeTemplate from './template/HomeTemplate';
 import StudentViewTemplate from './template/StudentViewTemplate';
 import AdminViewTemplate from './template/AdminViewTemplate';
-import AdminNewMail from './pages/AdminView/AdminNewEmail';
+import AdminNewMail from './pages/AdminView/AdminNewEmail'; 
 import AdminStudentEmails from './pages/AdminView/AdminStudentEmails';
-import SpecificAnnouncementView from './pages/StudentView/SpecificAnnouncements';
 import ScholarshipFormPage from './pages/StudentView/FormPrint';
+import PdfGenerator from './pages/StudentView/FormPrint';
+import AdminViewIndivApplicant from './pages/AdminView/AdminViewIndivScholarship';
+import AddEditIndivScholarship from './pages/AdminView/AdminAddEditIndivScholarship';
 
 function App() {
 
   return (
     <>
-      <BrowserRouter>
-        <Routes>            
+      <BrowserRouter basename="/">
+        <Routes >            
           <Route path='/' element={<HomeTemplate/>}>
 
             <Route path='/' element={<Navigate to={'home'}/>}/>
@@ -68,7 +70,7 @@ function App() {
             <Route path='contact/new' element={<NewMail/>}/>
             
           </Route>
-          <Route path='/print' element={<ScholarshipFormPage />}/>
+          <Route path='/print' element={<PdfGenerator />}/>
 
           <Route path='/adminview' element={<AdminViewTemplate/>}>
             {/* <Route index element={<Navigate to="foundations" replace/>} /> */}
@@ -85,6 +87,9 @@ function App() {
             <Route path='applicants' element={<AdminViewApplicant/>} />
             <Route path='applicants/newEmail/:student_email' element={<AdminNewMail />} />
             <Route path='applicants/emails/:student_email' element={<AdminStudentEmails />} />
+            <Route path='indivscholarships' element={<AdminViewIndivApplicant/>}/>
+            <Route path='indivscholarships/addedit' element={<AddEditIndivScholarship/>}/>
+            <Route path='indivscholarships/addedit/:indiv_scholarship_id' element={<AddEditIndivScholarship/>}/>
             
           </Route>
           <Route path='*' element={<NotFoundPage />} />

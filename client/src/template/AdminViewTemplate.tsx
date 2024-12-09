@@ -36,7 +36,7 @@ function CustomDrawerNav(){
     )
 }
 
-export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'
+export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'|'indivscholarships'
 
 export default function AdminTemplate() {
   
@@ -48,6 +48,13 @@ export default function AdminTemplate() {
   //user info fetching
   useEffect(() => {
     const call = () => {
+      const activeAccount = instance.getActiveAccount();
+      if (!activeAccount) {
+        //no active account
+        navigate("/signin?error=No Logged Account!");
+      }
+
+      
       const storedUser = localStorage.getItem('userInfo');
       if (storedUser) {
         console.log(storedUser);
@@ -112,7 +119,7 @@ export default function AdminTemplate() {
           Welcome,
           <br/></Typography>
         <Typography variant='h5' sx={{fontWeight:'bold'}}>
-          {userInfo?.displayName}
+          RGO ADMIN
         </Typography>
         <Typography variant='body1'>
           {userInfo?.mail}
@@ -120,7 +127,7 @@ export default function AdminTemplate() {
         <Typography variant='body1'>
           {userInfo?.mobilePhone}
         </Typography>
-        <Button variant='contained' endIcon={<CreateOutlinedIcon/>} sx={{backgroundColor:"rgb(191, 155, 48)", width:"70%", margin:"30px auto"}}>Update profile</Button>
+        {/*Removed 'cause there is no profile <Button variant='contained' endIcon={<CreateOutlinedIcon/>} sx={{backgroundColor:"rgb(191, 155, 48)", width:"70%", margin:"30px auto"}}>Update profile</Button>*/}
         <Divider sx={{backgroundColor:"rgba(255,255,255,0.6)", width:"85%", margin:"0 auto"}}/>
    
         <AdminNavbar active={active} setActive={setActive}/>

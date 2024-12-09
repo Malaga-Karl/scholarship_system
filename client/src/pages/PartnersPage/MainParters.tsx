@@ -14,18 +14,24 @@ import { boldStyle } from '../HomePage/Announcements'
 
 //Image Imports
 import {FoundationProps} from '../HomePage/Foundations'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import SpecificFoundation from './SpecificPartner'
 import { useEffect, useState } from 'react'
 import axios, { axiosBase } from '../../axiosConfig';
 
 function FoundationCard({image, name, id}: FoundationProps){
+    const navigate = useNavigate();
     return(
         <Card sx={{maxWidth:300, minWidth:300 , display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
             <Box>
-                <CardMedia sx={{paddingTop:"20px"}}>
-                    <img src={image} style={{maxWidth:"250px", padding:"10px"}} alt={name + 'logo'} />
+                <CardMedia sx={{paddingTop:"20px", minHeight:"270px", maxHeight:"270px"}}>
+                    <img src={image} 
+                    style={{
+                        maxWidth:"250px",
+                        padding:"10px",
+                        maxHeight:"250px",
+                        }} alt={name + 'logo'} />
                 </CardMedia>
                 <CardContent>
                     <Typography variant='h5' sx={boldStyle}>{name}</Typography>
@@ -36,7 +42,7 @@ function FoundationCard({image, name, id}: FoundationProps){
                     <CardActions>
                         <CardActions>
                             <Button variant="contained" endIcon={<ArrowForwardIcon/>} size='small' sx={{
-                    backgroundColor:"rgb(191, 155, 48)"}} onClick={() => {window.location.href="/partners/" + id}}>Know More</Button>
+                    backgroundColor:"rgb(191, 155, 48)"}} onClick={() => { navigate("/partners/" + id)}}>Know More</Button>
                         </CardActions>
                     </CardActions>
                 </Box>

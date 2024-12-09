@@ -14,11 +14,19 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useNavigate, useParams } from "react-router-dom"
 import axios from "../../axiosConfig"
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from "@mui/material"
 // import { useParams } from "react-router-dom"
 
 function FirstForm({ data, handleChange }: { data: any; handleChange: any }) {
+
     return (
-        <>
+        <>  
             <Typography variant="h4">SCHOLARSHIP APPLICATION FORM</Typography>
             <Typography
                 variant="h5"
@@ -672,12 +680,24 @@ export default function Form(){
         }));
     };
 
-    
+    const [openPrompt, setOpenPrompt] = useState<boolean>(false);
+    const [dialogContent, setDialogContent] = useState('');
+    const [error, setError] = useState('');
+
+    const handleDialogClose = () => {
+        setOpenPrompt(false);
+        setDialogContent('');
+        if(!error){
+            navigate('/studentView/dashboard');
+        }
+        setError('');
+    }
     
     const onSend = async (e:any) => {
         // Save formData to localStorage
         localStorage.setItem("scholarshipFormData", JSON.stringify(formData));
-        
+        setOpenPrompt(true);
+
         console.log("Form Data Submitted:", formData);
         if(!edit){
             const formDataSubmit = new FormData();
@@ -687,17 +707,17 @@ export default function Form(){
             formDataSubmit.append('status_id', '2');
             e.preventDefault();
             try {
-                const response = await axios.post('/user/studentScholarship/create', formDataSubmit);
-                alert('Record created successfully!');
-                console.log(response.data);
-                navigate('/studentView/dashboard');
+                await axios.post('/user/studentScholarship/create', formDataSubmit);
+                //console.log(response.data);
+                setDialogContent('Record created successfully!');
             } catch (error) {
                 console.error('Error creating record:', error);
-                alert('Failed to create record. Please try again.');
+                setError('Failed to create record. Please try again.');
             }
         }else{
-            navigate('/studentView/dashboard');
+            setDialogContent('Forms Edited Successfully!');
         }
+        setOpenPrompt(true);
     };
 
     const [index, setIndex] = useState(0);
@@ -735,6 +755,28 @@ export default function Form(){
                     }
                 </Box>
             </Box>
+            {/* Just showing Dialog */}
+            <Dialog
+                open={openPrompt}
+                onClose={() => setOpenPrompt(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Notice!"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description" color={
+                        //just some colors to emphasize errors
+                        error ? ("error") : ("success")
+                    }>
+                        {dialogContent || error}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose} color="primary">
+                        Ok
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     )
 }

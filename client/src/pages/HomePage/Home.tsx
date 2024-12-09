@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 
 // Background Image
 import plmFascade from '../../assets/plmBackground.png';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Home(){
@@ -38,6 +39,7 @@ export default function Home(){
     const imageStyle = {
         padding:"10px"
     }
+    const navigate = useNavigate();
 
     const card = (
         <>
@@ -67,7 +69,7 @@ export default function Home(){
                         marginLeft:"100px",
                         padding:"15px"
                     }}
-                onClick={() => window.location.href = '/partners'}
+                onClick={() => navigate('/partners')}
                 >See Scholarships</Button>
             </CardActions>
         </>

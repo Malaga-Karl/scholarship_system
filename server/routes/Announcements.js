@@ -23,7 +23,7 @@ const sequelize = new Sequelize({
     dialect: 'mysql', // Or 'postgres', 'sqlite', 'mssql', depending on your database
     host: 'localhost', // Replace with your database host
     username: 'root', // Replace with your database username
-    password: '', // Replace with your database password
+    password: 'conchasroot', // Replace with your database password
     database: 'scholarship_db', // Replace with your database name
 }); // Adjust based on your Sequelize initialization
 

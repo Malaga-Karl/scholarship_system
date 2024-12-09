@@ -24,6 +24,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  CircularProgress,
 } from "@mui/material";
 
 type ScholarshipType = {
@@ -38,6 +39,7 @@ type ScholarshipType = {
 function FoundationList({scholarship_id, title, deadline, scholarship_description, slots, refreshList}:ScholarshipType & { refreshList: () => void}){
   const navigate = useNavigate();  
   const [openDialog, setOpenDialog] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [remainingSlots, setRemainingSlots] = useState(0);
     const handleDelete = async () => {
@@ -53,6 +55,7 @@ function FoundationList({scholarship_id, title, deadline, scholarship_descriptio
     useEffect(() => {
         // Fetch the remaining slots when the component loads
         const fetchRemainingSlots = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(`/user/calculateSlots/${scholarship_id}`);
                 const { remainingSlots } = response.data; // Destructure remaining slots from response
@@ -60,12 +63,16 @@ function FoundationList({scholarship_id, title, deadline, scholarship_descriptio
             } catch (error) {
                 console.error('Error fetching remaining slots:', error);
             }
+            setLoading(false);
         };
 
         fetchRemainingSlots();
     }, []); // Dependency array ensures this runs when scholarshipId changes
 
   
+    if(loading){
+        return <CircularProgress sx={{margin:"300px auto"}} size={24} />;
+    }
   return(
           <>
             <TableRow
@@ -132,10 +139,12 @@ function FoundList(){
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(''); // State to track search input
   const [debouncedSearch, setDebouncedSearch] = useState(''); // For debounce
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Fetch Foundations with Pagination and Search
   const fetchFoundations = async (page = 1, search = '') => {
+        setLoading(true);
       try {
           const response = await axios.get(`/foundations/getAllPaginateS`, {
               params: { page, limit: 5, search },
@@ -146,7 +155,9 @@ function FoundList(){
       } catch (error) {
           console.error("Error fetching foundations:", error);
       }
+      setLoading(false);
   };
+
 
   // Debounce search input to minimize API calls
   useEffect(() => {
@@ -191,7 +202,7 @@ function FoundList(){
                     maxWidth:'50%',
                     minWidth: '50%',
                 }}
-                placeholder="Search by foundation name..."
+                placeholder="Search by scholarship name..."
                 value={searchQuery}
                 onChange={handleSearchChange} // Handle input change
                 InputProps={{
@@ -236,7 +247,7 @@ function FoundList(){
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {scholarships.map((scholarship) => (
+                {loading ? <CircularProgress sx={{margin:"auto"}} size={24} /> :scholarships.map((scholarship) => (
                         <FoundationList
                             key={scholarship.scholarship_id}
                             {...scholarship}

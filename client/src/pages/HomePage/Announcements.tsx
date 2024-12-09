@@ -11,6 +11,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { useEffect, useState } from 'react';
 import axios, { axiosBase } from '../../axiosConfig';
+import newIcon from "../../assets/announcements/new_icon.png";
+import { useNavigate } from 'react-router-dom';
 
 export type NewsProps = {
     id: number,
@@ -29,13 +31,25 @@ export const boldStyle = {
     lineHeight:"normal",
 }
 
+
 export function BigNews({id, date, image, title, content}: NewsProps){
+    const navigate = useNavigate();
+
+    const currentDate = new Date();
+    const createdAtDate = new Date(date);
+    const dateDifference = Math.ceil((currentDate.getTime() - createdAtDate.getTime()) / (1000 * 60 * 60 * 24));
+
+
+        if(dateDifference <= 1){
+
+        }
     return(
         <Card sx={{
             maxWidth:450,
             display:"flex",
             flexDirection:"column",
             justifyContent:"space-between",
+            position:"relative"
         }}>
             <CardMedia 
                 sx={{height:250, scale:0.9}}
@@ -50,13 +64,29 @@ export function BigNews({id, date, image, title, content}: NewsProps){
                 justifyContent:"space-between",
             }}>
                 <Typography variant='body2'>{date}</Typography>
-                <Button variant='contained'  sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={()=>window.location.href = '/announcements/' + id}>Read More</Button>
+                <Button variant='contained'  sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={() => navigate(`/announcements/${id}`)}>Read More</Button>
             </CardActions>
+            {dateDifference <= 1 ? (
+            <Box
+                position={"absolute"}
+                top={"20px"}
+                right={"20px"}
+            >
+                <img 
+                src={newIcon} 
+                alt="New Icon"
+                style={{
+                    maxHeight:"50px",
+                    maxWidth:"50px",
+                }}
+                />
+            </Box>):''}
         </Card>
     )
 }
 
 function SmallNews({id, date, image, title}: NewsProps){
+    const navigate = useNavigate();
     return(
         <Card sx={{
             maxWidth:500,
@@ -97,7 +127,7 @@ function SmallNews({id, date, image, title}: NewsProps){
                     justifyContent:"space-between",
                 }}>
                     <Typography variant='body2'>{date}</Typography>
-                    <Button variant='contained' sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={()=>window.location.href = '/announcements/' + id}>Read More</Button>
+                    <Button variant='contained' sx={{backgroundColor:"rgb(191, 155, 48)"}} onClick={() => navigate(`/announcements/${id}`)}>Read More</Button>
                 </CardActions>
             </div>
         </Card>
@@ -115,6 +145,7 @@ type announcement = {
 
 export default function Announcements(){
 
+    const navigate = useNavigate();
     const [firstAnnouncement, setFirstAnnouncement] = useState<announcement | null>(null);
     const [announcements, setOtherAnnouncements] = useState<announcement[]>([]);
 
@@ -194,7 +225,7 @@ export default function Announcements(){
                         title={news?.title ?? ''}
                         content={news?.description}
                     />)}
-                    <Button variant='text' sx={{color:"rgb(255, 255, 255)"}} onClick={()=>window.location.href = '/announcements'}>See more<ArrowForwardIcon></ArrowForwardIcon></Button>
+                    <Button variant='text' sx={{color:"rgb(255, 255, 255)"}} onClick={()=>navigate(`/announcements`)}>See more<ArrowForwardIcon></ArrowForwardIcon></Button>
                 </Box>
             </Box>
         </div>

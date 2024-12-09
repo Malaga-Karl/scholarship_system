@@ -1,11 +1,18 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
-import axios from '../../axiosConfig';
+import axios, { axiosBase } from '../../axiosConfig';
 import ImageResize from "quill-image-resize-module-react";
 import SendIcon from "@mui/icons-material/Send";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    } from "@mui/material";
 
 ReactQuill.Quill.register("modules/imageResize", ImageResize);
 
@@ -18,6 +25,8 @@ export default function AddEditAnnouncement() {
   const [editorHtml, setEditorHtml] = useState(""); // State to hold the editor's content
   const [loading, setLoading] = useState(false); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [dialogContent, setDialogContent] = useState('');
 
   const { announcement_id } = useParams();
   const navigate = useNavigate();
@@ -37,6 +46,7 @@ export default function AddEditAnnouncement() {
         if(content)
           setEditorHtml(content.content);
         setFileName(cover_path ? cover_path.split('/').pop() : "");
+        setPreviewUrl(`${axiosBase}/uploads${cover_path}`);
       } catch (err) {
         console.error("Error fetching announcement:", err);
         setError("Failed to load announcement data.");
@@ -64,7 +74,8 @@ export default function AddEditAnnouncement() {
     if (file) {
       const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validFileTypes.includes(file.type)) {
-        alert("Invalid file type. Please upload a JPEG, PNG, or GIF image.");
+        setError("Invalid file type. Please upload a JPEG, PNG, or GIF image.");
+        setOpenDialog(true);
         return;
       }
       setAnnImageFile(file);
@@ -77,7 +88,8 @@ export default function AddEditAnnouncement() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!editorHtml.trim()) {
-      alert("Please enter content in the announcement editor.");
+      setError("Please enter content in the announcement editor.");
+      setOpenDialog(true);
       return;
     }
 
@@ -86,6 +98,12 @@ export default function AddEditAnnouncement() {
     formData.append("description", annDescription);
     if (annImageFile) {
       formData.append("file", annImageFile);
+    }else{
+      if(!announcement_id){
+        setError("Please add a cover image.");
+        setOpenDialog(true);
+        return;
+      }
     }
     formData.append("content", editorHtml);
 
@@ -97,7 +115,7 @@ export default function AddEditAnnouncement() {
             "Content-Type": "multipart/form-data",
           },
         });
-        alert("Announcement updated successfully!");
+        setDialogContent("Announcement updated successfully!");
       } else {
         // Create new announcement
         await axios.post("/announcements/create", formData, {
@@ -105,21 +123,31 @@ export default function AddEditAnnouncement() {
             "Content-Type": "multipart/form-data",
           },
         });
-        alert("Announcement created successfully!");
+        setDialogContent("Announcement created successfully!");
       }
 
       // Redirect to announcements list
-      navigate("/adminView/announcements");
     } catch (err) {
       console.error("Error saving announcement:", err);
-      alert("Failed to save the announcement. Please try again.");
+      setError("Failed to save the announcement. Please try again.");
     }
+    setOpenDialog(true);
   };
 
+  const handleCloseDialog = () => {
+    setDialogContent('');
+    setOpenDialog(false);
+    if(!error){
+      navigate("/adminView/announcements");
+    }
+    setError('');
+
+  }
+
   if (loading) return <p>Loading announcement...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
+<>
     <Box
       sx={{
         display: "flex",
@@ -192,7 +220,7 @@ export default function AddEditAnnouncement() {
               <input
                 type="file"
                 hidden
-                accept="image/*,image/gif"
+                
                 onChange={handleFileChange}
               />
             </Button>
@@ -268,5 +296,27 @@ export default function AddEditAnnouncement() {
         </Box>
       </form>
     </Box>
+    {/* Notice Dialog */}
+    <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+    >
+        <DialogTitle id="alert-dialog-title">{"Notice"}</DialogTitle>
+        <DialogContent>
+            <DialogContentText id="alert-dialog-description"
+                color={error?'error' : 'success'}
+            >
+                {error ? error : dialogContent}
+            </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleCloseDialog} color="success">
+                OK
+            </Button>
+        </DialogActions>
+    </Dialog>
+  </>
   );
 }

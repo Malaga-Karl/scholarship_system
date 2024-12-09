@@ -13,6 +13,14 @@ import { useState } from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    } from "@mui/material";
+
 //icons 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -97,7 +105,12 @@ export default function AddEditScholarship(){
     const [slotsLeft, setSlotsLeft] = useState(0); // Initial value for slotsLeft
     const [isActive, setIsActive] = useState<boolean>(false); // Checkbox state for "Is Active"
     const [foundation, setFoundation] = useState<number | string>('');
+    
+    const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [dialogContent, setDialogContent] = useState('');
+    const [errors, setErrors] = useState('');
     const navigate = useNavigate();
+
 
     const { scholarship_id } = useParams();
 
@@ -269,7 +282,7 @@ export default function AddEditScholarship(){
                       
                 })
                 .catch(error => {
-                    setError("Failed to load scholarship details: " + error);
+                    setErrors("Failed to load scholarship details: " + error);
                     console.log("Error In Fetching Scholarship Info: " + error);
                 })
                 .finally(() => {
@@ -303,21 +316,39 @@ export default function AddEditScholarship(){
                 await axios.put(`/foundations/updateS/${scholarship_id}`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                alert("Scholarship updated successfully!");
+                setDialogContent("Scholarship updated successfully!");
             } else {
                 // Create new scholarship
+                
                 await axios.post("/foundations/add_scholarship", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                alert("Scholarship created successfully!");
+                setDialogContent("Scholarship created successfully!");
             }
-            navigate("/adminView/scholarships"); // Redirect after save
         } catch (error) {
             console.error("Error saving scholarship:", error);
-            alert("Failed to save the scholarship. Please try again.");
+            setErrors("Failed to save the scholarship. Please try again. : [" + error + "]");
         }
+        setOpenDialog(true);
     };
     
+
+    
+    const handleCloseDialog = () =>{
+        
+        
+        setDialogContent('');
+        setOpenDialog(false);
+
+        if(!errors){
+            navigate("/adminView/scholarships"); // Redirect after save
+            
+        }
+        setErrors('');
+            
+        
+    }
+
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
@@ -333,7 +364,6 @@ export default function AddEditScholarship(){
     //getting all the foundations that does not have scholarships yet
     const [noFScholarship,setNoFScholarship] = useState<Foundation[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchFoundationsWithoutScholarships = async () => {
@@ -344,7 +374,7 @@ export default function AddEditScholarship(){
                 );
                 setNoFScholarship(response.data);
             } catch (err: any) {
-                setError(err.message || 'Failed to fetch foundations T_T aggggggghhhhhhhhhhhhh my head hurts');
+                setErrors(err.message || 'Failed to fetch foundations T_T aggggggghhhhhhhhhhhhh my head hurts');
             } finally {
                 setLoading(false);
             }
@@ -357,11 +387,14 @@ export default function AddEditScholarship(){
         return <p>Loading...</p>;
     }
 
-    if (error) {
-        return <p>Error: {error}</p>;
+    if(errors){
+        if(!openDialog)
+            setOpenDialog(true);
     }
 
     return(
+        
+        <>
         <Box sx={{display: 'flex', flexDirection: 'column', margin:'80px auto 0 auto', width: '90%', height: 'auto', border: 'ridge', borderRadius: '15px', padding: '20px'}}>
             <Button startIcon={<ArrowBack/>} sx={{alignSelf: 'flex-start', backgroundColor: 'transparent', border: 'none', color: 'black', textTransform: 'capitalize', fontSize: '20px', marginBottom: '5px'}} onClick={()=>{navigate("/adminView/scholarships")}}>Go Back</Button>
             
@@ -682,5 +715,27 @@ export default function AddEditScholarship(){
                 </Box>
             </form>
         </Box>
+        {/* Notice Dialog */}
+        <Dialog
+            open={openDialog}
+            onClose={() => setOpenDialog(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{"Notice"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description"
+                    color={errors?'error' : 'success'}
+                >
+                    {errors ? errors : dialogContent}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseDialog} color="success">
+                    OK
+                </Button>
+            </DialogActions>
+        </Dialog>
+        </>
     )
 }

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Colors from "../../colors";
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import axios from "axios";
@@ -35,6 +35,7 @@ const [loading, setLoading] = useState<boolean>(false); // State for loading ind
 const [accessToken, setAccessToken] = useState<string | null>(null);
 const { instance } = useMsal(); // Get MSAL instance
 const isAuthenticated = useIsAuthenticated(); // Check if the user is authenticated
+const navigate = useNavigate();
 
 //this can be placed in 1 file tho T_T, but I don't want to fuck this shit up
 const fetchAccessToken = async (): Promise<string> => {
@@ -74,26 +75,28 @@ const fetchEmails = async (): Promise<void> => {
     setLoading(true); // Set loading to true when starting to fetch
     const token = await fetchAccessToken();
     const targetEmail = 'rcconchas2021@plm.edu.ph';
-    const emailResponse = await axios.get(`https://graph.microsoft.com/v1.0/me/messages?$filter=from/emailAddress/address eq '${targetEmail}'`, {
+    const emailResponse = await axios.get(`https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$filter=from/emailAddress/address eq '${targetEmail}'&$top=50`, {
         headers: {
         Authorization: `Bearer ${token}`,
         },
     });
-
-    const mappedEmails = emailResponse.data.value.map((email: any) => ({
-        id: email.id,
-        sender: {
+    const mappedEmails = emailResponse.data.value
+    .map((email: any) => ({
+      id: email.id,
+      sender: {
         name: email.from?.emailAddress?.name || "Unknown Sender",
         email: email.from?.emailAddress?.address || "Unknown Email",
-        },
-        receiver: {
+      },
+      receiver: {
         name: email.toRecipients[0]?.emailAddress?.name || "Unknown Recipient",
         email: email.toRecipients[0]?.emailAddress?.address || "Unknown Email",
-        },
-        sentTime: email.receivedDateTime,
-        subject: email.subject,
-        body: email.bodyPreview,
-    }));
+      },
+      sentTime: email.receivedDateTime,
+      subject: email.subject,
+      body: email.bodyPreview,
+    }))
+    .sort((a:any, b:any) => new Date(b.sentTime).getTime() - new Date(a.sentTime).getTime()); // Sort by sentTime (latest first)
+  
 
     setEmails(mappedEmails);
     } catch (err: any) {
@@ -115,7 +118,7 @@ return (
         <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
             <Toolbar />
             <Box sx={{ display: "flex" }}>
-            <Button variant="contained" sx={{ marginBottom: 3 }} onClick={() => (window.location.href = "contact/new")}>
+            <Button variant="contained" sx={{ marginBottom: 3 }} onClick={() => (navigate("new"))}>
                 Create Mail
             </Button>
             </Box>
