@@ -15,10 +15,13 @@ import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCale
 import Person2Icon from '@mui/icons-material/Person2';
 import Person3OutlinedIcon from '@mui/icons-material/Person3Outlined';
 
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutlined';
+
 import { Dispatch, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 
-export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'|'indivscholarships'
+export type AdminActiveType = 'foundations'|'scholarships'|'announcements'|'applicants'|'indivscholarships'|'allemails'
 type AdminNavbarProps = {
     active: AdminActiveType,
     setActive: Dispatch<React.SetStateAction<AdminActiveType>>;
@@ -72,6 +75,12 @@ export default function AdminNavbar({active, setActive}: AdminNavbarProps){
         path:"applicants", 
         active:<PermContactCalendarIcon/>, 
         inactive:<PermContactCalendarOutlinedIcon/>
+    },
+    {
+        page:"Emails", 
+        path:"allemails", 
+        active:<MarkEmailUnreadIcon/>, 
+        inactive:<MarkEmailUnreadOutlinedIcon/>
     },
     ];
 
